@@ -1,0 +1,13 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
+PROJECT(snuffbox-mantis C CXX)
+
+OPTION(SNUFF_USE_OGL "Forces OpenGL or Vulkan on Windows")
+SET(SNUFF_DIRECTX_VERSION "11" CACHE STRING "Specifies the DirectX version to use")
+SET(SNUFF_OGL_VERSION "ogl" CACHE STRING "Specifies whether to use OpenGL or Vulkan")
+SET_PROPERTY(CACHE "SNUFF_DIRECTX_VERSION" PROPERTY STRINGS "11" "12")
+SET_PROPERTY(CACHE "SNUFF_OGL_VERSION" PROPERTY STRINGS "ogl" "vulkan")
+
+OPTION(SNUFF_JAVASCRIPT "Should V8 (JavaScript) be enabled for this build?")
+
+ADD_SUBDIRECTORY(snuffbox-engine)
+ADD_SUBDIRECTORY(snuffbox-test)
