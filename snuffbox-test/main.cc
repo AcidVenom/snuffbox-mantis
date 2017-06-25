@@ -1,0 +1,44 @@
+#include <memory/allocators.h>
+#include <stdio.h>
+#include <EASTL/string.h>
+#include <iostream>
+
+class A
+{
+public:
+
+	A() {}
+
+	A(const int& f, const bool& b, const size_t& s) :
+		foo(f),
+		bar(b),
+		some_value(s)
+	{
+
+	}
+
+	int foo;
+	bool bar;
+	size_t some_value;
+};
+
+int main(int argc, char** argv)
+{
+	snuffbox::MallocAllocator alloc(1024 * 1024 * 4);
+	eastl::basic_string<char, snuffbox::EASTLAllocator<snuffbox::MallocAllocator>> testString = "This is a test string.";
+	printf("EASTL string: %s\n", testString.c_str());
+	testString.at(2) = '!';
+	printf("EASTL string (change i to !): %s\n", testString.c_str());
+	testString.erase(testString.begin() + testString.size() - 1);
+	printf("EASTL string (remove last character): %s\n", testString.c_str());
+
+	void* ptr = alloc.Malloc(4000);
+	alloc.Free(ptr);
+
+	A* test = alloc.Construct<A>(5, false, 1283917);
+
+	printf("foo: %i, bar: %s, some_value: %zu\n", test->foo, test->bar == true ? "true" : "false", test->some_value);
+
+	std::cin.get();
+	alloc.Destruct(test);
+}

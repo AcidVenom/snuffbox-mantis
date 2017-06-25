@@ -9,5 +9,8 @@ SET_PROPERTY(CACHE "SNUFF_OGL_VERSION" PROPERTY STRINGS "ogl" "vulkan")
 
 OPTION(SNUFF_JAVASCRIPT "Should V8 (JavaScript) be enabled for this build?")
 
+ADD_SUBDIRECTORY(eastl)
+INCLUDE_DIRECTORIES("eastl/include")
+
 ADD_SUBDIRECTORY(snuffbox-engine)
 ADD_SUBDIRECTORY(snuffbox-test)

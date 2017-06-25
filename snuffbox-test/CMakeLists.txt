@@ -8,6 +8,8 @@ SET(SNUFF_TEST_SOURCES
 
 SOURCE_GROUP("\\" FILES ${SNUFF_TEST_MAIN})
 
+INCLUDE_DIRECTORIES("../snuffbox-engine")
+
 ADD_EXECUTABLE(snuffbox-test ${SNUFF_TEST_SOURCES})
 
 TARGET_LINK_LIBRARIES(snuffbox-test snuffbox-engine)
