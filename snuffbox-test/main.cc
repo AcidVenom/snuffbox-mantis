@@ -9,12 +9,15 @@ public:
 
 	A() {}
 
-	A(const int& f, const bool& b, const size_t& s) :
+	A(const int& f, const bool& b, const size_t& s, const int& argc, char** argv) :
 		foo(f),
 		bar(b),
 		some_value(s)
 	{
-
+		for (int i = 0; i < argc; ++i)
+		{
+			printf("%s\n", argv[i]);
+		}
 	}
 
 	int foo;
@@ -35,7 +38,7 @@ int main(int argc, char** argv)
 	void* ptr = alloc.Malloc(4000);
 	alloc.Free(ptr);
 
-	A* test = alloc.Construct<A>(5, false, 1283917);
+	A* test = alloc.Construct<A>(5, false, 1283917, argc, argv);
 
 	printf("foo: %i, bar: %s, some_value: %zu\n", test->foo, test->bar == true ? "true" : "false", test->some_value);
 
