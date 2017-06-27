@@ -9,8 +9,28 @@ SET_PROPERTY(CACHE "SNUFF_OGL_VERSION" PROPERTY STRINGS "ogl" "vulkan")
 
 OPTION(SNUFF_JAVASCRIPT "Should V8 (JavaScript) be enabled for this build?")
 
-ADD_SUBDIRECTORY(eastl)
-INCLUDE_DIRECTORIES("eastl/include")
+SET_PROPERTY(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
+    $<$<CONFIG:Debug>:SNUFF_DEBUG>
+    $<$<CONFIG:Release>:SNUFF_RELEASE>
+)
 
-ADD_SUBDIRECTORY(snuffbox-engine)
-ADD_SUBDIRECTORY(snuffbox-test)
+IF (WIN32)
+	ADD_DEFINITIONS("/DSNUFF_WIN32")
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+	ADD_DEFINITIONS("/DSNUFF_LINUX")
+ENDIF ()
+
+SET(EASTL_DIR "" CACHE PATH "Specifies the location of EASTL (find the repo here: https://github.com/electronicarts/EASTL)")
+SET(WXWIDGETS_DIR "" CACHE PATH "Specifies the location of wxWidgets (https://www.wxwidgets.org)")
+
+SET(WXWIDGETS_VERSION_MAJOR "3" CACHE STRING "Specifies the major version of wxWidgets")
+SET(WXWIDGETS_VERSION_MINOR "1" CACHE STRING "Specifies the minor version of wxWidgets")
+SET_PROPERTY(CACHE "WXWIDGETS_VERSION_MAJOR" PROPERTY STRINGS "0" "1" "2" "3" "4" "5")
+SET_PROPERTY(CACHE "WXWIDGETS_VERSION_MINOR" PROPERTY STRINGS "0" "1" "2" "3" "4" "5")
+
+ADD_SUBDIRECTORY("${EASTL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/deps/eastl")
+INCLUDE_DIRECTORIES("${EASTL_DIR}/include")
+
+ADD_SUBDIRECTORY("snuffbox-engine")
+ADD_SUBDIRECTORY("snuffbox-test")
+ADD_SUBDIRECTORY("snuffbox-console")
