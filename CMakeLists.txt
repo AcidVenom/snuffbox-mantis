@@ -1,6 +1,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 PROJECT(snuffbox-mantis C CXX)
 
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+SET_PROPERTY(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake-targets")
+
 OPTION(SNUFF_USE_OGL "Forces OpenGL or Vulkan on Windows")
 SET(SNUFF_DIRECTX_VERSION "11" CACHE STRING "Specifies the DirectX version to use")
 SET(SNUFF_OGL_VERSION "ogl" CACHE STRING "Specifies whether to use OpenGL or Vulkan")
@@ -34,3 +37,9 @@ INCLUDE_DIRECTORIES("${EASTL_DIR}/include")
 ADD_SUBDIRECTORY("snuffbox-engine")
 ADD_SUBDIRECTORY("snuffbox-test")
 ADD_SUBDIRECTORY("snuffbox-console")
+
+SET_TARGET_PROPERTIES(snuffbox-engine PROPERTIES FOLDER "snuffbox-mantis")
+SET_TARGET_PROPERTIES(snuffbox-test PROPERTIES FOLDER "snuffbox-mantis")
+SET_TARGET_PROPERTIES(snuffbox-console PROPERTIES FOLDER "snuffbox-mantis")
+SET_TARGET_PROPERTIES(EASTL PROPERTIES FOLDER "deps/eastl")
+SET_TARGET_PROPERTIES(EABase_ide PROPERTIES FOLDER "deps/eastl")
