@@ -1,13 +1,14 @@
 #include "application.h"
-#include "../forms/main_window.h"
+#include "console.h"
 
 namespace snuffbox
 {
 	//-----------------------------------------------------------------------------------------------
 	bool ConsoleApp::OnInit()
 	{
-		main_window_ = new MainWindow(nullptr);
-		main_window_->Show(true);
+		console_ = new Console(nullptr);
+		console_->Show(true);
+		console_->AddMessage(LogSeverity::kInfo, "Looking for an available connection..");
 		return true;
 	}
 }

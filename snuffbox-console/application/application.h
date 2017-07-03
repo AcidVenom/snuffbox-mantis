@@ -4,7 +4,7 @@
 
 namespace snuffbox
 {
-	class MainWindow;
+	class Console;
 
 	/**
 	* @class snuffbox::ConsoleApp : public wxApp
@@ -23,6 +23,6 @@ namespace snuffbox
 
 	private:
 
-		MainWindow* main_window_; //!< The main window of the application generated through a form
+		Console* console_; //!< The main console window of the application generated through a form
 	};
 }
