@@ -3,6 +3,10 @@
 #include <EASTL/string.h>
 #include <iostream>
 
+#define SNUFF_INCLUDE_WINSOCK
+#include <logging_stream.h>
+#include <connection/logging_client.h>
+
 class A
 {
 public:
@@ -25,6 +29,19 @@ public:
 	size_t some_value;
 };
 
+class Client : public snuffbox::LoggingClient
+{
+	void OnConnect() const override
+	{
+		printf("CLIENT CONNECTED\n");
+	}
+
+	void OnDisconnect() const override
+	{
+		printf("CLIENT DISCONNECTED\n");
+	}
+};
+
 int main(int argc, char** argv)
 {
 	snuffbox::MallocAllocator alloc(1024 * 1024 * 4);
@@ -42,8 +59,15 @@ int main(int argc, char** argv)
 
 	printf("foo: %i, bar: %s, some_value: %zu\n", test->foo, test->bar == true ? "true" : "false", test->some_value);
 
-	std::cin.get();
 	alloc.Destruct(test);
+
+	snuffbox::LoggingStream stream;
+	Client client;
+	stream.Open(&client);
+
+	while (std::cin.get() != 'q') {}
+
+	stream.Close();
 
 	return 0;
 }

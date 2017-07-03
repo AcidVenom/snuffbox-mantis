@@ -62,7 +62,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	std::string Console::CreateTimeStamp()
+	std::string Console::CreateTimeStamp() const
 	{
 		std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
 		std::time_t now = std::chrono::system_clock::to_time_t(tp);

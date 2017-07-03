@@ -4,6 +4,7 @@ PROJECT(snuffbox-mantis C CXX)
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 SET_PROPERTY(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake-targets")
 
+SET(SNUFF_DEFAULT_PORT "8888" CACHE STRING "Specifies the default port for the logging connection to use")
 OPTION(SNUFF_USE_OGL "Forces OpenGL or Vulkan on Windows")
 SET(SNUFF_DIRECTX_VERSION "11" CACHE STRING "Specifies the DirectX version to use")
 SET(SNUFF_OGL_VERSION "ogl" CACHE STRING "Specifies whether to use OpenGL or Vulkan")
@@ -23,6 +24,8 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	ADD_DEFINITIONS("/DSNUFF_LINUX")
 ENDIF ()
 
+ADD_DEFINITIONS("/DSNUFF_DEFAULT_PORT=${SNUFF_DEFAULT_PORT}")
+
 SET(EASTL_DIR "" CACHE PATH "Specifies the location of EASTL (find the repo here: https://github.com/electronicarts/EASTL)")
 SET(WXWIDGETS_DIR "" CACHE PATH "Specifies the location of wxWidgets (https://www.wxwidgets.org)")
 
@@ -31,15 +34,19 @@ SET(WXWIDGETS_VERSION_MINOR "1" CACHE STRING "Specifies the minor version of wxW
 SET_PROPERTY(CACHE "WXWIDGETS_VERSION_MAJOR" PROPERTY STRINGS "0" "1" "2" "3" "4" "5")
 SET_PROPERTY(CACHE "WXWIDGETS_VERSION_MINOR" PROPERTY STRINGS "0" "1" "2" "3" "4" "5")
 
-ADD_SUBDIRECTORY("${EASTL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/deps/eastl")
 INCLUDE_DIRECTORIES("${EASTL_DIR}/include")
+INCLUDE_DIRECTORIES("snuffbox-logging")
+INCLUDE_DIRECTORIES("snuffbox-console")
 
+ADD_SUBDIRECTORY("${EASTL_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/deps/eastl")
+ADD_SUBDIRECTORY("snuffbox-logging")
+ADD_SUBDIRECTORY("snuffbox-console")
 ADD_SUBDIRECTORY("snuffbox-engine")
 ADD_SUBDIRECTORY("snuffbox-test")
-ADD_SUBDIRECTORY("snuffbox-console")
 
-SET_TARGET_PROPERTIES(snuffbox-engine PROPERTIES FOLDER "snuffbox-mantis")
-SET_TARGET_PROPERTIES(snuffbox-test PROPERTIES FOLDER "snuffbox-mantis")
-SET_TARGET_PROPERTIES(snuffbox-console PROPERTIES FOLDER "snuffbox-mantis")
 SET_TARGET_PROPERTIES(EASTL PROPERTIES FOLDER "deps/eastl")
 SET_TARGET_PROPERTIES(EABase_ide PROPERTIES FOLDER "deps/eastl")
+SET_TARGET_PROPERTIES(snuffbox-logging PROPERTIES FOLDER "snuffbox-mantis")
+SET_TARGET_PROPERTIES(snuffbox-console PROPERTIES FOLDER "snuffbox-mantis")
+SET_TARGET_PROPERTIES(snuffbox-engine PROPERTIES FOLDER "snuffbox-mantis")
+SET_TARGET_PROPERTIES(snuffbox-test PROPERTIES FOLDER "snuffbox-mantis")

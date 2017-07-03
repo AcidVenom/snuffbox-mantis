@@ -13,4 +13,5 @@ INCLUDE_DIRECTORIES("../snuffbox-engine")
 ADD_EXECUTABLE(snuffbox-test ${SNUFF_TEST_SOURCES})
 
 TARGET_LINK_LIBRARIES(snuffbox-test snuffbox-engine)
+TARGET_LINK_LIBRARIES(snuffbox-test snuffbox-logging)
 SET_TARGET_PROPERTIES(snuffbox-test PROPERTIES LINKER_LANGUAGE CXX)
