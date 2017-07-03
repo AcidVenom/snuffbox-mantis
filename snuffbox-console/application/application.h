@@ -9,18 +9,36 @@ namespace snuffbox
 {
 	class Console;
 
-	class Server : public snuffbox::LoggingServer
+	/**
+	* @class snuffbox::ConsoleServer : public snuffbox::LogginServer
+	* @brief The console server that we can log message from the logging stream with
+	* @author Daniël Konings
+	*/
+	class ConsoleServer : public snuffbox::LoggingServer
 	{
 
 	public:
 
-		Server();
+		/**
+		* @brief Default constructor
+		*/
+		ConsoleServer();
 
-		Server(Console* console);
+		/**
+		* @brief Construct by providing the console that we'll append to
+		* @param[in] console (snuffbox::Console*) The console
+		*/ 
+		ConsoleServer(Console* console);
 
-		void OnConnect() const override;
+		/**
+		* @see snuffbox::LoggingServer::OnConnect
+		*/
+		void OnConnect(const bool& stream_quit) const override;
 
-		void OnDisconnect() const override;
+		/**
+		* @see snuffbox::LoggingServer::OnDisconnect
+		*/
+		void OnDisconnect(const bool& stream_quit) const override;
 
 	private:
 
@@ -52,6 +70,6 @@ namespace snuffbox
 
 		Console* console_; //!< The main console window of the application generated through a form
 		LoggingStream stream_; //!< The logging stream
-		Server server_; //!< The logging server
+		ConsoleServer server_; //!< The logging server
 	};
 }

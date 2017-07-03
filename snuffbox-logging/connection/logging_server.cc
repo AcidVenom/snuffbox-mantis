@@ -49,13 +49,18 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingServer::Connect(const bool& quit)
+	int LoggingServer::Connect(const bool& quit)
 	{
+		if (quit == true)
+		{
+			return -1;
+		}
+
 		assert(socket_ >= 0);
 
 		if (socket_ < 0 || connected_ == true)
 		{
-			return;
+			return 0;
 		}
 
 		client_ = -1;
@@ -65,7 +70,7 @@ namespace snuffbox
 		{
 			if (quit == true)
 			{
-				return;
+				return -1;
 			}
 
 			client_ = static_cast<int>(accept(socket_, nullptr, nullptr));
@@ -73,7 +78,9 @@ namespace snuffbox
 		}
 
 		connected_ = true;
-		OnConnect();
+		OnConnect(quit);
+
+		return 0;
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -92,18 +99,18 @@ namespace snuffbox
 		if (connected_ == true)
 		{
 			connected_ = false;
-			OnDisconnect();
+			OnDisconnect(true);
 		}
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingServer::OnConnect() const
+	void LoggingServer::OnConnect(const bool& stream_quit) const
 	{
 
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingServer::OnDisconnect() const
+	void LoggingServer::OnDisconnect(const bool& stream_quit) const
 	{
 
 	}

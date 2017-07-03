@@ -4,28 +4,31 @@
 namespace snuffbox
 {
 	//-----------------------------------------------------------------------------------------------
-	Server::Server()
+	ConsoleServer::ConsoleServer()
 	{
 
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	Server::Server(Console* console) :
+	ConsoleServer::ConsoleServer(Console* console) :
 		console_(console)
 	{
 
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void Server::OnConnect() const
+	void ConsoleServer::OnConnect(const bool& stream_quit) const
 	{
-		console_->AddMessage(LogSeverity::kSuccess, "SERVER CONNECTED");
+		if (stream_quit == false)
+		{
+			console_->AddMessage(LogSeverity::kSuccess, "Succesfully connected to the engine");
+		}
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void Server::OnDisconnect() const
+	void ConsoleServer::OnDisconnect(const bool& stream_quit) const
 	{
-		console_->AddMessage(LogSeverity::kInfo, "SERVER DISCONNECTED");
+
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -35,7 +38,7 @@ namespace snuffbox
 		console_->Show(true);
 		console_->AddMessage(LogSeverity::kInfo, "Looking for an available connection..");
 
-		server_ = Server(console_);
+		server_ = ConsoleServer(console_);
 		stream_.Open(&server_);
 
 		return true;

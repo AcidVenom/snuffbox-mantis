@@ -31,12 +31,12 @@ public:
 
 class Client : public snuffbox::LoggingClient
 {
-	void OnConnect() const override
+	void OnConnect(const bool& stream_quit) const override
 	{
 		printf("CLIENT CONNECTED\n");
 	}
 
-	void OnDisconnect() const override
+	void OnDisconnect(const bool& stream_quit) const override
 	{
 		printf("CLIENT DISCONNECTED\n");
 	}

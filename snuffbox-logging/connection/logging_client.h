@@ -45,13 +45,15 @@ namespace snuffbox
 
 		/**
 		* @brief Called when the client succesfully connects to a server
+		* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
 		*/
-		virtual void OnConnect() const;
+		virtual void OnConnect(const bool& stream_quit) const;
 
 		/**
 		* @brief Called when the client disconnects from a server or the stream is closed
+		* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
 		*/
-		virtual void OnDisconnect() const;
+		virtual void OnDisconnect(const bool& stream_quit) const;
 
 	private:
 

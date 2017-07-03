@@ -32,8 +32,9 @@ namespace snuffbox
 		/**
 		* @brief Listens for incoming clients
 		* @param[in] quit (const bool&) Has the logging stream been closed yet?
+		* @return (int) Are we connected yet? Success = 0
 		*/
-		void Connect(const bool& quit);
+		int Connect(const bool& quit);
 
 		/**
 		* @brief Closes the socket so we can re-use it later
@@ -42,13 +43,15 @@ namespace snuffbox
 
 		/**
 		* @brief Called when the server is connected to a client
+		* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
 		*/
-		virtual void OnConnect() const;
+		virtual void OnConnect(const bool& stream_quit) const;
 
 		/**
 		* @brief Called when the server is disconnected from a client or the main stream closes
+		* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
 		*/
-		virtual void OnDisconnect() const;
+		virtual void OnDisconnect(const bool& stream_quit) const;
 
 	private:
 

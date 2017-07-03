@@ -41,7 +41,10 @@ namespace snuffbox
 		{
 			while (should_quit_ == false)
 			{
-				server->Connect(should_quit_);
+				if (server->Connect(should_quit_) == 0)
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_WAITING));
+				}
 			}
 
 			server->CloseSocket();
@@ -62,7 +65,10 @@ namespace snuffbox
 		{
 			while (should_quit_ == false)
 			{
-				client->Connect(port, ip, should_quit_);
+				if (client->Connect(port, ip, should_quit_) == 0)
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_WAITING));
+				}
 			}
 
 			client->CloseSocket();
@@ -72,8 +78,8 @@ namespace snuffbox
 	//-----------------------------------------------------------------------------------------------
 	void LoggingStream::Close()
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_SHUTDOWN));
 		should_quit_ = true;
+		std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_SHUTDOWN));
 
 		if (connection_thread_.joinable() == true)
 		{

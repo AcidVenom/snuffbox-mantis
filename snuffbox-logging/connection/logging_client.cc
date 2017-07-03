@@ -35,6 +35,11 @@ namespace snuffbox
 	//-----------------------------------------------------------------------------------------------
 	int LoggingClient::Connect(const int& port, const char* ip, const bool& quit)
 	{
+		if (quit == true)
+		{
+			return -1;
+		}
+
 		assert(socket_ >= 0);
 
 		if (connected_ == true)
@@ -80,7 +85,7 @@ namespace snuffbox
 		}
 
 		connected_ = true;
-		OnConnect();
+		OnConnect(quit);
 
 		return 0;
 	}
@@ -96,18 +101,18 @@ namespace snuffbox
 		if (connected_ == true)
 		{
 			connected_ = false;
-			OnDisconnect();
+			OnDisconnect(true);
 		}
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingClient::OnConnect() const
+	void LoggingClient::OnConnect(const bool& stream_quit) const
 	{
 		
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingClient::OnDisconnect() const
+	void LoggingClient::OnDisconnect(const bool& stream_quit) const
 	{
 
 	}
