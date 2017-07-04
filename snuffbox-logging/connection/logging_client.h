@@ -1,15 +1,17 @@
 #pragma once
 
+#include "logging_socket.h"
+
 namespace snuffbox
 {
 	class LoggingStream;
 
 	/**
-	* @class snuffbox::LoggingClient
+	* @class snuffbox::LoggingClient : public snuffbox::LoggingSocket
 	* @brief The client sided socket to setup a logging stream
 	* @author Daniël Konings
 	*/
-	class LoggingClient
+	class LoggingClient : public LoggingSocket
 	{
 
 		friend class LoggingStream;
@@ -44,6 +46,12 @@ namespace snuffbox
 		void CloseSocket();
 
 		/**
+		* @brief Checks for incoming packets and sends packets accordingly
+		* @return (bool) Are we still connected?
+		*/
+		bool Update();
+
+		/**
 		* @brief Called when the client succesfully connects to a server
 		* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
 		*/
@@ -60,5 +68,8 @@ namespace snuffbox
 		int socket_; //!< The socket opened for this client
 		int server_; //!< The ID of the server socket if connected to a server
 		bool connected_; //!< Has the client socket been connected to the server yet?
+
+		time_t last_time_; //!< The last time there was a connection
+		char buffer_[SNUFF_LOG_BUFFERSIZE]; //!< The buffer to receive data with
 	};
 }

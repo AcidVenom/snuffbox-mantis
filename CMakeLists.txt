@@ -5,6 +5,8 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 SET_PROPERTY(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake-targets")
 
 SET(SNUFF_DEFAULT_PORT "8888" CACHE STRING "Specifies the default port for the logging connection to use")
+SET(SNUFF_LOG_TIMEOUT "3" CACHE STRING "Specifies the default timeout in seconds for the logging connection to use")
+SET(SNUFF_LOG_BUFFERSIZE "4096" CACHE STRING "Specifies the maximum buffer size for the logging connection to use per socket")
 OPTION(SNUFF_USE_OGL "Forces OpenGL or Vulkan on Windows")
 SET(SNUFF_DIRECTX_VERSION "11" CACHE STRING "Specifies the DirectX version to use")
 SET(SNUFF_OGL_VERSION "ogl" CACHE STRING "Specifies whether to use OpenGL or Vulkan")
@@ -25,6 +27,8 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 ENDIF ()
 
 ADD_DEFINITIONS("/DSNUFF_DEFAULT_PORT=${SNUFF_DEFAULT_PORT}")
+ADD_DEFINITIONS("/DSNUFF_LOG_TIMEOUT=${SNUFF_LOG_TIMEOUT}")
+ADD_DEFINITIONS("/DSNUFF_LOG_BUFFERSIZE=${SNUFF_LOG_BUFFERSIZE}")
 
 SET(EASTL_DIR "" CACHE PATH "Specifies the location of EASTL (find the repo here: https://github.com/electronicarts/EASTL)")
 SET(WXWIDGETS_DIR "" CACHE PATH "Specifies the location of wxWidgets (https://www.wxwidgets.org)")

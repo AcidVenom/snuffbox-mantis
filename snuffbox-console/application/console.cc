@@ -39,7 +39,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	const Console::LogColour Console::LOG_COLOURS_[static_cast<unsigned char>(LogSeverity::kCount)] = {
+	const Console::LogColour Console::LOG_COLOURS_[static_cast<char>(LogSeverity::kCount)] = {
 		{ wxColour{ 255, 255, 255 }, wxColour{ 0, 0, 0 } },
 		{ wxColour{ 200, 220, 255 }, wxColour{ 0, 0, 255 } },
 		{ wxColour{ 0, 100, 50 }, wxColour{ 0, 255, 100 } },
@@ -49,7 +49,7 @@ namespace snuffbox
 	};
 
 	//-----------------------------------------------------------------------------------------------
-	const std::string Console::LOG_PREFIXES_[static_cast<unsigned char>(LogSeverity::kCount)] = {
+	const std::string Console::LOG_PREFIXES_[static_cast<char>(LogSeverity::kCount)] = {
 		"~",
 		"?",
 		"+",

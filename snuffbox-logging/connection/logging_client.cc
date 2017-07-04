@@ -11,10 +11,7 @@
 namespace snuffbox
 {
 	//-----------------------------------------------------------------------------------------------
-	LoggingClient::LoggingClient() :
-		socket_(-1),
-		server_(-1),
-		connected_(false)
+	LoggingClient::LoggingClient()
 	{
 
 	}
@@ -77,7 +74,6 @@ namespace snuffbox
 			if (err != SNUFF_IS_CONNECTED)
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_DISCONNECTED));
-				printf("Not connected..\n");
 				continue;
 			}
 
@@ -86,6 +82,7 @@ namespace snuffbox
 
 		connected_ = true;
 		OnConnect(quit);
+		time(&last_time_);
 
 		return 0;
 	}

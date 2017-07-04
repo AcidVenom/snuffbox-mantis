@@ -96,7 +96,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingStream::LogError(const int& error)
+	void LoggingStream::LogError(const int& error) const
 	{
 		if (error_handler_ == nullptr)
 		{

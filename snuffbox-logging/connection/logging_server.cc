@@ -11,12 +11,9 @@
 namespace snuffbox
 {
 	//-----------------------------------------------------------------------------------------------
-	LoggingServer::LoggingServer() :
-		socket_(-1),
-		client_(-1),
-		connected_(false)
+	LoggingServer::LoggingServer()
 	{
-		
+
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -63,22 +60,23 @@ namespace snuffbox
 			return 0;
 		}
 
-		client_ = -1;
+		other_ = -1;
 
 		set_blocking_socket(socket_, false);
-		while (client_ <= 0)
+		while (other_ <= 0)
 		{
 			if (quit == true)
 			{
 				return -1;
 			}
 
-			client_ = static_cast<int>(accept(socket_, nullptr, nullptr));
+			other_ = static_cast<int>(accept(socket_, nullptr, nullptr));
 			std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_DISCONNECTED));
 		}
 
 		connected_ = true;
 		OnConnect(quit);
+		time(&last_time_);
 
 		return 0;
 	}
@@ -91,9 +89,9 @@ namespace snuffbox
 			closesocket(socket_);
 		}
 
-		if (client_ > 0)
+		if (other_ > 0)
 		{
-			closesocket(client_);
+			closesocket(other_);
 		}
 
 		if (connected_ == true)

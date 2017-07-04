@@ -5,7 +5,7 @@ namespace snuffbox
 	/**
 	* @brief The different severities to log with
 	*/
-	enum struct LogSeverity : unsigned char
+	enum struct LogSeverity : char
 	{
 		kDebug, //!< Used to log arbritrary debugging information
 		kInfo, //!< Used to log info messages, e.g. initialisations or shutdowns

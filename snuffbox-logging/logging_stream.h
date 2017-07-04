@@ -1,6 +1,7 @@
 #pragma once
 
 #include <thread>
+#include <time.h>
 
 namespace snuffbox
 {
@@ -17,6 +18,18 @@ namespace snuffbox
 	{
 
 	public:
+
+		/**
+		* @brief The different server/client commands
+		*/
+		enum Commands : char
+		{
+			kWaiting, //!< When both client and server are idle
+			kWorking, //!< When the server is working
+			kLog, //!< When the client wants to log something to the server
+			kCommand, //!< When the client wants to execute a command on the server
+			kJavaScript //!< When the client wants to execute JavaScript on the server
+		};
 
 		/**
 		* @brief Default constructor
@@ -57,7 +70,7 @@ namespace snuffbox
 		* @brief Called whenever an error occurs, formats the errorcode as a string and passes it to the error handler
 		* @param[in] error (const int&) The error code
 		*/
-		void LogError(const int& error);
+		void LogError(const int& error) const;
 
 	private:
 

@@ -116,8 +116,8 @@ namespace snuffbox
 		*/
 		std::string CreateTimeStamp() const;
 
-		const static LogColour LOG_COLOURS_[static_cast<unsigned char>(LogSeverity::kCount)]; //!< The list of colours per severity
-		const static std::string LOG_PREFIXES_[static_cast<unsigned char>(LogSeverity::kCount)]; //!< The list of prefixes per severity
+		const static LogColour LOG_COLOURS_[static_cast<char>(LogSeverity::kCount)]; //!< The list of colours per severity
+		const static std::string LOG_PREFIXES_[static_cast<char>(LogSeverity::kCount)]; //!< The list of prefixes per severity
 
 	private:
 
