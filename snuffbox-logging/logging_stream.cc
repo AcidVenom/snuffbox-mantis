@@ -19,6 +19,8 @@ namespace snuffbox
 		win_sock_(nullptr),
 #endif
 		should_quit_(false),
+		is_server_(false),
+		socket_(nullptr),
 		error_handler_(nullptr)
 	{
 #ifdef SNUFF_WIN32
@@ -32,12 +34,16 @@ namespace snuffbox
 	//-----------------------------------------------------------------------------------------------
 	void LoggingStream::Open(LoggingServer* server, const int& port)
 	{
+		is_server_ = true;
+		socket_ = server;
 		Start(server, port, "");
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	void LoggingStream::Open(LoggingClient* client, const int& port, const char* ip)
 	{
+		is_server_ = false;
+		socket_ = client;
 		Start(client, port, ip);
 	}
 
@@ -52,6 +58,12 @@ namespace snuffbox
 			return;
 		}
 
+		RunThread(socket, port, ip);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	void LoggingStream::RunThread(LoggingSocket* socket, const int& port, const char* ip)
+	{
 		connection_thread_ = std::thread([=]()
 		{
 			LoggingSocket::ConnectionStatus status = LoggingSocket::ConnectionStatus::kWaiting;
@@ -69,7 +81,9 @@ namespace snuffbox
 
 				if (socket->Connect(port, ip, should_quit_) == 0)
 				{
+					connection_mutex_.lock();
 					status = socket->Update(should_quit_);
+					connection_mutex_.unlock();
 					switch (status)
 					{
 					case LoggingSocket::ConnectionStatus::kWaiting:
@@ -84,6 +98,30 @@ namespace snuffbox
 
 			socket->CloseSocket(should_quit_);
 		});
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	void LoggingStream::Log(const LogSeverity& severity, const char* message, const int& size)
+	{
+		assert(is_server_ == false);
+
+		std::lock_guard<std::mutex> lock(connection_mutex_);
+
+		bool connected = true;
+
+		PacketHeader header;
+		header.command = Commands::kLog;
+		header.severity = severity;
+		header.size = size;
+
+		connected = socket_->Send(socket_->socket_, &header, should_quit_);
+		connected = connected == false ? false : socket_->Receive(socket_->socket_, &header, should_quit_);
+
+		if (connected == true && header.command == Commands::kAccept)
+		{
+			connected = socket_->SendPacket(socket_->socket_, message, size, should_quit_);
+			connected = connected == false ? false : socket_->Receive(socket_->socket_, &header, should_quit_);
+		}
 	}
 
 	//-----------------------------------------------------------------------------------------------

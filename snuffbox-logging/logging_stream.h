@@ -1,7 +1,10 @@
 #pragma once
 
 #include <thread>
+#include <mutex>
 #include <time.h>
+
+#include <logging/logging.h>
 
 namespace snuffbox
 {
@@ -29,10 +32,11 @@ namespace snuffbox
 		enum Commands : char
 		{
 			kWaiting, //!< When both client and server are idle
-			kWorking, //!< When the server is working
+			kAccept, //!< When the server accepts a message
 			kLog, //!< When the client wants to log something to the server
-			kCommand, //!< When the client wants to execute a command on the server
-			kJavaScript //!< When the client wants to execute JavaScript on the server
+			kCommand, //!< When the server wants to execute a command on the client
+			kJavaScript, //!< When the server wants to execute JavaScript on the client
+			kProcessing //!< When either the client or server is processing
 		};
 
 		/**
@@ -43,7 +47,8 @@ namespace snuffbox
 		struct PacketHeader
 		{
 			Commands command; //!< The command to execute
-			size_t size; //!< The size of the upcoming buffer
+			LogSeverity severity; //!< The severity to log with, if applicable
+			int size; //!< The size of the upcoming buffer
 		};
 
 		/**
@@ -78,6 +83,20 @@ namespace snuffbox
 		void Start(LoggingSocket* socket, const int& port, const char* ip);
 
 		/**
+		* @brief Starts the connection thread
+		* @see snuffbox::LoggingStream::Start
+		*/
+		void RunThread(LoggingSocket* socket, const int& port, const char* ip);
+
+		/**
+		* @brief Logs a message, client only
+		* @param[in] severity (const snuffbox::LogSeverity&) The severity to log with
+		* @param[in] message (const char*) The message to send
+		* @param[in] size (const int&) The message size
+		*/
+		void Log(const LogSeverity& severity, const char* message, const int& size);
+
+		/**
 		* @brief Closes the stream and kills the connection if it exists
 		* @remarks This function call has a slight delay to make sure all log messages were received (SNUFF_SLEEP_SHUTDOWN)
 		*/
@@ -103,7 +122,10 @@ namespace snuffbox
 		WinSockWrapper* win_sock_; //!< The WinSock wrapper
 #endif
 		bool should_quit_; //!< Should the stream be closed?
+		bool is_server_; //!< Is this stream server-sided?
+		LoggingSocket* socket_; //!< The socket that started this stream
 		std::thread connection_thread_; //!< The connection thread
+		std::mutex connection_mutex_; //!< The connection mutex
 		void(*error_handler_)(const char*); //!< The error handler to stream error messages to
 	};
 }

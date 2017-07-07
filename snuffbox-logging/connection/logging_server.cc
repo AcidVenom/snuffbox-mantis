@@ -103,23 +103,71 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
+	bool LoggingServer::SendAccept(const bool& quit)
+	{
+		LoggingStream::PacketHeader header;
+		header.command = LoggingStream::Commands::kAccept;
+		header.severity = LogSeverity::kCount;
+		header.size = -1;
+
+		return Send(other_, &header, quit);
+	}
+
+	//-----------------------------------------------------------------------------------------------
 	LoggingSocket::ConnectionStatus LoggingServer::Update(const bool& quit)
 	{
 		bool connected = true;
 		LoggingStream::PacketHeader header;
 
-		if (last_message_ == LoggingStream::Commands::kWaiting)
+		if (last_message_ < LoggingStream::Commands::kLog || last_message_ == LoggingStream::Commands::kProcessing)
 		{
 			connected = Receive(other_, &header, quit);
 			if (connected == true)
 			{
 				last_message_ = header.command;
+
+				if (last_message_ == LoggingStream::Commands::kLog)
+				{
+					expected_ = header.size;
+					severity_ = header.severity;
+
+					connected = SendAccept(quit);
+
+					if (connected == false)
+					{
+						return ConnectionStatus::kDisconnected;
+					}
+
+					return ConnectionStatus::kBusy;
+				}
+
 				SendWait(other_, quit);
+
+				return ConnectionStatus::kWaiting;
+			}
+		}
+		else
+		{
+			connected = ReceivePacket(other_, expected_, quit);
+
+			if (connected == true)
+			{
+				memset(buffer_ + expected_, '\0', 1);
+				OnLog(severity_, buffer_);
+
+				connected = SendWait(other_, quit);
+				last_message_ = LoggingStream::Commands::kWaiting;
 
 				return ConnectionStatus::kWaiting;
 			}
 		}
 
 		return ConnectionStatus::kDisconnected;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	void LoggingServer::OnLog(const LogSeverity& severity, const char* message)
+	{
+
 	}
 }

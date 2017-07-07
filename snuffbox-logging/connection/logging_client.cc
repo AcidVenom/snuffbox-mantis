@@ -103,8 +103,6 @@ namespace snuffbox
 		}
 	}
 
-	
-
 	//-----------------------------------------------------------------------------------------------
 	LoggingSocket::ConnectionStatus LoggingClient::Update(const bool& quit)
 	{

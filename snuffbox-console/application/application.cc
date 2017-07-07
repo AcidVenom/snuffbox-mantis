@@ -35,6 +35,12 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
+	void ConsoleServer::OnLog(const LogSeverity& severity, const char* message)
+	{
+		console_->AddMessage(severity, message);
+	}
+
+	//-----------------------------------------------------------------------------------------------
 	bool ConsoleApp::OnInit()
 	{
 		console_ = new Console(nullptr);

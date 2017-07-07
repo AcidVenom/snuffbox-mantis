@@ -65,7 +65,10 @@ int main(int argc, char** argv)
 	Client client;
 	stream.Open(&client);
 
-	while (std::cin.get() != 'q') {}
+	while (std::cin.get() != 'q') 
+	{
+		stream.Log(snuffbox::LogSeverity::kDebug, "This is some random line from the engine, aye", 4);
+	}
 
 	stream.Close();
 

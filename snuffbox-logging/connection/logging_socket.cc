@@ -14,7 +14,8 @@ namespace snuffbox
 		socket_(-1),
 		other_(-1),
 		connected_(false),
-		last_message_(0)
+		last_message_(0),
+		expected_(0)
 	{
 		time(&last_time_);
 	}

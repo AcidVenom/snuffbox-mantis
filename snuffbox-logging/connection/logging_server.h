@@ -1,6 +1,7 @@
 #pragma once
 
 #include "logging_socket.h"
+#include <logging/logging.h>
 
 namespace snuffbox
 {
@@ -37,8 +38,24 @@ namespace snuffbox
 		void CloseSocket(const bool& quit) override;
 
 		/**
+		* @brief Sends an accept message to the client
+		* @param[in] quit (const bool&) Has the logging stream been closed yet?
+		* @return (bool) Are we still connected?
+		*/
+		bool SendAccept(const bool& quit);
+
+		/**
 		* @see snuffbox::LoggingSocket::Update
 		*/
 		ConnectionStatus Update(const bool& quit) override;
+
+		/**
+		* @brief Called when a log was received
+		*/
+		virtual void OnLog(const LogSeverity& severity, const char* message);
+
+	private:
+
+		LogSeverity severity_; //!< The received severity from the client of the previous packet
 	};
 }

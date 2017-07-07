@@ -125,6 +125,7 @@ namespace snuffbox
 		int other_; //!< The socket ID of the connected client or server
 		bool connected_; //!< Is there a connection?
 		char last_message_; //!< The last message received
+		int expected_; //!< The next expected size
 
 		time_t last_time_; //!< The last time a connection was available
 		char buffer_[SNUFF_LOG_BUFFERSIZE]; //!< The buffer to receive messages with
