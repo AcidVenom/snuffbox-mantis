@@ -1,4 +1,5 @@
 #include "logging_server.h"
+#include "logging_stream.h"
 
 #ifdef SNUFF_WIN32
 #include "win32/winsock_wrapper.h"
@@ -46,7 +47,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	int LoggingServer::Connect(const bool& quit)
+	int LoggingServer::Connect(const int& port, const char* ip, const bool& quit)
 	{
 		if (quit == true)
 		{
@@ -102,14 +103,24 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingServer::OnConnect(const bool& stream_quit) const
+	LoggingSocket::ConnectionStatus LoggingServer::Update(const bool& quit)
 	{
+		bool connected = true;
+		LoggingStream::PacketHeader header;
 
-	}
+		if (last_message_ == LoggingStream::Commands::kWaiting)
+		{
+			connected = ReceivePacket(other_, sizeof(char), quit);
+			if (connected == true)
+			{
+				header.command = LoggingStream::Commands::kWaiting;
+				header.size = 0;
+				connected = SendPacket(other_, reinterpret_cast<char*>(&header), sizeof(LoggingStream::PacketHeader), quit);
 
-	//-----------------------------------------------------------------------------------------------
-	void LoggingServer::OnDisconnect(const bool& stream_quit) const
-	{
+				return ConnectionStatus::kWaiting;
+			}
+		}
 
+		return ConnectionStatus::kDisconnected;
 	}
 }

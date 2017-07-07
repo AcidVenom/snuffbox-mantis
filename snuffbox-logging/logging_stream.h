@@ -5,9 +5,13 @@
 
 namespace snuffbox
 {
+	class LoggingSocket;
 	class LoggingClient;
 	class LoggingServer;
+
+#ifdef SNUFF_WIN32
 	class WinSockWrapper;
+#endif
 
 	/**
 	* @class snuffbox::LoggingStream
@@ -32,6 +36,17 @@ namespace snuffbox
 		};
 
 		/**
+		* @struct snuffbox::LoggingStream::PacketHeader
+		* @brief A structure to send information of what to receive or send between a connected client and server
+		* @author Daniël Konings
+		*/
+		struct PacketHeader
+		{
+			Commands command; //!< The command to execute
+			size_t size; //!< The size of the upcoming buffer
+		};
+
+		/**
 		* @brief Default constructor
 		* @remarks Initialises WinSock on Windows systems
 		*/
@@ -51,6 +66,16 @@ namespace snuffbox
 		* @param[in] ip (const char*) The IP address to stream on, default = "127.0.0.1" (localhost)
 		*/
 		void Open(LoggingClient* client, const int& port = SNUFF_DEFAULT_PORT, const char* ip = "127.0.0.1");
+
+		/**
+		* @brief Starts streaming between a client and a server
+		* @remarks This will start a connection thread next to the main thread
+		* @param[in] socket (snuffbox::LoggingSocket*) The client or server socket to stream with
+		* @param[in] port (const int&) The port to stream on
+		* @param[in] ip (const char*) The IP address to stream to, client only
+		* @param[in] is_server (const bool&) Is the socket a server?
+		*/
+		void Start(LoggingSocket* socket, const int& port, const char* ip);
 
 		/**
 		* @brief Closes the stream and kills the connection if it exists

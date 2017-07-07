@@ -21,41 +21,32 @@ namespace snuffbox
 		should_quit_(false),
 		error_handler_(nullptr)
 	{
+#ifdef SNUFF_WIN32
 		static WinSockWrapper wrapper;
 		win_sock_ = &wrapper;
 
 		win_sock_->Initialise();
+#endif
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	void LoggingStream::Open(LoggingServer* server, const int& port)
 	{
-		int err = 0;
-		if ((err = server->OpenSocket(port)) != 0)
-		{
-			LogError(err);
-			return;
-		}
-
-		connection_thread_ = std::thread([=]()
-		{
-			while (should_quit_ == false)
-			{
-				if (server->Connect(should_quit_) == 0)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_WAITING));
-				}
-			}
-
-			server->CloseSocket();
-		});
+		Start(server, port, "");
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	void LoggingStream::Open(LoggingClient* client, const int& port, const char* ip)
 	{
+		Start(client, port, ip);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	void LoggingStream::Start(LoggingSocket* socket, const int& port, const char* ip)
+	{
 		int err = 0;
-		if ((err = client->OpenSocket()) != 0)
+
+		if ((err = socket->OpenSocket(port)) != 0)
 		{
 			LogError(err);
 			return;
@@ -63,15 +54,26 @@ namespace snuffbox
 
 		connection_thread_ = std::thread([=]()
 		{
+			LoggingSocket::ConnectionStatus status = LoggingSocket::ConnectionStatus::kWaiting;
+			socket->last_message_ = Commands::kWaiting;
+
 			while (should_quit_ == false)
 			{
-				if (client->Connect(port, ip, should_quit_) == 0)
+				if (socket->Connect(port, ip, should_quit_) == 0)
 				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_WAITING));
+					status = socket->Update(should_quit_);
+					switch (status)
+					{
+					case LoggingSocket::ConnectionStatus::kWaiting:
+						std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_WAITING));
+						break;
+					default:
+						break;
+					}
 				}
 			}
 
-			client->CloseSocket();
+			socket->CloseSocket();
 		});
 	}
 
@@ -86,7 +88,9 @@ namespace snuffbox
 			connection_thread_.join();
 		}
 
+#ifdef SNUFF_WIN32
 		win_sock_->CleanUp();
+#endif
 	}
 
 	//-----------------------------------------------------------------------------------------------

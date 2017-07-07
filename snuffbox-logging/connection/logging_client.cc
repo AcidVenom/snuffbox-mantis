@@ -1,4 +1,5 @@
 #include "logging_client.h"
+#include "logging_stream.h"
 
 #ifdef SNUFF_WIN32
 #include "win32/winsock_wrapper.h"
@@ -17,7 +18,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	int LoggingClient::OpenSocket()
+	int LoggingClient::OpenSocket(const int& port)
 	{
 		socket_ = static_cast<int>(socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
 
@@ -103,14 +104,24 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingClient::OnConnect(const bool& stream_quit) const
+	LoggingSocket::ConnectionStatus LoggingClient::Update(const bool& quit)
 	{
-		
-	}
+		bool connected = true;
+		LoggingStream::PacketHeader header;
 
-	//-----------------------------------------------------------------------------------------------
-	void LoggingClient::OnDisconnect(const bool& stream_quit) const
-	{
+		if (last_message_ == LoggingStream::Commands::kWaiting)
+		{
+			connected = ReceivePacket(other_, sizeof(char), quit);
+			if (connected == true)
+			{
+				header.command = LoggingStream::Commands::kWaiting;
+				header.size = 0;
+				connected = SendPacket(other_, reinterpret_cast<char*>(&header), sizeof(LoggingStream::PacketHeader), quit);
 
+				return ConnectionStatus::kWaiting;
+			}
+		}
+
+		return ConnectionStatus::kDisconnected;
 	}
 }

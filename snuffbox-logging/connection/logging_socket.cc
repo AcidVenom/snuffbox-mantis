@@ -12,7 +12,8 @@ namespace snuffbox
 	LoggingSocket::LoggingSocket() :
 		socket_(-1),
 		other_(-1),
-		connected_(false)
+		connected_(false),
+		last_message_(0)
 	{
 		time(&last_time_);
 	}
@@ -60,7 +61,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	bool LoggingSocket::SendPacket(const int& socket, const int& size, const bool& quit)
+	bool LoggingSocket::SendPacket(const int& socket, const char* buffer, const int& size, const bool& quit)
 	{
 		int bytes = 0;
 		int result = -1;
@@ -68,7 +69,7 @@ namespace snuffbox
 
 		while (quit == false)
 		{
-			result = send(socket, buffer_, size, 0);
+			result = send(socket, buffer, size, 0);
 			err = errno;
 
 			if ((result < 0 && (err == SNUFF_WOULD_BLOCK || err == EAGAIN)) && TimedOut() == false)
@@ -85,5 +86,18 @@ namespace snuffbox
 		}
 
 		return false;
+	}
+
+
+	//-----------------------------------------------------------------------------------------------
+	void LoggingSocket::OnConnect(const bool& stream_quit) const
+	{
+
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	void LoggingSocket::OnDisconnect(const bool& stream_quit) const
+	{
+
 	}
 }
