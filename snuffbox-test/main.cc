@@ -67,7 +67,8 @@ int main(int argc, char** argv)
 
 	while (std::cin.get() != 'q') 
 	{
-		stream.Log(snuffbox::LogSeverity::kDebug, "This is some random line from the engine, aye", 4);
+		std::string bleh = "This is some random line from the engine, aye";
+		stream.Log(snuffbox::LogSeverity::kDebug, bleh.c_str(), bleh.size());
 	}
 
 	stream.Close();
