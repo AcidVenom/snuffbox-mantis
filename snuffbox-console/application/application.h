@@ -40,7 +40,10 @@ namespace snuffbox
 		*/
 		void OnDisconnect(const bool& stream_quit) const override;
 
-		void OnLog(const LogSeverity& severity, const char* message) override;
+		/**
+		* @see snuffbox::LoggingServer::OnLog
+		*/
+		void OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg) override;
 
 	private:
 

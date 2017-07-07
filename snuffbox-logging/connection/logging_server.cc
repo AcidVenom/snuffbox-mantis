@@ -152,8 +152,16 @@ namespace snuffbox
 
 			if (connected == true)
 			{
-				memset(buffer_ + expected_, '\0', 1);
-				OnLog(severity_, buffer_);
+				if (severity_ == LogSeverity::kRGB)
+				{
+					OnLog(severity_, buffer_,
+						reinterpret_cast<unsigned char*>(buffer_ + expected_ - 6),
+						reinterpret_cast<unsigned char*>(buffer_ + expected_ - 3));
+				}
+				else
+				{
+					OnLog(severity_, buffer_);
+				}
 
 				connected = SendWait(other_, quit);
 				last_message_ = LoggingStream::Commands::kWaiting;
@@ -166,7 +174,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingServer::OnLog(const LogSeverity& severity, const char* message)
+	void LoggingServer::OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg)
 	{
 
 	}

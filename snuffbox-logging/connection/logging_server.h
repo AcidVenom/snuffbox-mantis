@@ -51,8 +51,12 @@ namespace snuffbox
 
 		/**
 		* @brief Called when a log was received
+		* @param[in] severity (const snuffbox::LogSeverity&) The severity being logged with
+		* @param[in] message (const char*) The message that was received
+		* @param[in] col_fg (const unsigned char*) The colour values for the foreground when logged with an RGB severity, default = nullptr
+		* @param[in] col_bg (const unsigned char*) The colour values for the background when logged with an RGB severity, default = nullptr
 		*/
-		virtual void OnLog(const LogSeverity& severity, const char* message);
+		virtual void OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg = nullptr, const unsigned char* col_bg = nullptr);
 
 	private:
 

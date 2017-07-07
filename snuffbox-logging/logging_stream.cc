@@ -101,7 +101,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingStream::Log(const LogSeverity& severity, const char* message, const int& size)
+	void LoggingStream::Log(const LogSeverity& severity, const char* message, const int& size, const unsigned char* col_fg, const unsigned char* col_bg)
 	{
 		assert(is_server_ == false);
 
@@ -114,17 +114,33 @@ namespace snuffbox
 
 		bool connected = true;
 
+		char buffer[SNUFF_LOG_BUFFERSIZE];
+
+		memcpy(buffer, message, size);
+		memset(buffer + size, '\0', sizeof(char));
+		int extra_size = 0;
+
+		if (severity == LogSeverity::kRGB && col_fg != nullptr && col_bg != nullptr)
+		{
+			memcpy(buffer + size + 1, col_fg, sizeof(unsigned char) * 3);
+			memcpy(buffer + size + 4, col_bg, sizeof(unsigned char) * 3);
+
+			extra_size = sizeof(unsigned char) * 6;
+		}
+
+		int s = size + 1 + extra_size;
+
 		PacketHeader header;
 		header.command = Commands::kLog;
 		header.severity = severity;
-		header.size = size;
+		header.size = s;
 
 		connected = socket_->Send(socket_->socket_, &header, should_quit_);
 		connected = connected == false ? false : socket_->Receive(socket_->socket_, &header, should_quit_);
 
 		if (connected == true && header.command == Commands::kAccept)
 		{
-			connected = socket_->SendPacket(socket_->socket_, message, size, should_quit_);
+			connected = socket_->SendPacket(socket_->socket_, buffer, s, should_quit_);
 			connected = connected == false ? false : socket_->Receive(socket_->socket_, &header, should_quit_);
 		}
 	}

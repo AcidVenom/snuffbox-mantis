@@ -35,8 +35,18 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void ConsoleServer::OnLog(const LogSeverity& severity, const char* message)
+	void ConsoleServer::OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg)
 	{
+		if (severity == LogSeverity::kRGB && col_fg != nullptr && col_bg != nullptr)
+		{
+			Console::LogColour col;
+			col.foreground.Set(col_fg[0], col_fg[1], col_fg[2], 255);
+			col.background.Set(col_bg[0], col_bg[1], col_bg[2], 255);
+
+			console_->AddMessage(severity, message, col);
+			return;
+		}
+
 		console_->AddMessage(severity, message);
 	}
 

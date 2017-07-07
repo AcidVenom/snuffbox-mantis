@@ -8,6 +8,8 @@
 
 namespace snuffbox
 {
+	class ConsoleServer;
+
 	/**
 	* @class snuffbox::Console : public MainWindow
 	* @brief The main console window that you can send messages to
@@ -15,6 +17,8 @@ namespace snuffbox
 	*/
 	class Console : public MainWindow
 	{
+
+		friend class ConsoleServer;
 
 	protected:
 

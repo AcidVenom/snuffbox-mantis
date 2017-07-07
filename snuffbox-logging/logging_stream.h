@@ -93,8 +93,11 @@ namespace snuffbox
 		* @param[in] severity (const snuffbox::LogSeverity&) The severity to log with
 		* @param[in] message (const char*) The message to send
 		* @param[in] size (const int&) The message size
+		* @param[in] col_fg (const unsigned char*) The foreground colour to log with, default = nullptr
+		* @param[in] col_bg (const unsigned char*) The background colour to log with, default = nullptr
+		* @remarks Colour parameters are only applicable for the RGB severity
 		*/
-		void Log(const LogSeverity& severity, const char* message, const int& size);
+		void Log(const LogSeverity& severity, const char* message, const int& size, const unsigned char* col_fg = nullptr, const unsigned char* col_bg = nullptr);
 
 		/**
 		* @brief Closes the stream and kills the connection if it exists
