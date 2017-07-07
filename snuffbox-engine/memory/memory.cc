@@ -1,26 +1,24 @@
-#include "malloc_allocator.h"
+#include "memory.h"
 
 namespace snuffbox
 {
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		MallocAllocator::MallocAllocator(const size_t& size) :
-			Allocator(size)
-		{
+		Allocator* Memory::default_allocator_ = nullptr;
 
+		//-----------------------------------------------------------------------------------------------
+		Allocator& Memory::default_allocator()
+		{
+			assert(default_allocator_ != nullptr);
+			return *default_allocator_;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void* MallocAllocator::Allocate(const size_t& size, const size_t& align)
+		void Memory::Shutdown()
 		{
-			return malloc(size);
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void MallocAllocator::Deallocate(void* ptr)
-		{
-			free(ptr);
+			assert(default_allocator != nullptr);
+			default_allocator_->~Allocator();
 		}
 	}
 }

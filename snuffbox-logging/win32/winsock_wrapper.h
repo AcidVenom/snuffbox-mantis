@@ -7,42 +7,45 @@
 
 namespace snuffbox
 {
-	/**
-	* @class snuffbox::WinSockWrapper
-	* @brief A wrapper class to initialise the WinSock library with
-	* @author Daniël Konings
-	*/
-	class WinSockWrapper
+	namespace logging
 	{
-	public:
-
 		/**
-		* @brief Default constructor
+		* @class snuffbox::logging::WinSockWrapper
+		* @brief A wrapper class to initialise the WinSock library with
+		* @author Daniël Konings
 		*/
-		WinSockWrapper();
+		class WinSockWrapper
+		{
+		public:
 
-		/**
-		* @brief Converts an error code to a descriptive string
-		* @param[in] error (const int&) The error code to convert
-		* @return (char*) The error message as a string
-		*/
-		char* GetErrorMessage(const int& error);
+			/**
+			* @brief Default constructor
+			*/
+			WinSockWrapper();
 
-		/**
-		* @brief Initialises WinSock
-		* @return (int) The error code, success = 0
-		*/
-		int Initialise();
+			/**
+			* @brief Converts an error code to a descriptive string
+			* @param[in] error (const int&) The error code to convert
+			* @return (char*) The error message as a string
+			*/
+			char* GetErrorMessage(const int& error);
 
-		/**
-		* @brief Cleans up WinSock
-		* @return (int) The error code, success = 0
-		*/
-		int CleanUp();
+			/**
+			* @brief Initialises WinSock
+			* @return (int) The error code, success = 0
+			*/
+			int Initialise();
 
-	private:
+			/**
+			* @brief Cleans up WinSock
+			* @return (int) The error code, success = 0
+			*/
+			int CleanUp();
 
-		bool initialised_; //!< Has the WinSock wrapper been initialised?
-		WSADATA data_; //!< The WinSock data that is filled in at initialisation
-	};
+		private:
+
+			bool initialised_; //!< Has the WinSock wrapper been initialised?
+			WSADATA data_; //!< The WinSock data that is filled in at initialisation
+		};
+	}
 }
