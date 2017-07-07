@@ -105,6 +105,11 @@ namespace snuffbox
 	{
 		assert(is_server_ == false);
 
+		if (socket_->connected_ == false)
+		{
+			return;
+		}
+
 		std::lock_guard<std::mutex> lock(connection_mutex_);
 
 		bool connected = true;
