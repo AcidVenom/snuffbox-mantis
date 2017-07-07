@@ -1,4 +1,5 @@
 #include "logging_socket.h"
+#include "logging_stream.h"
 
 #ifdef SNUFF_WIN32
 #include "../win32/winsock_wrapper.h"
@@ -88,6 +89,14 @@ namespace snuffbox
 		return false;
 	}
 
+	//-----------------------------------------------------------------------------------------------
+	bool LoggingSocket::SendWait(const int& socket, const bool& quit)
+	{
+		LoggingStream::PacketHeader header;
+		header.command = LoggingStream::Commands::kWaiting;
+		header.size = 0;
+		return Send(socket, &header, quit);
+	}
 
 	//-----------------------------------------------------------------------------------------------
 	void LoggingSocket::OnConnect(const bool& stream_quit) const

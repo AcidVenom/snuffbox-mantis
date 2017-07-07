@@ -89,7 +89,7 @@ namespace snuffbox
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	void LoggingClient::CloseSocket()
+	void LoggingClient::CloseSocket(const bool& quit)
 	{
 		if (socket_ > 0)
 		{
@@ -99,9 +99,11 @@ namespace snuffbox
 		if (connected_ == true)
 		{
 			connected_ = false;
-			OnDisconnect(true);
+			OnDisconnect(quit);
 		}
 	}
+
+	
 
 	//-----------------------------------------------------------------------------------------------
 	LoggingSocket::ConnectionStatus LoggingClient::Update(const bool& quit)
@@ -111,13 +113,12 @@ namespace snuffbox
 
 		if (last_message_ == LoggingStream::Commands::kWaiting)
 		{
-			connected = ReceivePacket(other_, sizeof(char), quit);
+			connected = SendWait(socket_, quit);
+			connected = connected == false ? false : Receive(socket_, &header, quit);
 			if (connected == true)
 			{
-				header.command = LoggingStream::Commands::kWaiting;
-				header.size = 0;
-				connected = SendPacket(other_, reinterpret_cast<char*>(&header), sizeof(LoggingStream::PacketHeader), quit);
-
+				last_message_ = header.command;
+				
 				return ConnectionStatus::kWaiting;
 			}
 		}

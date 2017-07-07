@@ -45,8 +45,9 @@ namespace snuffbox
 
 		/**
 		* @brief Closes the socket
+		* @param[in] quit (const bool&) Is the socket being closed because the logging stream has closed?
 		*/
-		virtual void CloseSocket() = 0;
+		virtual void CloseSocket(const bool& quit) = 0;
 
 		/**
 		* @brief Has the connection been timed out?
@@ -66,6 +67,13 @@ namespace snuffbox
 		bool ReceivePacket(const int& socket, const int& expected_size, const bool& quit);
 
 		/**
+		* @brief Helper function for receiving typed packets
+		* @see snuffbox::LoggingSocket::ReceivePacket
+		*/
+		template <typename T>
+		bool Receive(const int& socket, T* out, const bool& quit);
+
+		/**
 		* @brief Sends a packet to a specified socket
 		* @remarks When the connection is not established this method will return false
 		* @param[in] socket (const int&) The socket to send packets to
@@ -75,6 +83,21 @@ namespace snuffbox
 		* @return (bool) Are we still connected?
 		*/
 		bool SendPacket(const int& socket, const char* buffer, const int& size, const bool& quit);
+
+		/**
+		* @brief Helper function for sending typed packets
+		* @see snuffbox::LoggingSocket::SendPacket
+		*/
+		template <typename T>
+		bool Send(const int& socket, const T* buffer, const bool& quit);
+
+		/**
+		* @brief Sends a wait command packet
+		* @param[in] socket (const int&) The socket to send with
+		* @param[in] quit (const bool&) Has the logging stream been closed yet?
+		* @return (bool) Are we still connected?
+		*/
+		bool SendWait(const int& socket, const bool& quit);
 
 		/**
 		* @brief Updates the connection between server and client
@@ -106,4 +129,21 @@ namespace snuffbox
 		time_t last_time_; //!< The last time a connection was available
 		char buffer_[SNUFF_LOG_BUFFERSIZE]; //!< The buffer to receive messages with
 	};
+
+	//-----------------------------------------------------------------------------------------------
+	template <typename T>
+	inline bool LoggingSocket::Send(const int& socket, const T* buffer, const bool& quit)
+	{
+		return SendPacket(socket, reinterpret_cast<const char*>(buffer), sizeof(T), quit);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	template <typename T>
+	inline bool LoggingSocket::Receive(const int& socket, T* out, const bool& quit)
+	{
+		bool connected = ReceivePacket(socket, sizeof(T), quit);
+		*out = *reinterpret_cast<T*>(buffer_);
+
+		return connected;
+	}
 }

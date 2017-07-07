@@ -56,9 +56,17 @@ namespace snuffbox
 		{
 			LoggingSocket::ConnectionStatus status = LoggingSocket::ConnectionStatus::kWaiting;
 			socket->last_message_ = Commands::kWaiting;
+			bool disconnect = false;
 
 			while (should_quit_ == false)
 			{
+				if (disconnect == true)
+				{
+					socket->CloseSocket(should_quit_);
+					socket->OpenSocket(port);
+					disconnect = false;
+				}
+
 				if (socket->Connect(port, ip, should_quit_) == 0)
 				{
 					status = socket->Update(should_quit_);
@@ -67,13 +75,14 @@ namespace snuffbox
 					case LoggingSocket::ConnectionStatus::kWaiting:
 						std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_WAITING));
 						break;
-					default:
+					case LoggingSocket::ConnectionStatus::kDisconnected:
+						disconnect = true;
 						break;
 					}
 				}
 			}
 
-			socket->CloseSocket();
+			socket->CloseSocket(should_quit_);
 		});
 	}
 

@@ -34,7 +34,7 @@ namespace snuffbox
 		/**
 		* @see snuffbox::LoggingSocket::CloseSocket
 		*/
-		void CloseSocket() override;
+		void CloseSocket(const bool& quit) override;
 
 		/**
 		* @see snuffbox::LoggingSocket::Update

@@ -28,7 +28,10 @@ namespace snuffbox
 	//-----------------------------------------------------------------------------------------------
 	void ConsoleServer::OnDisconnect(const bool& stream_quit) const
 	{
-
+		if (stream_quit == false)
+		{
+			console_->AddMessage(LogSeverity::kInfo, "Disconnected from the engine, looking for a new connection..");
+		}
 	}
 
 	//-----------------------------------------------------------------------------------------------
