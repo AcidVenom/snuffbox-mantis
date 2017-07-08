@@ -49,7 +49,7 @@ namespace snuffbox
 
 		private:
 
-			Console* console_;
+			Console* console_; //!< The console form running in the wxApp
 		};
 
 		/**
