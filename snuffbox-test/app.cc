@@ -15,6 +15,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void App::OnInit()
+		{
+			engine::String bleh = "Initialised the application";
+			stream_.Log(console::LogSeverity::kSuccess, bleh.c_str(), static_cast<int>(bleh.size()));
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void App::OnUpdate()
 		{
 			unsigned char fg[3];
@@ -24,8 +31,15 @@ namespace snuffbox
 			HSLToRGB(0.0f, 0.0f, 0.0f, fg);
 			HSLToRGB(std::fmodf(offset_, 1.0f), 1.0f, 0.5f, bg);
 
-			engine::String bleh = "This is some random line from the engine, aye";
+			engine::String bleh = "Update";
 			stream_.Log(console::LogSeverity::kRGB, bleh.c_str(), static_cast<int>(bleh.size()), fg, bg);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void App::OnShutdown()
+		{
+			engine::String bleh = "Shutting down..";
+			stream_.Log(console::LogSeverity::kInfo, bleh.c_str(), static_cast<int>(bleh.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------

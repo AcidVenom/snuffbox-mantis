@@ -9,12 +9,17 @@
 #include "win32/winsock_wrapper.h"
 #endif
 
-#include "connection/wrapper.h"
+#include "connection/logging_wrapper.h"
 
 namespace snuffbox
 {
 	namespace logging
 	{
+		//-----------------------------------------------------------------------------------------------
+		const unsigned int LoggingStream::STARTUP_SLEEP_ = 1000;
+		const unsigned int LoggingStream::WAIT_SLEEP_ = 16;
+		const unsigned int LoggingStream::SHUTDOWN_SLEEP_ = 500;
+
 		//-----------------------------------------------------------------------------------------------
 		LoggingStream::LoggingStream() :
 #ifdef SNUFF_WIN32
@@ -61,6 +66,11 @@ namespace snuffbox
 			}
 
 			RunThread(socket, port, ip);
+
+			if (is_server_ == false)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(STARTUP_SLEEP_));
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -89,7 +99,7 @@ namespace snuffbox
 						switch (status)
 						{
 						case LoggingSocket::ConnectionStatus::kWaiting:
-							std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_WAITING));
+							std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_SLEEP_));
 							break;
 						case LoggingSocket::ConnectionStatus::kDisconnected:
 							disconnect = true;
@@ -151,7 +161,7 @@ namespace snuffbox
 		void LoggingStream::Close()
 		{
 			should_quit_ = true;
-			std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_SHUTDOWN));
+			std::this_thread::sleep_for(std::chrono::milliseconds(SHUTDOWN_SLEEP_));
 
 			if (connection_thread_.joinable() == true)
 			{

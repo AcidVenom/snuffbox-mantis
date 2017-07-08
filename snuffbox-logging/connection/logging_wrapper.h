@@ -2,10 +2,6 @@
 
 #include <assert.h>
 
-#define SNUFF_SLEEP_DISCONNECTED 100
-#define SNUFF_SLEEP_WAITING 16
-#define SNUFF_SLEEP_SHUTDOWN 500
-
 #ifdef SNUFF_WIN32
 #define set_blocking_socket(sock, x) \
 {\

@@ -35,6 +35,7 @@ namespace snuffbox
 		Application::~Application()
 		{
 			OnDestroy();
+			stream_.Close();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -47,7 +48,6 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Application::Shutdown()
 		{
-			stream_.Close();
 			OnShutdown();
 		}
 

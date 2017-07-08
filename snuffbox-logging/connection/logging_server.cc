@@ -5,7 +5,7 @@
 #include "../win32/winsock_wrapper.h"
 #endif
 
-#include "wrapper.h"
+#include "logging_wrapper.h"
 
 #include <thread>
 
@@ -74,7 +74,7 @@ namespace snuffbox
 				}
 
 				other_ = static_cast<int>(accept(socket_, nullptr, nullptr));
-				std::this_thread::sleep_for(std::chrono::milliseconds(SNUFF_SLEEP_DISCONNECTED));
+				std::this_thread::sleep_for(std::chrono::milliseconds(DISCONNECTED_SLEEP_));
 			}
 
 			connected_ = true;

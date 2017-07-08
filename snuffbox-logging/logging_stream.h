@@ -121,6 +121,10 @@ namespace snuffbox
 			*/
 			void LogError(const int& error) const;
 
+			static const unsigned int STARTUP_SLEEP_; //!< The client-sided wait time so we can receive initialisation logs
+			static const unsigned int WAIT_SLEEP_; //!< The sleep to prevent busy-waiting while the console isn't doing anything
+			static const unsigned int SHUTDOWN_SLEEP_; //!< The sleep before the stream shuts down so we can still receive some last logs
+
 		private:
 
 #ifdef SNUFF_WIN32

@@ -128,6 +128,8 @@ namespace snuffbox
 
 		protected:
 
+			const static unsigned int DISCONNECTED_SLEEP_; //!< The sleep when there is no connection to prevent busy waiting
+
 			int socket_; //!< The socket of this client or server
 			int other_; //!< The socket ID of the connected client or server
 			bool connected_; //!< Is there a connection?

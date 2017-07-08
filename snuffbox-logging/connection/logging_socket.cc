@@ -5,12 +5,15 @@
 #include "../win32/winsock_wrapper.h"
 #endif
 
-#include "wrapper.h"
+#include "logging_wrapper.h"
 
 namespace snuffbox
 {
 	namespace logging
 	{
+		//-----------------------------------------------------------------------------------------------
+		const unsigned int LoggingSocket::DISCONNECTED_SLEEP_ = 100;
+
 		//-----------------------------------------------------------------------------------------------
 		LoggingSocket::LoggingSocket() :
 			socket_(-1),

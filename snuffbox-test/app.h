@@ -24,9 +24,19 @@ namespace snuffbox
 		protected:
 
 			/**
+			* @see snuffbox::engine::Application::OnInit
+			*/
+			void OnInit() override;
+
+			/**
 			* @see snuffbox::engine::Application::OnUpdate
 			*/
 			void OnUpdate() override;
+
+			/**
+			* @see snuffbox::engine::Application::OnShutdown
+			*/
+			void OnShutdown() override;
 
 			/**
 			* @brief Converts a HSL value to RGB
