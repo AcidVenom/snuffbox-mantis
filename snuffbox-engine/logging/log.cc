@@ -7,7 +7,7 @@
 		{						\
 			__debugbreak();		\
 		}
-	#else
+	#elif SNUFF_LINUX
 		#include <signal.h>
 		#define SNUFF_ASSERT()	\
 		while (true)			\
