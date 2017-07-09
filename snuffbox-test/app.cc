@@ -34,7 +34,6 @@ namespace snuffbox
 
 			engine::LogService& log = engine::Services::Get<engine::LogService>();
 			log.RGB("Update", console::LogColour{ {bg[0], bg[1], bg[2]}, {fg[0], fg[1], fg[2]} });
-			log.Assert(false, "KEK");
 		}
 
 		//-----------------------------------------------------------------------------------------------
