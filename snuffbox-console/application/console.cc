@@ -41,13 +41,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		const Console::LogColour Console::LOG_COLOURS_[static_cast<char>(LogSeverity::kCount)] = {
-			{ wxColour{ 255, 255, 255 }, wxColour{ 0, 0, 0 } },
-			{ wxColour{ 200, 220, 255 }, wxColour{ 0, 0, 255 } },
-			{ wxColour{ 0, 100, 50 }, wxColour{ 0, 255, 100 } },
-			{ wxColour{ 125, 100, 0 }, wxColour{ 255, 200, 0 } },
-			{ wxColour{ 80, 0, 0 }, wxColour{ 255, 0, 0 } },
-			{ wxColour{ 255, 0, 0 }, wxColour{ 255, 255, 255 } }
+		const LogColour Console::LOG_COLOURS_[static_cast<char>(LogSeverity::kCount)] = {
+			{ { 255, 255, 255 }, { 0, 0, 0 } },
+			{ { 200, 220, 255 }, { 0, 0, 255 } },
+			{ { 0, 100, 50 }, { 0, 255, 100 } },
+			{ { 125, 100, 0 }, { 255, 200, 0 } },
+			{ { 80, 0, 0 }, { 255, 0, 0 } },
+			{ { 255, 0, 0 }, { 255, 255, 255 } }
 		};
 
 		//-----------------------------------------------------------------------------------------------
@@ -114,12 +114,19 @@ namespace snuffbox
 			}
 
 			const LogMessage& msg = evt.message();
+			wxColour fg_col, bg_col;
+
+			LogColour::Colour col = msg.colour.foreground;
+			fg_col.Set(col.r, col.g, col.b, 255);
+
+			col = msg.colour.background;
+			bg_col.Set(col.r, col.g, col.b, 255);
 
 			wxRichTextAttr style;
 			style.SetFont(font_);
 			style.SetFontStyle(wxFontStyle::wxFONTSTYLE_NORMAL);
-			style.SetBackgroundColour(msg.colour.background);
-			style.SetTextColour(msg.colour.foreground);
+			style.SetBackgroundColour(bg_col);
+			style.SetTextColour(fg_col);
 			style.SetFontWeight(msg.bold == true ? wxFontWeight::wxFONTWEIGHT_BOLD : wxFontWeight::wxFONTWEIGHT_NORMAL);
 			style.SetParagraphSpacingAfter(0);
 			style.SetParagraphSpacingBefore(0);

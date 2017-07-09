@@ -113,7 +113,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::Log(const console::LogSeverity& severity, const char* message, const int& size, const unsigned char* col_fg, const unsigned char* col_bg)
+		void LoggingStream::Log(const console::LogSeverity& severity, const char* message, const int& size, const unsigned char* col_bg, const unsigned char* col_fg)
 		{
 			assert(is_server_ == false);
 

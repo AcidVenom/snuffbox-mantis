@@ -1,6 +1,9 @@
 #pragma once
 
-#include "allocator.h"
+#include <EASTL/shared_ptr.h>
+#include <EASTL/unique_ptr.h>
+
+#include "eastl_allocator.h"
 
 namespace snuffbox
 {
@@ -8,6 +11,15 @@ namespace snuffbox
 	{
 		class Application;
 		class EASTLAllocator;
+
+		template <typename T>
+		struct EASTLDeleter;
+
+		template <typename T>
+		using UniquePtr = eastl::unique_ptr<T, EASTLDeleter<T>>;
+
+		template <typename T>
+		using SharedPtr = eastl::shared_ptr<T>;
 
 		/**
 		* @class snuffbox::Memory
@@ -36,6 +48,24 @@ namespace snuffbox
 		public:
 
 			/**
+			* @brief Constructs a shared pointer with the EASTL allocator
+			* @param[in] args (const Args&...) The arguments to pass to the constructor
+			* @remarks Classes that will be constructed through this interface require friendship with snuffbox::engine::Allocator
+			* @return (snuffbox::engine::SharedPtr<T>) The constructed shared pointer
+			*/
+			template <typename T, typename ... Args>
+			static SharedPtr<T> ConstructShared(const Args&... args);
+
+			/**
+			* @brief Constructs a unique pointer with the EASTL allocator
+			* @param[in] args (const Args&...) The arguments to pass to the constructor
+			* @remarks Classes that will be constructed through this interface require friendship with snuffbox::engine::Allocator
+			* @return (snuffbox::engine::UniquePtr<T>) The constructed unique pointer
+			*/
+			template <typename T, typename ... Args>
+			static UniquePtr<T> ConstructUnique(const Args&... args);
+
+			/**
 			* @return (snuffbox::Allocator&) The default allocator
 			*/
 			static Allocator& default_allocator();
@@ -43,6 +73,21 @@ namespace snuffbox
 		private:
 
 			static Allocator* default_allocator_; //!< The default allocator
+		};
+
+		/**
+		* @struct snuffbox::engine::EASTLDeleter<T>
+		* @brief Deletes pointers stored in EASTL smart pointers
+		* @author Daniël Konings
+		*/
+		template <typename T>
+		struct EASTLDeleter
+		{
+			/**
+			* @brief The pointer deletion function
+			* @param[in] ptr (T*) The pointer to delete
+			*/
+			void operator()(T* ptr);
 		};
 
 		//-----------------------------------------------------------------------------------------------
@@ -53,6 +98,34 @@ namespace snuffbox
 
 			static T alloc(max_memory);
 			default_allocator_ = &alloc;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		template <typename T, typename ... Args>
+		inline SharedPtr<T> Memory::ConstructShared(const Args&... args)
+		{
+			T* ptr = EASTL_ALLOCATOR.Construct<T>(args...);
+			return eastl::shared_ptr<T>(ptr, EASTLDeleter<T>(), EASTLAllocator());
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		template <typename T, typename ... Args>
+		inline UniquePtr<T> Memory::ConstructUnique(const Args&... args)
+		{
+			T* ptr = EASTL_ALLOCATOR.Construct<T>(args...);
+			return UniquePtr<T>(ptr);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		template <typename T>
+		inline void EASTLDeleter<T>::operator()(T* ptr)
+		{
+			if (ptr == nullptr)
+			{
+				return;
+			}
+			
+			EASTL_ALLOCATOR.Destruct(ptr);
 		}
 	}
 }

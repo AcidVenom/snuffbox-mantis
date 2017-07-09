@@ -18,5 +18,28 @@ namespace snuffbox
 			kRGB, //!< Used to log something with your own specified colour
 			kCount //!< The number of log severities
 		};
+
+		/**
+		* @struct snuffbox::console::LogColour
+		* @brief A structure to define a logging colour
+		* @author Daniël Konings
+		*/
+		struct LogColour
+		{
+			/**
+			* @struct snuffbox::LogColour::Colour
+			* @brief A structure to define an RGB colour
+			* @author Daniël Konings
+			*/
+			struct Colour
+			{
+				unsigned char r; //!< The red value
+				unsigned char g; //!< The green value
+				unsigned char b; //!< The blue value
+			};
+
+			Colour background; //!< The background colour of the text
+			Colour foreground; //!< The foreground colour of the text
+		};
 	}
 }

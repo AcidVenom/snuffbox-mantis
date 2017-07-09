@@ -41,9 +41,9 @@ namespace snuffbox
 		{
 			if (severity == LogSeverity::kRGB && col_fg != nullptr && col_bg != nullptr)
 			{
-				Console::LogColour col;
-				col.foreground.Set(col_fg[0], col_fg[1], col_fg[2], 255);
-				col.background.Set(col_bg[0], col_bg[1], col_bg[2], 255);
+				LogColour col;
+				col.foreground = LogColour::Colour{ col_fg[0], col_fg[1], col_fg[2] };
+				col.background = LogColour::Colour{ col_bg[0], col_bg[1], col_bg[2] };
 
 				console_->AddMessage(severity, message, col);
 				return;

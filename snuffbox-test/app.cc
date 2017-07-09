@@ -2,6 +2,8 @@
 #include <cmath>
 #include <snuffbox-engine/core/eastl.h>
 
+#include <snuffbox-engine/services/log_service.h>
+
 namespace snuffbox
 {
 	namespace test
@@ -17,8 +19,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void App::OnInit()
 		{
-			engine::String bleh = "Initialised the application";
-			stream_.Log(console::LogSeverity::kSuccess, bleh.c_str(), static_cast<int>(bleh.size()));
+			engine::Services::Get<engine::LogService>().Success("Initialised the application");
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -31,15 +32,15 @@ namespace snuffbox
 			HSLToRGB(0.0f, 0.0f, 0.0f, fg);
 			HSLToRGB(std::fmodf(offset_, 1.0f), 1.0f, 0.5f, bg);
 
-			engine::String bleh = "Update";
-			stream_.Log(console::LogSeverity::kRGB, bleh.c_str(), static_cast<int>(bleh.size()), fg, bg);
+			engine::LogService& log = engine::Services::Get<engine::LogService>();
+			log.RGB("Update", console::LogColour{ {bg[0], bg[1], bg[2]}, {fg[0], fg[1], fg[2]} });
+			log.Assert(false, "KEK");
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void App::OnShutdown()
 		{
-			engine::String bleh = "Shutting down..";
-			stream_.Log(console::LogSeverity::kInfo, bleh.c_str(), static_cast<int>(bleh.size()));
+			engine::Services::Get<engine::LogService>().Info("Shutting down..");
 		}
 
 		//-----------------------------------------------------------------------------------------------

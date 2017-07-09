@@ -7,7 +7,7 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		EASTLAllocator::EASTLAllocator(const char* pName) :
-			allocator_(Memory::default_allocator())
+			allocator_(EASTL_ALLOCATOR)
 		{
 #if EASTL_NAME_ENABLED
 			mpName = pName ? pName : EASTL_ALLOCATOR_DEFAULT_NAME;

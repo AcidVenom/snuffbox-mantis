@@ -25,17 +25,6 @@ namespace snuffbox
 		protected:
 
 			/**
-			* @struct snuffbox::console::Console::LogColour
-			* @brief Used to create the different logging colours per severity or when user-specified
-			* @author Daniël Konings
-			*/
-			struct LogColour
-			{
-				wxColour background; //!< The background colour of the text
-				wxColour foreground; //!< The foreground colour of the text
-			};
-
-			/**
 			* @struct snuffbox::console::Console::LogMessage
 			* @brief Used to send messages from the networking thread to the main thread
 			* @author Daniël Konings
@@ -105,7 +94,7 @@ namespace snuffbox
 			* @remarks The different severities also change the colour of the log
 			* @param[in] severity (const snuffbox::console::LogSeverity&) The severity to log with
 			* @param[in] msg (const std::string&) The message to log
-			* @param[in] colour (const wxColour&) Optional, this parameter is only used with LogSeverity::kRGB
+			* @param[in] colour (const snuffbox::console::LogColour&) Optional, this parameter is only used with LogSeverity::kRGB
 			*/
 			void AddMessage(const LogSeverity& severity, const std::string& msg, const LogColour& colour = LogColour());
 

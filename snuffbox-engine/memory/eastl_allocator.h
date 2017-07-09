@@ -3,6 +3,8 @@
 #include <EASTL/allocator.h>
 #include "allocator.h"
 
+#define EASTL_ALLOCATOR Memory::default_allocator()
+
 namespace snuffbox
 {
 	namespace engine

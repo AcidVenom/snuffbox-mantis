@@ -1,88 +1,61 @@
-#include "application.h"
-#include "../memory/allocators.h"
-
-#include "../logging/log.h"
-
-#include <iostream>
+#include "log_service.h"
 
 namespace snuffbox
 {
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		Application::Application(const size_t& max_memory) :
-			running_(true),
-			log_service_(nullptr)
-		{
-			Memory::Initialise<MallocAllocator>(max_memory);
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		Application::ExitCodes Application::Exec(const int& argc, char** argv)
-		{
-			Initialise();
-
-			OnStartup();
-
-			while (std::cin.get() != 'q')
-			{
-				OnUpdate();
-			}
-
-			Shutdown();
-
-			return ExitCodes::kSuccess;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		Application::~Application()
-		{
-			OnDestroy();
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void Application::Initialise()
-		{
-			log_service_ = Memory::ConstructUnique<Log>();
-			log_service_->Initialise();
-			OnInit();
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void Application::Shutdown()
-		{
-			OnShutdown();
-			log_service_->Shutdown();
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void Application::OnInit()
+		LogService::LogService()
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnStartup()
+		void LogService::Debug(const String& message)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnUpdate()
+		void LogService::Info(const String& message)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnShutdown()
+		void LogService::Success(const String& message)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnDestroy()
+		void LogService::Warning(const String& message)
 		{
 
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LogService::Error(const String& message)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LogService::Fatal(const String& message)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LogService::RGB(const String& message, const console::LogColour& colour)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LogService::Assert(const bool& expr, const String& message)
+		{
+			assert(expr);
 		}
 	}
 }

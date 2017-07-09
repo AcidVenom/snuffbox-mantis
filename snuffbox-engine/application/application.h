@@ -3,10 +3,16 @@
 #include <snuffbox-logging/connection/logging_client.h>
 #include <snuffbox-logging/logging_stream.h>
 
+#include "../memory/memory.h"
+
+#include "../core/eastl.h"
+
 namespace snuffbox
 {
 	namespace engine
 	{
+		class Log;
+
 		/**
 		* @class snuffbox::engine::Application
 		* @brief An application class to use as main entry point for the engine
@@ -89,8 +95,7 @@ namespace snuffbox
 
 		protected:
 
-			logging::LoggingStream stream_; //!< The logging stream
-			logging::LoggingClient client_; //!< The logging client
+			UniquePtr<Log> log_service_; //!< The logging service
 		};
 	}
 }
