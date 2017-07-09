@@ -30,7 +30,7 @@ namespace snuffbox
 
 			offset_ += 0.05f;
 			HSLToRGB(0.0f, 0.0f, 0.0f, fg);
-			HSLToRGB(std::fmodf(offset_, 1.0f), 1.0f, 0.5f, bg);
+            HSLToRGB(std::fmod(offset_, 1.0f), 1.0f, 0.5f, bg);
 
 			engine::LogService& log = engine::Services::Get<engine::LogService>();
 			log.RGB("Update", console::LogColour{ {bg[0], bg[1], bg[2]}, {fg[0], fg[1], fg[2]} });

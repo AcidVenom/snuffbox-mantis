@@ -68,7 +68,11 @@ namespace snuffbox
 			max_line_count_(max_lines)
 		{
 			font_ = wxFont(10, wxFontFamily::wxFONTFAMILY_DEFAULT, wxFontStyle::wxFONTSTYLE_NORMAL, wxFontWeight::wxFONTWEIGHT_NORMAL);
+#ifdef SNUFF_WIN32
 			font_.SetFaceName("Consolas");
+#elif SNUFF_LINUX
+            font_.SetFaceName("Ubuntu Mono");
+#endif
 
 			Bind(CONSOLE_MSG_EVT, &Console::AddLine, this);
 		}

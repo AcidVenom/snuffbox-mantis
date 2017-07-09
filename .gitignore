@@ -1,1 +1,2 @@
-eastl
+#QtCreator creates user files for storing CMake variables
+*.txt.user

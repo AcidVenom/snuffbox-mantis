@@ -1,4 +1,5 @@
 #include "allocator.h"
+#include <string.h>
 
 namespace snuffbox
 {

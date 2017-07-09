@@ -192,7 +192,7 @@ namespace snuffbox
 			error_handler_(buff);
 			LocalFree(buff);
 #else
-			error_handler_(error);
+			error_handler_(std::to_string(error).c_str());
 #endif
 		}
 	}

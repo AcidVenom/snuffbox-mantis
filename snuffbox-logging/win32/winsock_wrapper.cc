@@ -1,3 +1,4 @@
+#ifdef SNUFF_WIN32
 #include "winsock_wrapper.h"
 
 #include <assert.h>
@@ -54,3 +55,4 @@ namespace snuffbox
 		}
 	}
 }
+#endif

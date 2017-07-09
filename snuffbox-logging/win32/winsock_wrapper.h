@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef SNUFF_WIN32
 #include <WinSock2.h>
 #include <Ws2tcpip.h>
 
@@ -12,7 +13,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::logging::WinSockWrapper
 		* @brief A wrapper class to initialise the WinSock library with
-		* @author Daniël Konings
+		* @author Daniï¿½l Konings
 		*/
 		class WinSockWrapper
 		{
@@ -49,3 +50,4 @@ namespace snuffbox
 		};
 	}
 }
+#endif
