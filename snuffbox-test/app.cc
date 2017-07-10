@@ -3,6 +3,7 @@
 #include <snuffbox-engine/core/eastl.h>
 
 #include <snuffbox-engine/services/log_service.h>
+#include <snuffbox-engine/services/cvar_service.h>
 
 namespace snuffbox
 {
@@ -25,6 +26,7 @@ namespace snuffbox
 		void App::OnUpdate()
 		{
 			engine::LogService& log = engine::Services::Get<engine::LogService>();
+			engine::CVarService& cvar = engine::Services::Get<engine::CVarService>();
 
 			static float test = 0.0f;
 			test += 0.1f;

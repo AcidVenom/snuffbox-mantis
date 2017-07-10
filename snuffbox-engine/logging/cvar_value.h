@@ -9,6 +9,7 @@ namespace snuffbox
 		class CVarString;
 		class CVarBoolean;
 		class CVarNumber;
+		class CVarService;
 		class CVar;
 
 		/**
@@ -21,6 +22,7 @@ namespace snuffbox
 			friend class CVarString;
 			friend class CVarBoolean;
 			friend class CVarNumber;
+			friend class CVarService;
 			friend class CVar;
 
 		protected:
@@ -35,6 +37,30 @@ namespace snuffbox
 				kNumber, //!< A number value
 				kCount //!< The number of types
 			};
+
+			template <typename T>
+			struct value_type
+			{
+
+			};
+
+			template <>
+			struct value_type<CVarString>
+			{
+				typedef String type;
+			};
+
+			template <>
+			struct value_type<CVarBoolean>
+			{
+				typedef bool type;
+			};
+
+			template <>
+			struct value_type<CVarNumber>
+			{
+				typedef float type;
+			};
 		};
 
 		/**
@@ -45,6 +71,7 @@ namespace snuffbox
 		template <typename T, int Y>
 		class CVarValue : public CVarBase
 		{
+			friend class CVarService;
 
 		protected:
 
