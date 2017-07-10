@@ -38,24 +38,44 @@ namespace snuffbox
 				kCount //!< The number of types
 			};
 
+			/**
+			* @struct snuffbox::engine::CVarBase::value_type<T>
+			* @brief Used to determine the value type of a CVar
+			* @author Daniël Konings
+			*/
 			template <typename T>
 			struct value_type
 			{
 
 			};
 
+			/**
+			* @struct snuffbox::engine::CVarBase::value_type<CVarString>
+			* @brief A CVarString's value type
+			* @author Daniël Konings
+			*/
 			template <>
 			struct value_type<CVarString>
 			{
 				typedef String type;
 			};
 
+			/**
+			* @struct snuffbox::engine::CVarBase::value_type<CVarBoolean>
+			* @brief A CVarBoolean's value type
+			* @author Daniël Konings
+			*/
 			template <>
 			struct value_type<CVarBoolean>
 			{
 				typedef bool type;
 			};
 
+			/**
+			* @struct snuffbox::engine::CVarBase::value_type<CVarNumber>
+			* @brief A CVarNumber's value type
+			* @author Daniël Konings
+			*/
 			template <>
 			struct value_type<CVarNumber>
 			{
