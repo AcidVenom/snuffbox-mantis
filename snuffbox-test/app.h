@@ -37,19 +37,6 @@ namespace snuffbox
 			* @see snuffbox::engine::Application::OnShutdown
 			*/
 			void OnShutdown() override;
-
-			/**
-			* @brief Converts a HSL value to RGB
-			* @param[in] h (float) The hue value
-			* @param[in] s (float) The saturation value
-			* @param[in] l (float) The lightness value
-			* @param[out] converted (unsigned char*) The converted value in the 0 < 255 range
-			*/
-			static void HSLToRGB(float h, float s, float l, unsigned char* converted);
-
-		private:
-
-			float offset_; //!< The hue offset for the HSL logging
 		};
 	}
 

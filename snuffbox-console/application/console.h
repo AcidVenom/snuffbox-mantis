@@ -32,8 +32,11 @@ namespace snuffbox
 			struct LogMessage
 			{
 				bool bold; //!< Should the message be bolded?
+				wxString timestamp; //!< The timestamp
+				wxString severity; //!< The severity
 				wxString message; //!< The message
 				LogColour colour; //!< The colour
+				bool repeat; //!< Should the message be repeated?
 			};
 
 		public:
@@ -93,10 +96,10 @@ namespace snuffbox
 			* @brief Adds a message with a severity and a timestamp to the console
 			* @remarks The different severities also change the colour of the log
 			* @param[in] severity (const snuffbox::console::LogSeverity&) The severity to log with
-			* @param[in] msg (const std::string&) The message to log
+			* @param[in] msg (const wxString&) The message to log
 			* @param[in] colour (const snuffbox::console::LogColour&) Optional, this parameter is only used with LogSeverity::kRGB
 			*/
-			void AddMessage(const LogSeverity& severity, const std::string& msg, const LogColour& colour = LogColour());
+			void AddMessage(const LogSeverity& severity, const wxString& msg, const LogColour& colour = LogColour());
 
 			/**
 			* @brief Actually adds the line to the console after thread-to-thread data transfer
@@ -107,18 +110,26 @@ namespace snuffbox
 		protected:
 
 			/**
-			* @return (std::string) A generated time stamp of the current time point
+			* @return (wxString) A generated time stamp of the current time point
 			*/
-			std::string CreateTimeStamp() const;
+			wxString CreateTimeStamp() const;
 
+			const static wxColour BACKGROUND_COLOUR_; //!< The background colour of the console
 			const static LogColour LOG_COLOURS_[static_cast<char>(LogSeverity::kCount)]; //!< The list of colours per severity
-			const static std::string LOG_PREFIXES_[static_cast<char>(LogSeverity::kCount)]; //!< The list of prefixes per severity
+			const static wxColour TIMESTAMP_COLOUR_; //!< The colour of the timestamp
+			const static wxColour SEVERITY_COLOUR_; //!< The colour of the severity
+			const static wxColour REPEAT_COLOUR_[2]; //!< The colours for the repeat counter
+			const static wxString LOG_PREFIXES_[static_cast<char>(LogSeverity::kCount)]; //!< The list of prefixes per severity
 
 		private:
 
 			wxFont font_; //!< The font of the console
 			unsigned int messages_; //!< The number of messages
 			unsigned int max_line_count_; //!< The maximum line count for this console
+
+			wxString last_message_; //!< The last message sent to the console
+			LogSeverity last_severity_; //!< The last log severity
+			unsigned int repeat_count_; //!< The current repeat count
 		};
 
 		wxDECLARE_EVENT(CONSOLE_MSG_EVT, Console::Event);

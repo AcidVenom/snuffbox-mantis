@@ -41,18 +41,33 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		const wxColour Console::BACKGROUND_COLOUR_ = wxColour(52, 18, 41);
+
+		//-----------------------------------------------------------------------------------------------
 		const LogColour Console::LOG_COLOURS_[static_cast<char>(LogSeverity::kCount)] = {
-			{ { 255, 255, 255 }, { 0, 0, 0 } },
-			{ { 200, 220, 255 }, { 0, 0, 255 } },
-			{ { 0, 100, 50 }, { 0, 255, 100 } },
-			{ { 125, 100, 0 }, { 255, 200, 0 } },
-			{ { 80, 0, 0 }, { 255, 0, 0 } },
-			{ { 255, 0, 0 }, { 255, 255, 255 } }
+			{ { BACKGROUND_COLOUR_.Red(), BACKGROUND_COLOUR_.Green(), BACKGROUND_COLOUR_.Blue() },{ 180, 180, 180 } },
+			{ { BACKGROUND_COLOUR_.Red(), BACKGROUND_COLOUR_.Green(), BACKGROUND_COLOUR_.Blue() },{ 255, 255, 255 } },
+			{ { 0, 100, 50 },{ 0, 255, 100 } },
+			{ { 125, 100, 0 },{ 255, 200, 0 } },
+			{ { 80, 0, 0 },{ 255, 0, 0 } },
+			{ { 255, 0, 0 },{ 255, 255, 255 } }
 		};
 
 		//-----------------------------------------------------------------------------------------------
-		const std::string Console::LOG_PREFIXES_[static_cast<char>(LogSeverity::kCount)] = {
-			"~",
+		const wxColour Console::TIMESTAMP_COLOUR_ = wxColour(129, 227, 59);
+
+		//-----------------------------------------------------------------------------------------------
+		const wxColour Console::SEVERITY_COLOUR_ = wxColour(117, 156, 206);
+
+		//-----------------------------------------------------------------------------------------------
+		const wxColour Console::REPEAT_COLOUR_[2] = {
+			wxColour(120, 150, 220, 255),
+			wxColour(255, 255, 255, 255)
+		};
+
+		//-----------------------------------------------------------------------------------------------
+		const wxString Console::LOG_PREFIXES_[static_cast<char>(LogSeverity::kCount)] = {
+			"$",
 			"?",
 			"+",
 			"^",
@@ -65,7 +80,10 @@ namespace snuffbox
 		Console::Console(wxWindow* parent, const int& max_lines) :
 			MainWindow(parent),
 			messages_(0),
-			max_line_count_(max_lines)
+			max_line_count_(max_lines),
+			last_message_(""),
+			last_severity_(LogSeverity::kCount),
+			repeat_count_(1)
 		{
 			font_ = wxFont(10, wxFontFamily::wxFONTFAMILY_DEFAULT, wxFontStyle::wxFONTSTYLE_NORMAL, wxFontWeight::wxFONTWEIGHT_NORMAL);
 #ifdef SNUFF_WIN32
@@ -73,28 +91,38 @@ namespace snuffbox
 #elif SNUFF_LINUX
             font_.SetFaceName("Ubuntu Mono");
 #endif
-
+			output_console->SetBackgroundColour(BACKGROUND_COLOUR_);
+			
 			Bind(CONSOLE_MSG_EVT, &Console::AddLine, this);
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Console::AddMessage(const LogSeverity& severity, const std::string& msg, const LogColour& colour)
+		void Console::AddMessage(const LogSeverity& severity, const wxString& msg, const LogColour& colour)
 		{
 			if (severity == LogSeverity::kCount)
 			{
 				return;
 			}
 
+			bool repeat = strcmp(last_message_.c_str(), msg.c_str()) == 0 ? (last_severity_ != severity ? false : true) : false;
+			repeat_count_ = repeat == true ? ++repeat_count_ : 1;
+
 			unsigned char idx = static_cast<unsigned char>(severity);
 			const LogColour& col = severity == LogSeverity::kRGB ? colour : LOG_COLOURS_[idx];
 
 			LogMessage log;
-			log.message = "[" + CreateTimeStamp() + "] " + LOG_PREFIXES_[idx] + " " + msg;
+			log.timestamp = "[" + CreateTimeStamp() + "]";
+			log.severity = LOG_PREFIXES_[idx];
+			log.message = msg;
 			log.bold = severity == LogSeverity::kFatal;
 			log.colour = col;
+			log.repeat = repeat;
 
 			Event evt(CONSOLE_MSG_EVT, 0);
 			evt.set_message(log);
+
+			last_message_ = msg;
+			last_severity_ = severity;
 
 			wxPostEvent(this, evt);
 		}
@@ -102,7 +130,36 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Console::AddLine(const Event& evt)
 		{
+			const LogMessage& msg = evt.message();
+
 			output_console->BeginSuppressUndo();
+
+			if (msg.repeat == true)
+			{
+				unsigned int old_repeat = repeat_count_ - 1;
+				wxTextPos last = output_console->GetLastPosition();
+				wxTextPos to_remove = repeat_count_ > 2 ? std::to_string(old_repeat).size() + 4 : 1;
+
+				output_console->Remove(last - to_remove, last);
+
+				wxRichTextAttr style;
+				style.SetFont(font_);
+				style.SetFontWeight(wxFontWeight::wxFONTWEIGHT_BOLD);
+				style.SetBackgroundColour(REPEAT_COLOUR_[0]);
+				style.SetTextColour(REPEAT_COLOUR_[1]);
+				style.SetParagraphSpacingAfter(0);
+				style.SetParagraphSpacingBefore(0);
+				style.SetLineSpacing(0);
+				
+				output_console->MoveEnd();
+				output_console->AppendText(" ");
+				output_console->BeginStyle(style);
+				output_console->WriteText("(" + std::to_string(repeat_count_) + ")\n");
+				output_console->EndStyle();
+
+				output_console->EndSuppressUndo();
+				return;
+			}
 
 			if (messages_ + 1 > max_line_count_)
 			{
@@ -117,7 +174,6 @@ namespace snuffbox
 				--messages_;
 			}
 
-			const LogMessage& msg = evt.message();
 			wxColour fg_col, bg_col;
 
 			LogColour::Colour col = msg.colour.foreground;
@@ -126,17 +182,32 @@ namespace snuffbox
 			col = msg.colour.background;
 			bg_col.Set(col.r, col.g, col.b, 255);
 
+			output_console->MoveEnd();
+
 			wxRichTextAttr style;
 			style.SetFont(font_);
 			style.SetFontStyle(wxFontStyle::wxFONTSTYLE_NORMAL);
-			style.SetBackgroundColour(bg_col);
-			style.SetTextColour(fg_col);
-			style.SetFontWeight(msg.bold == true ? wxFontWeight::wxFONTWEIGHT_BOLD : wxFontWeight::wxFONTWEIGHT_NORMAL);
 			style.SetParagraphSpacingAfter(0);
 			style.SetParagraphSpacingBefore(0);
 			style.SetLineSpacing(0);
 
-			output_console->MoveEnd();
+			style.SetBackgroundColour(BACKGROUND_COLOUR_);
+			style.SetTextColour(TIMESTAMP_COLOUR_);
+
+			output_console->BeginStyle(style);
+			output_console->WriteText(msg.timestamp + " ");
+			output_console->EndStyle();
+
+			style.SetTextColour(SEVERITY_COLOUR_);
+
+			output_console->BeginStyle(style);
+			output_console->WriteText(msg.severity + " ");
+			output_console->EndStyle();
+
+			style.SetBackgroundColour(bg_col);
+			style.SetTextColour(fg_col);
+			style.SetFontWeight(msg.bold == true ? wxFontWeight::wxFONTWEIGHT_BOLD : wxFontWeight::wxFONTWEIGHT_NORMAL);
+
 			output_console->BeginStyle(style);
 			output_console->WriteText(msg.message + "\n");
 			output_console->EndStyle();
@@ -148,7 +219,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		std::string Console::CreateTimeStamp() const
+		wxString Console::CreateTimeStamp() const
 		{
 			std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
 			std::time_t now = std::chrono::system_clock::to_time_t(tp);
@@ -156,13 +227,11 @@ namespace snuffbox
 
 			auto FormatTime = [](const int& time)
 			{
-				std::string formatted = std::to_string(time);
+				wxString formatted = std::to_string(time);
 				formatted = formatted.size() == 1 ? "0" + formatted : formatted;
 
 				return formatted;
 			};
-
-			std::string min = std::to_string(time->tm_min);
 
 			return FormatTime(time->tm_hour) + ":" + FormatTime(time->tm_min) + ":" + FormatTime(time->tm_sec);
 		}
