@@ -1,59 +1,53 @@
-#include "cvar.h"
+#include "cvar_service.h"
 
 namespace snuffbox
 {
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		CVar::CVar()
+		CVarService::CVarService()
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVar::ParseCommandLine(const int& argc, char** argv)
+		void CVarService::LogAll()
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVar::LogAll()
-		{
-			
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void CVar::SetString(const String& name, const String& value)
+		void CVarService::SetString(const String& name, const String& value)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVar::SetBoolean(const String& name, const bool& value)
+		void CVarService::SetBoolean(const String& name, const bool& value)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVar::SetNumber(const String& name, const float& value)
+		void CVarService::SetNumber(const String& name, const float& value)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		CVarString* CVar::GetString(const String& name) const
+		CVarString* CVarService::GetString(const String& name) const
 		{
 			return nullptr;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		CVarBoolean* CVar::GetBoolean(const String& name) const
+		CVarBoolean* CVarService::GetBoolean(const String& name) const
 		{
 			return nullptr;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		CVarNumber* CVar::GetNumber(const String& name) const
+		CVarNumber* CVarService::GetNumber(const String& name) const
 		{
 			return nullptr;
 		}

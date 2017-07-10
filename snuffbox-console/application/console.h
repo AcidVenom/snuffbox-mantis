@@ -88,9 +88,9 @@ namespace snuffbox
 			/**
 			* @brief Default constructor, requires a parent window to construct the underlying MainWindow form
 			* @param[in] parent (wxWindow*) The parent window to assign to the MainWindow
-			* @param[in] max_lines (const int&) The maximum number of lines in the console, default = 1000
+			* @param[in] max_lines (const int&) The maximum number of lines in the console, default = 200
 			*/
-			Console(wxWindow* parent, const int& max_lines = 1000);
+			Console(wxWindow* parent, const int& max_lines = 200);
 
 			/**
 			* @brief Adds a message with a severity and a timestamp to the console

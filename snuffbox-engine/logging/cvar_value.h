@@ -9,6 +9,7 @@ namespace snuffbox
 		class CVarString;
 		class CVarBoolean;
 		class CVarNumber;
+		class CVar;
 
 		/**
 		* @class snuffbox::engine::CVarBase
@@ -20,6 +21,7 @@ namespace snuffbox
 			friend class CVarString;
 			friend class CVarBoolean;
 			friend class CVarNumber;
+			friend class CVar;
 
 		protected:
 
@@ -30,7 +32,8 @@ namespace snuffbox
 			{
 				kString, //!< A string value
 				kBoolean, //!< A boolean value
-				kNumber //!< A number value
+				kNumber, //!< A number value
+				kCount //!< The number of types
 			};
 		};
 
@@ -80,6 +83,9 @@ namespace snuffbox
 		*/
 		class CVarString : public CVarValue<String, CVarBase::CVarTypes::kString>
 		{
+
+		protected:
+
 			/**
 			* @brief Default constructor, initialises the CVar
 			* @param[in] init (const snuffbox::engine::String&) The initial value
@@ -94,6 +100,9 @@ namespace snuffbox
 		*/
 		class CVarBoolean : public CVarValue<bool, CVarBase::CVarTypes::kBoolean>
 		{
+
+		protected:
+
 			/**
 			* @brief Default constructor, initialises the CVar
 			* @param[in] init (const bool&) The initial value
@@ -108,6 +117,9 @@ namespace snuffbox
 		*/
 		class CVarNumber : public CVarValue<float, CVarBase::CVarTypes::kNumber>
 		{
+
+		protected:
+
 			/**
 			* @brief Default constructor, initialises the CVar
 			* @param[in] init (const float&) The initial value

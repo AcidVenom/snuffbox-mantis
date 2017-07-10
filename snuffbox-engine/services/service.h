@@ -12,6 +12,7 @@ namespace snuffbox
 		enum ServiceIDs : int
 		{
 			kLogService, //!< The ID for the log service
+			kCVarService, //!< The ID for the CVar service
 			kCount //!< The total number of different services
 		};
 
