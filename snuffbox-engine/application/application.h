@@ -12,6 +12,7 @@ namespace snuffbox
 	namespace engine
 	{
 		class Log;
+		class CVar;
 
 		/**
 		* @class snuffbox::engine::Application
@@ -55,8 +56,10 @@ namespace snuffbox
 
 			/**
 			* @brief Initialises the application
+			* @param[in] argc (const int&) The number of command line arguments
+			* @parma[in] argv (char**) The actual command line arguments
 			*/
-			void Initialise();
+			void Initialise(const int& argc, char** argv);
 
 			/**
 			* @brief Shuts the application down
@@ -96,6 +99,7 @@ namespace snuffbox
 		protected:
 
 			UniquePtr<Log> log_service_; //!< The logging service
+			UniquePtr<CVar> cvar_service_; //!< The CVar service
 		};
 	}
 }

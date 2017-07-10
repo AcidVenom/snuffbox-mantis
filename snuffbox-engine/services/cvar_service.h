@@ -29,6 +29,16 @@ namespace snuffbox
 		public:
 
 			/**
+			* @brief Delete copy constructor
+			*/
+			CVarService(const CVarService& other) = delete;
+
+			/**
+			* @brief Delete assignment operator
+			*/
+			CVarService operator=(const CVarService& other) = delete;
+
+			/**
 			* @brief Logs all CVars
 			*/
 			virtual void LogAll();
@@ -48,7 +58,7 @@ namespace snuffbox
 			* @return (T*) The found CVar, or nullptr if it doesn't exist
 			*/
 			template <typename T>
-			T* Get(const String& name) const;
+			T* Get(const String& name);
 
 		protected:
 
@@ -78,21 +88,21 @@ namespace snuffbox
 			* @param[in] name (const snuffbox::engine::String&) The name of the CVar to retrieve
 			* @return (snuffbox::engine::CVarString*) The found CVar, or nullptr if it doesn't exist
 			*/
-			virtual CVarString* GetString(const String& name) const;
+			virtual CVarString* GetString(const String& name);
 
 			/**
 			* @brief Retrieves a boolean typed CVar value
 			* @param[in] name (const snuffbox::engine::String&) The name of the CVar to retrieve
 			* @return (snuffbox::engine::CVarBoolean*) The found CVar, or nullptr if it doesn't exist
 			*/
-			virtual CVarBoolean* GetBoolean(const String& name) const;
+			virtual CVarBoolean* GetBoolean(const String& name);
 
 			/**
 			* @brief Retrieves a number typed CVar value
 			* @param[in] name (const snuffbox::engine::String&) The name of the CVar to retrieve
 			* @return (snuffbox::engine::CVarNumber*) The found CVar, or nullptr if it doesn't exist
 			*/
-			virtual CVarNumber* GetNumber(const String& name) const;
+			virtual CVarNumber* GetNumber(const String& name);
 		};
 
 		//-----------------------------------------------------------------------------------------------
@@ -118,21 +128,21 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <>
-		inline CVarString* CVarService::Get<CVarString>(const String& name) const
+		inline CVarString* CVarService::Get<CVarString>(const String& name)
 		{
 			return GetString(name);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		template <>
-		inline CVarBoolean* CVarService::Get<CVarBoolean>(const String& name) const
+		inline CVarBoolean* CVarService::Get<CVarBoolean>(const String& name)
 		{
 			return GetBoolean(name);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		template <>
-		inline CVarNumber* CVarService::Get<CVarNumber>(const String& name) const
+		inline CVarNumber* CVarService::Get<CVarNumber>(const String& name)
 		{
 			return GetNumber(name);
 		}

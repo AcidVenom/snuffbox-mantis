@@ -35,19 +35,19 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		CVarString* CVarService::GetString(const String& name) const
+		CVarString* CVarService::GetString(const String& name)
 		{
 			return nullptr;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		CVarBoolean* CVarService::GetBoolean(const String& name) const
+		CVarBoolean* CVarService::GetBoolean(const String& name)
 		{
 			return nullptr;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		CVarNumber* CVarService::GetNumber(const String& name) const
+		CVarNumber* CVarService::GetNumber(const String& name)
 		{
 			return nullptr;
 		}

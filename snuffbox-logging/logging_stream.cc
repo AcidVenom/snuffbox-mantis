@@ -17,7 +17,7 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		const unsigned int LoggingStream::STARTUP_SLEEP_ = 1000;
-		const unsigned int LoggingStream::WAIT_SLEEP_ = 16;
+		const unsigned int LoggingStream::WAIT_SLEEP_ = 1;
 		const unsigned int LoggingStream::SHUTDOWN_SLEEP_ = 500;
 
 		//-----------------------------------------------------------------------------------------------

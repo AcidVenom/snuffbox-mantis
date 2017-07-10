@@ -11,6 +11,7 @@ namespace snuffbox
 		class CVarNumber;
 		class CVarService;
 		class CVar;
+		class Allocator;
 
 		/**
 		* @class snuffbox::engine::CVarBase
@@ -92,6 +93,7 @@ namespace snuffbox
 		class CVarValue : public CVarBase
 		{
 			friend class CVarService;
+			friend class CVar;
 
 		protected:
 
@@ -131,6 +133,9 @@ namespace snuffbox
 		class CVarString : public CVarValue<String, CVarBase::CVarTypes::kString>
 		{
 
+			friend class CVar;
+			friend class Allocator;
+
 		protected:
 
 			/**
@@ -147,6 +152,9 @@ namespace snuffbox
 		*/
 		class CVarBoolean : public CVarValue<bool, CVarBase::CVarTypes::kBoolean>
 		{
+
+			friend class CVar;
+			friend class Allocator;
 
 		protected:
 
@@ -165,6 +173,9 @@ namespace snuffbox
 		class CVarNumber : public CVarValue<float, CVarBase::CVarTypes::kNumber>
 		{
 
+			friend class CVar;
+			friend class Allocator;
+
 		protected:
 
 			/**
@@ -172,6 +183,8 @@ namespace snuffbox
 			* @param[in] init (const float&) The initial value
 			*/
 			CVarNumber(const float& init);
+
+		public:
 
 			/**
 			* @brief Converts the float to a provided numerical value of type T
@@ -207,7 +220,7 @@ namespace snuffbox
 		template <typename T>
 		inline T CVarNumber::As() const
 		{
-			return static_cast<T>(value_);
+			return static_cast<T>(value());
 		}
 	}
 	

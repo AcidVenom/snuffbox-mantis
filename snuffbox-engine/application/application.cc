@@ -2,6 +2,7 @@
 #include "../memory/allocators.h"
 
 #include "../logging/log.h"
+#include "../logging/cvar.h"
 
 #include <iostream>
 
@@ -20,7 +21,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		Application::ExitCodes Application::Exec(const int& argc, char** argv)
 		{
-			Initialise();
+			Initialise(argc, argv);
 
 			OnStartup();
 
@@ -41,10 +42,15 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::Initialise()
+		void Application::Initialise(const int& argc, char** argv)
 		{
+			cvar_service_ = Memory::ConstructUnique<CVar>();
+			cvar_service_->ParseCommandLine(argc, argv);
+
 			log_service_ = Memory::ConstructUnique<Log>();
 			log_service_->Initialise();
+
+			cvar_service_->LogAll();
 			OnInit();
 		}
 

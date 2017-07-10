@@ -1,4 +1,5 @@
 #include "log.h" 
+#include "../services/cvar_service.h"
 
 #ifndef SNUFF_DEBUG
 	#ifdef SNUFF_WIN32
@@ -32,7 +33,26 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Log::Initialise()
 		{
-			stream_.Open(&client_);
+			CVarService& cvar = Services::Get<CVarService>();
+
+			CVarNumber* cvport = cvar.Get<CVarNumber>("console_port");
+			CVarString* cvip = cvar.Get<CVarString>("console_ip");
+
+			int port = cvport != nullptr ? cvport->As<int>() : SNUFF_DEFAULT_PORT;
+			const char* ip = cvip != nullptr ? cvip->value().c_str() : "127.0.0.1";
+
+			if (strcmp(ip, "localhost") == 0)
+			{
+				ip = "127.0.0.1";
+			}
+
+			if (cvport == nullptr || cvip == nullptr)
+			{
+				cvar.Set<CVarNumber>("console_port", static_cast<float>(port));
+				cvar.Set<CVarString>("console_ip", ip);
+			}
+
+			stream_.Open(&client_, port, ip);
 			Services::Provide<LogService>(this);
 		}
 

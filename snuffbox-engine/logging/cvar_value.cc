@@ -1,5 +1,6 @@
 #include "cvar_value.h"
 
+#include "../logging/log.h"
 namespace snuffbox
 {
 	namespace engine
@@ -8,7 +9,7 @@ namespace snuffbox
 		CVarString::CVarString(const String& init) :
 			CVarValue(init)
 		{
-
+			
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -28,17 +28,7 @@ namespace snuffbox
 			engine::LogService& log = engine::Services::Get<engine::LogService>();
 			engine::CVarService& cvar = engine::Services::Get<engine::CVarService>();
 
-			static float test = 0.0f;
-			test += 0.1f;
-			engine::String bleh = "BLEH";
-
-			console::LogColour col
-			{
-				{230, 250, 0},
-				{0, 0, 0}
-			};
-
-			log.Log(console::LogSeverity::kRGB, "Update {0}, {1}, {0}", test, bleh.c_str(), col);
+			log.Log(console::LogSeverity::kDebug, "Update");
 		}
 
 		//-----------------------------------------------------------------------------------------------

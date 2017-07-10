@@ -85,6 +85,16 @@ namespace snuffbox
 		public:
 
 			/**
+			* @brief Delete copy constructor
+			*/
+			LogService(const LogService& other) = delete;
+
+			/**
+			* @brief Delete assignment operator
+			*/
+			LogService operator=(const LogService& other) = delete;
+
+			/**
 			* @brief Logs with a specified severity and message
 			* @param[in] severity (const snuffbox::console::LogSeverity&) The severity to log with
 			* @param[in] message (const snuffbox::engine::String&) The message to log
@@ -253,6 +263,10 @@ namespace snuffbox
 
 			console::LogColour colour;
 			String formatted = FormatString(message, &colour, args...);
+
+#ifdef SNUFF_DEBUG
+			printf("%s\n", formatted.c_str());
+#endif
 
 			switch (severity)
 			{
