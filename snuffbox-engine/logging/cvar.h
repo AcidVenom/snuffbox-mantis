@@ -7,7 +7,7 @@ namespace snuffbox
 {
 	namespace engine
 	{
-		class Application;
+		class SnuffboxApp;
 		class Allocator;
 
 		/**
@@ -17,7 +17,7 @@ namespace snuffbox
 		*/
 		class CVar : public CVarService
 		{
-			friend class Application;
+			friend class SnuffboxApp;
 			friend class Allocator;
 
 		protected:

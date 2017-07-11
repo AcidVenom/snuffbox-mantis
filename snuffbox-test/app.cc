@@ -11,7 +11,7 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		App::App() :
-			Application(static_cast<size_t>(4294967296))
+			SnuffboxApp(static_cast<size_t>(4294967296))
 		{
 			
 		}

@@ -8,11 +8,11 @@ namespace snuffbox
 	namespace test
 	{
 		/**
-		* @class snuffbox::test::App : public snuffbox::engine::Application
+		* @class snuffbox::test::App : public snuffbox::engine::SnuffboxApp
 		* @brief The test application environment
 		* @author Daniël Konings
 		*/
-		class App : public engine::Application
+		class App : public engine::SnuffboxApp
 		{
 		public:
 

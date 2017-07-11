@@ -11,7 +11,7 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		Application::Application(const size_t& max_memory) :
+		SnuffboxApp::SnuffboxApp(const size_t& max_memory) :
 			running_(true),
 			log_service_(nullptr)
 		{
@@ -19,7 +19,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		Application::ExitCodes Application::Exec(const int& argc, char** argv)
+		SnuffboxApp::ExitCodes SnuffboxApp::Exec(const int& argc, char** argv)
 		{
 			Initialise(argc, argv);
 
@@ -36,57 +36,64 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		Application::~Application()
+		SnuffboxApp::~SnuffboxApp()
 		{
 			OnDestroy();
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::Initialise(const int& argc, char** argv)
+		void SnuffboxApp::Initialise(const int& argc, char** argv)
 		{
 			cvar_service_ = Memory::ConstructUnique<CVar>();
-			cvar_service_->ParseCommandLine(argc, argv);
-
 			log_service_ = Memory::ConstructUnique<Log>();
-			log_service_->Initialise();
+
+			cvar_service_->ParseCommandLine(argc, argv);
+			log_service_->Initialise(cvar_service_.get());
+
+			Services::Provide<CVarService>(cvar_service_.get());
+			Services::Provide<LogService>(log_service_.get());
 
 			cvar_service_->LogAll();
+
 			OnInit();
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::Shutdown()
+		void SnuffboxApp::Shutdown()
 		{
 			OnShutdown();
 			log_service_->Shutdown();
+
+			Services::Remove<CVarService>();
+			Services::Remove<LogService>();
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnInit()
+		void SnuffboxApp::OnInit()
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnStartup()
+		void SnuffboxApp::OnStartup()
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnUpdate()
+		void SnuffboxApp::OnUpdate()
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnShutdown()
+		void SnuffboxApp::OnShutdown()
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Application::OnDestroy()
+		void SnuffboxApp::OnDestroy()
 		{
 
 		}

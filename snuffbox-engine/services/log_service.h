@@ -7,6 +7,11 @@
 #include <snuffbox-console/logging/logging.h>
 #include <sstream>
 
+#ifdef SNUFF_WIN32
+#include <Windows.h>
+#undef RGB
+#endif
+
 namespace snuffbox
 {
 	namespace engine
@@ -263,6 +268,10 @@ namespace snuffbox
 
 			console::LogColour colour;
 			String formatted = FormatString(message, &colour, args...);
+
+#if defined SNUFF_WIN32 && defined SNUFF_DEBUG
+			OutputDebugStringA((formatted + "\n").c_str());
+#endif
 
 #ifdef SNUFF_DEBUG
 			printf("%s\n", formatted.c_str());

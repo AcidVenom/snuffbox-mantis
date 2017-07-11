@@ -15,11 +15,11 @@ namespace snuffbox
 		class CVar;
 
 		/**
-		* @class snuffbox::engine::Application
+		* @class snuffbox::engine::SnuffboxApp
 		* @brief An application class to use as main entry point for the engine
 		* @author Daniël Konings
 		*/
-		class Application
+		class SnuffboxApp
 		{
 
 		public:
@@ -37,20 +37,20 @@ namespace snuffbox
 			* @brief Default constructor
 			* @param[in] max_memory (const size_t&) The maximum amount of memory for the application to use
 			*/
-			Application(const size_t& max_memory);
+			SnuffboxApp(const size_t& max_memory);
 
 			/**
 			* @brief Runs the application
 			* @param[in] argc (const int&) The number of command line arguments
 			* @param[in] argv (char**) The command line arguments
-			* @return (snuffbox::engine::Application::ExitCodes) The exit code of the application, 0 = success
+			* @return (snuffbox::engine::SnuffboxApp::ExitCodes) The exit code of the application, 0 = success
 			*/
 			ExitCodes Exec(const int& argc, char** argv);
 
 			/**
 			* @brief Default destructor
 			*/
-			~Application();
+			~SnuffboxApp();
 
 		protected:
 
@@ -73,7 +73,7 @@ namespace snuffbox
 
 			/**
 			* @brief Called after startup of the base application
-			* @see snuffbox::engine::Application::Exec
+			* @see snuffbox::engine::SnuffboxApp::Exec
 			*/
 			virtual void OnStartup();
 

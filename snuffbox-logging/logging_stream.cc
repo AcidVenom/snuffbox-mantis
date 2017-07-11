@@ -16,7 +16,7 @@ namespace snuffbox
 	namespace logging
 	{
 		//-----------------------------------------------------------------------------------------------
-		const unsigned int LoggingStream::STARTUP_SLEEP_ = 1000;
+		const unsigned int LoggingStream::STARTUP_SLEEP_ = 1500;
 		const unsigned int LoggingStream::WAIT_SLEEP_ = 1;
 		const unsigned int LoggingStream::SHUTDOWN_SLEEP_ = 500;
 
@@ -69,6 +69,7 @@ namespace snuffbox
 
 			if (is_server_ == false)
 			{
+				printf("Waiting %ims for server..\n", STARTUP_SLEEP_);
 				std::this_thread::sleep_for(std::chrono::milliseconds(STARTUP_SLEEP_));
 			}
 		}

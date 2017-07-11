@@ -91,7 +91,7 @@ namespace snuffbox
 		void CVar::LogAll()
 		{
 			LogService& log = Services::Get<LogService>();
-			log.Log(console::LogSeverity::kInfo, "Command line arguments:");
+			log.Log(console::LogSeverity::kInfo, "Console variables:");
 
 			const char* name = nullptr;
 

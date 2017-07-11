@@ -8,8 +8,9 @@ namespace snuffbox
 {
 	namespace engine
 	{
-		class Application;
+		class SnuffboxApp;
 		class Allocator;
+		class CVar;
 
 		/**
 		* @class snuffbox::engine::Log : public snuffbox::engine::LogService
@@ -19,7 +20,7 @@ namespace snuffbox
 		class Log : public LogService
 		{
 			
-			friend class Application;
+			friend class SnuffboxApp;
 			friend class Allocator;
 
 		protected:
@@ -31,8 +32,9 @@ namespace snuffbox
 
 			/**
 			* @brief Initialises the log system
+			* @param[in] cvar (snuffbox::engine::CVar*) The CVar system
 			*/
-			void Initialise();
+			void Initialise(CVar* cvar);
 
 			/**
 			* @brief Shuts down the logging system
@@ -81,13 +83,9 @@ namespace snuffbox
 			*/
 			void Assert(const bool& expr, const String& message) override;
 
-			/**
-			* @brief Default destructor
-			*/
-			~Log();
-
 		private:
 
+			bool enabled_; //!< Has the console been enabled?
 			logging::LoggingClient client_; //!< The logging client
 			logging::LoggingStream stream_; //!< The logging stream
 		};

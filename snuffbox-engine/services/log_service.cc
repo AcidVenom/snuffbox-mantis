@@ -55,49 +55,53 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LogService::Debug(const String& message)
 		{
-
+			printf("$ %s\n", message.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LogService::Info(const String& message)
 		{
-
+			printf("? %s\n", message.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LogService::Success(const String& message)
 		{
-
+			printf("+ %s\n", message.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LogService::Warning(const String& message)
 		{
-
+			printf("^ %s\n", message.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LogService::Error(const String& message)
 		{
-
+			printf("- %s\n", message.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LogService::Fatal(const String& message)
 		{
-
+			printf("! %s\n", message.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LogService::RGB(const String& message, const console::LogColour& colour)
 		{
-
+			printf("~ %s\n", message.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LogService::Assert(const bool& expr, const String& message)
 		{
-			assert(expr);
+			if (expr == false)
+			{
+				printf("Assertion failed: %s\n", message.c_str());
+				assert(false);
+			}
 		}
 	}
 }

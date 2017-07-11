@@ -1,5 +1,5 @@
 #include "log.h" 
-#include "../services/cvar_service.h"
+#include "cvar.h"
 
 #ifndef SNUFF_DEBUG
 	#ifdef SNUFF_WIN32
@@ -25,18 +25,25 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		Log::Log()
+		Log::Log() :
+			enabled_(true)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Initialise()
+		void Log::Initialise(CVar* cvar)
 		{
-			CVarService& cvar = Services::Get<CVarService>();
+			CVarBoolean* cvconsole = cvar->Get<CVarBoolean>("console");
 
-			CVarNumber* cvport = cvar.Get<CVarNumber>("console_port");
-			CVarString* cvip = cvar.Get<CVarString>("console_ip");
+			if (cvconsole == nullptr || cvconsole->value() == false)
+			{
+				enabled_ = false;
+				return;
+			}
+
+			CVarNumber* cvport = cvar->Get<CVarNumber>("console_port");
+			CVarString* cvip = cvar->Get<CVarString>("console_ip");
 
 			int port = cvport != nullptr ? cvport->As<int>() : SNUFF_DEFAULT_PORT;
 			const char* ip = cvip != nullptr ? cvip->value().c_str() : "127.0.0.1";
@@ -48,59 +55,98 @@ namespace snuffbox
 
 			if (cvport == nullptr || cvip == nullptr)
 			{
-				cvar.Set<CVarNumber>("console_port", static_cast<float>(port));
-				cvar.Set<CVarString>("console_ip", ip);
+				cvar->Set<CVarNumber>("console_port", static_cast<float>(port));
+				cvar->Set<CVarString>("console_ip", ip);
 			}
 
 			stream_.Open(&client_, port, ip);
-			Services::Provide<LogService>(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Log::Shutdown()
 		{
+			if (enabled_ == false)
+			{
+				return;
+			}
+
 			stream_.Close();
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Log::Debug(const String& message)
 		{
+			if (enabled_ == false)
+			{
+				return;
+			}
+
 			stream_.Log(console::LogSeverity::kDebug, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Log::Info(const String& message)
 		{
+			if (enabled_ == false)
+			{
+				return;
+			}
+
 			stream_.Log(console::LogSeverity::kInfo, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Log::Success(const String& message)
 		{
+			if (enabled_ == false)
+			{
+				return;
+			}
+
 			stream_.Log(console::LogSeverity::kSuccess, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Log::Warning(const String& message)
 		{
+			if (enabled_ == false)
+			{
+				return;
+			}
+
 			stream_.Log(console::LogSeverity::kWarning, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Log::Error(const String& message)
 		{
+			if (enabled_ == false)
+			{
+				return;
+			}
+
 			stream_.Log(console::LogSeverity::kError, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Log::Fatal(const String& message)
 		{
+			if (enabled_ == false)
+			{
+				return;
+			}
+
 			stream_.Log(console::LogSeverity::kFatal, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Log::RGB(const String& message, const console::LogColour& colour)
 		{
+			if (enabled_ == false)
+			{
+				return;
+			}
+
 			stream_.Log(console::LogSeverity::kRGB, message.c_str(), static_cast<int>(message.size()), &colour.background.r, &colour.foreground.r);
 		}
 
@@ -112,12 +158,6 @@ namespace snuffbox
 				Fatal("[ASSERTION FAILED]\n\t\t\t" + message);
 				SNUFF_ASSERT();
 			}
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		Log::~Log()
-		{
-			Services::Remove<LogService>();
 		}
 	}
 }

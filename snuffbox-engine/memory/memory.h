@@ -9,7 +9,7 @@ namespace snuffbox
 {
 	namespace engine
 	{
-		class Application;
+		class SnuffboxApp;
 		class EASTLAllocator;
 
 		template <typename T>
@@ -29,7 +29,7 @@ namespace snuffbox
 		class Memory
 		{
 
-			friend class Application;
+			friend class SnuffboxApp;
 
 		protected:
 
