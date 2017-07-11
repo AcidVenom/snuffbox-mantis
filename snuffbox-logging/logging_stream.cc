@@ -69,7 +69,9 @@ namespace snuffbox
 
 			if (is_server_ == false)
 			{
+#ifdef SNUFF_DEBUG
 				printf("Waiting %ims for server..\n", STARTUP_SLEEP_);
+#endif
 				std::this_thread::sleep_for(std::chrono::milliseconds(STARTUP_SLEEP_));
 			}
 		}
