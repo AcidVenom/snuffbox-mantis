@@ -77,6 +77,17 @@ namespace snuffbox
 		};
 
 		//-----------------------------------------------------------------------------------------------
+		const wxString Console::SEVERITY_TO_STRING_[static_cast<char>(LogSeverity::kCount)] = {
+			"Debug",
+			"Info",
+			"Success",
+			"Warning",
+			"Error",
+			"Fatal",
+			"RGB"
+		};
+
+		//-----------------------------------------------------------------------------------------------
 		Console::Console(wxWindow* parent, const int& max_lines) :
 			MainWindow(parent),
 			messages_(0),
@@ -92,7 +103,23 @@ namespace snuffbox
             font_.SetFaceName("Ubuntu Mono");
 #endif
 			output_console->SetBackgroundColour(BACKGROUND_COLOUR_);
+
+			output_status->AppendTextColumn("Severity");
+			output_status->AppendTextColumn("Count");
+
+
+			wxVector<wxVariant> values;
+			values.resize(2);
+
+			for (char i = 0; i < static_cast<char>(LogSeverity::kCount); ++i)
+			{
+				values.at(0) = SEVERITY_TO_STRING_[i];
+				values.at(1) = "0";
+
+				output_status->InsertItem(i, values);
+			}
 			
+
 			Bind(CONSOLE_MSG_EVT, &Console::AddLine, this);
 		}
 
@@ -107,12 +134,11 @@ namespace snuffbox
 			bool repeat = strcmp(last_message_.c_str(), msg.c_str()) == 0 ? (last_severity_ != severity ? false : true) : false;
 			repeat_count_ = repeat == true ? ++repeat_count_ : 1;
 
-			unsigned char idx = static_cast<unsigned char>(severity);
-			const LogColour& col = severity == LogSeverity::kRGB ? colour : LOG_COLOURS_[idx];
+			const LogColour& col = severity == LogSeverity::kRGB ? colour : LOG_COLOURS_[static_cast<char>(severity)];
 
 			LogMessage log;
 			log.timestamp = "[" + CreateTimeStamp() + "]";
-			log.severity = LOG_PREFIXES_[idx];
+			log.severity = severity;
 			log.message = msg;
 			log.bold = severity == LogSeverity::kFatal;
 			log.colour = col;
@@ -133,6 +159,11 @@ namespace snuffbox
 			const LogMessage& msg = evt.message();
 
 			output_console->BeginSuppressUndo();
+			
+			unsigned int row = static_cast<unsigned int>(msg.severity);
+			wxString value = output_status->GetTextValue(row, 1);
+			unsigned int count = atoi(value.c_str()) + 1;
+			output_status->SetTextValue(std::to_string(count), row, 1);
 
 			if (msg.repeat == true)
 			{
@@ -201,7 +232,7 @@ namespace snuffbox
 			style.SetTextColour(SEVERITY_COLOUR_);
 
 			output_console->BeginStyle(style);
-			output_console->WriteText(msg.severity + " ");
+			output_console->WriteText(LOG_PREFIXES_[static_cast<char>(msg.severity)] + " ");
 			output_console->EndStyle();
 
 			style.SetBackgroundColour(bg_col);
@@ -219,7 +250,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		wxString Console::CreateTimeStamp() const
+		wxString Console::CreateTimeStamp()
 		{
 			std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
 			std::time_t now = std::chrono::system_clock::to_time_t(tp);

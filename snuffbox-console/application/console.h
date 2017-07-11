@@ -32,8 +32,8 @@ namespace snuffbox
 			struct LogMessage
 			{
 				bool bold; //!< Should the message be bolded?
+				LogSeverity severity; //!< The severity
 				wxString timestamp; //!< The timestamp
-				wxString severity; //!< The severity
 				wxString message; //!< The message
 				LogColour colour; //!< The colour
 				bool repeat; //!< Should the message be repeated?
@@ -112,7 +112,7 @@ namespace snuffbox
 			/**
 			* @return (wxString) A generated time stamp of the current time point
 			*/
-			wxString CreateTimeStamp() const;
+			static wxString CreateTimeStamp();
 
 			const static wxColour BACKGROUND_COLOUR_; //!< The background colour of the console
 			const static LogColour LOG_COLOURS_[static_cast<char>(LogSeverity::kCount)]; //!< The list of colours per severity
@@ -120,6 +120,7 @@ namespace snuffbox
 			const static wxColour SEVERITY_COLOUR_; //!< The colour of the severity
 			const static wxColour REPEAT_COLOUR_[2]; //!< The colours for the repeat counter
 			const static wxString LOG_PREFIXES_[static_cast<char>(LogSeverity::kCount)]; //!< The list of prefixes per severity
+			const static wxString SEVERITY_TO_STRING_[static_cast<char>(LogSeverity::kCount)]; //!< The list of severity names
 
 		private:
 

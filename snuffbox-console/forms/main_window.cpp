@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 24 2017)
+// C++ code generated with wxFormBuilder (version Jun 28 2017)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -56,8 +56,8 @@ MainWindow::MainWindow( wxWindow* parent, wxWindowID id, const wxString& title, 
 	output_size1 = new wxStaticLine( panel_status, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	sizer_status->Add( output_size1, 0, wxEXPAND, 5 );
 	
-	output_status = new wxRichTextCtrl( panel_status, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxVSCROLL|wxHSCROLL|wxNO_BORDER|wxWANTS_CHARS );
-	sizer_status->Add( output_status, 1, wxEXPAND | wxALL, 5 );
+	output_status = new wxDataViewListCtrl( panel_status, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	sizer_status->Add( output_status, 1, wxALL|wxEXPAND, 5 );
 	
 	
 	panel_status->SetSizer( sizer_status );

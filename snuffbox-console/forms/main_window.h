@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 24 2017)
+// C++ code generated with wxFormBuilder (version Jun 28 2017)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,6 +21,7 @@
 #include <wx/statline.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/dataview.h>
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
 #include <wx/choice.h>
@@ -49,7 +50,7 @@ namespace snuffbox
 			wxStaticLine* output_size;
 			wxPanel* panel_status;
 			wxStaticLine* output_size1;
-			wxRichTextCtrl* output_status;
+			wxDataViewListCtrl* output_status;
 			wxTextCtrl* input_box;
 			wxChoice* input_type;
 			wxButton* input_button;
