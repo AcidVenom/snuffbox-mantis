@@ -169,7 +169,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LoggingClient::OnCommand(const CommandTypes& cmd, const char* message)
 		{
-			printf("%s\n", message);
+			
 		}
 	}
 }

@@ -19,7 +19,39 @@ namespace snuffbox
 		*/
 		class Log : public LogService
 		{
-			
+			/**
+			* @class snuffbox::engine::Log::Client : public snuffbox::logging::LoggingClient
+			* @brief The logging client that will handle received commands from the server
+			* @author Daniël Konings
+			*/
+			class Client : public logging::LoggingClient
+			{
+
+				friend class Log;
+
+			protected:
+
+				/**
+				* @see snuffbox::logging::LoggingClient::OnCommand
+				*/
+				void OnCommand(const CommandTypes& cmd, const char* message) override;
+
+				/**
+				* @brief Parses a specified command
+				* @param[in] command (const char*) The command to parse
+				* @return (bool) Was this a valid command?
+				*/
+				static bool ParseCommand(const char* command);
+
+				/**
+				* @brief Handles a specific command
+				* @param[in] command (const String&) The command to handle
+				* @param[in] args (const char*) The arguments after the command
+				* @return (bool) Was it actually a command, space seperated?
+				*/
+				static bool HandleCommand(const String& command, const char* args);
+			};
+
 			friend class SnuffboxApp;
 			friend class Allocator;
 
@@ -40,8 +72,6 @@ namespace snuffbox
 			* @brief Shuts down the logging system
 			*/
 			void Shutdown();
-
-		public:
 
 			/**
 			* @see snuffbox::engine::LogService::Debug
@@ -86,7 +116,7 @@ namespace snuffbox
 		private:
 
 			bool enabled_; //!< Has the console been enabled?
-			logging::LoggingClient client_; //!< The logging client
+			Client client_; //!< The logging client
 			logging::LoggingStream stream_; //!< The logging stream
 		};
 	}

@@ -17,6 +17,7 @@ namespace snuffbox
 		*/
 		class CVar : public CVarService
 		{
+
 			friend class SnuffboxApp;
 			friend class Allocator;
 
@@ -26,21 +27,6 @@ namespace snuffbox
 			* @brief Default constructor
 			*/
 			CVar();
-
-			/**
-			* @brief Checks if a string value is a number and fills in the buffer with the number if it is
-			* @param[in] value (char*) The string value to check
-			* @param[out] buffer (float*) The buffer to assign the numerical float value to
-			* @return (bool) Was the string a number?
-			*/
-			static bool ParseNumber(char* value, float* buffer);
-
-			/**
-			* @brief Parses the command line and adds the corresponding values to the list of CVar values
-			* @param[in] argc (const int&) The number of command line arguments
-			* @param[in] argv (char**) The actual command line arguments
-			*/
-			void ParseCommandLine(const int& argc, char** argv);
 
 		public:
 

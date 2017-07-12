@@ -150,7 +150,7 @@ namespace snuffbox
 			bool is_server_; //!< Is this stream server-sided?
 			LoggingSocket* socket_; //!< The socket that started this stream
 			std::thread connection_thread_; //!< The connection thread
-			std::mutex connection_mutex_; //!< The connection mutex
+			std::recursive_mutex connection_mutex_; //!< The connection mutex
 			void(*error_handler_)(const char*); //!< The error handler to stream error messages to
 		};
 	}

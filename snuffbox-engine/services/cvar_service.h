@@ -3,6 +3,8 @@
 #include "service.h"
 #include "services.h"
 
+#include "log_service.h"
+
 #include "../logging/cvar_value.h"
 
 namespace snuffbox
@@ -26,6 +28,14 @@ namespace snuffbox
 			*/
 			CVarService();
 
+			/**
+			* @brief Checks if a string value is a number and fills in the buffer with the number if it is
+			* @param[in] value (char*) The string value to check
+			* @param[out] buffer (float*) The buffer to assign the numerical float value to
+			* @return (bool) Was the string a number?
+			*/
+			static bool ParseNumber(char* value, float* buffer);
+
 		public:
 
 			/**
@@ -37,6 +47,13 @@ namespace snuffbox
 			* @brief Delete assignment operator
 			*/
 			CVarService operator=(const CVarService& other) = delete;
+
+			/**
+			* @brief Parses the command line and adds the corresponding values to the list of CVar values
+			* @param[in] argc (const int&) The number of command line arguments
+			* @param[in] argv (char**) The actual command line arguments
+			*/
+			void ParseCommandLine(const int& argc, char** argv);
 
 			/**
 			* @brief Logs all CVars
@@ -109,6 +126,11 @@ namespace snuffbox
 		template <>
 		inline void CVarService::Set<CVarString>(const String& name, typename const CVarBase::value_type<CVarString>::type& value)
 		{
+			if (name.find(' ') != -1)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name.c_str());
+				return;
+			}
 			SetString(name, value);
 		}
 
@@ -116,6 +138,11 @@ namespace snuffbox
 		template <>
 		inline void CVarService::Set<CVarBoolean>(const String& name, typename const CVarBase::value_type<CVarBoolean>::type& value)
 		{
+			if (name.find(' ') != -1)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name.c_str());
+				return;
+			}
 			SetBoolean(name, value);
 		}
 
@@ -123,6 +150,11 @@ namespace snuffbox
 		template <>
 		inline void CVarService::Set<CVarNumber>(const String& name, typename const CVarBase::value_type<CVarNumber>::type& value)
 		{
+			if (name.find(' ') != -1)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name.c_str());
+				return;
+			}
 			SetNumber(name, value);
 		}
 

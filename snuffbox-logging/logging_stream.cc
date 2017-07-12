@@ -212,7 +212,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LoggingStream::Send(const Commands& cmd, const int& other, const char* buffer, const int& size)
 		{
-			std::lock_guard<std::mutex> lock(connection_mutex_);
+			std::lock_guard<std::recursive_mutex> lock(connection_mutex_);
 
 			PacketHeader header;
 			header.command = cmd;
