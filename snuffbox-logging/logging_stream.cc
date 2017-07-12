@@ -125,39 +125,49 @@ namespace snuffbox
 				return;
 			}
 
-			std::lock_guard<std::mutex> lock(connection_mutex_);
-
-			bool connected = true;
-
 			char buffer[SNUFF_LOG_BUFFERSIZE];
 
-			memcpy(buffer, message, size);
-			memset(buffer + size, '\0', sizeof(char));
-			int extra_size = 0;
+			int offset = 0;
+			memset(buffer, static_cast<char>(severity), sizeof(char));
+			memcpy(buffer + (++offset), message, size);
+			memset(buffer + offset + size, '\0', sizeof(char));
+
+			int extra_size = 1;
 
 			if (severity == console::LogSeverity::kRGB && col_fg != nullptr && col_bg != nullptr)
 			{
-				memcpy(buffer + size + 1, col_fg, sizeof(unsigned char) * 3);
-				memcpy(buffer + size + 4, col_bg, sizeof(unsigned char) * 3);
+				memcpy(buffer + size + offset, col_fg, sizeof(unsigned char) * 3);
+				offset += 3;
+				memcpy(buffer + size + offset, col_bg, sizeof(unsigned char) * 3);
 
 				extra_size = sizeof(unsigned char) * 6;
 			}
 
 			int s = size + 1 + extra_size;
 
-			PacketHeader header;
-			header.command = Commands::kLog;
-			header.severity = severity;
-			header.size = s;
+			Send(Commands::kLog, socket_->socket_, buffer, s);
+		}
 
-			connected = socket_->Send(socket_->socket_, &header, should_quit_);
-			connected = connected == false ? false : socket_->Receive(socket_->socket_, &header, should_quit_);
+		//-----------------------------------------------------------------------------------------------
+		void LoggingStream::SendCommand(const Commands& cmd, const char* message, const int& size)
+		{
+			assert(is_server_ == true);
 
-			if (connected == true && header.command == Commands::kAccept)
+			if (socket_->connected_ == false)
 			{
-				connected = socket_->SendPacket(socket_->socket_, buffer, s, should_quit_);
-				connected = connected == false ? false : socket_->Receive(socket_->socket_, &header, should_quit_);
+				return;
 			}
+
+			char buffer[SNUFF_LOG_BUFFERSIZE];
+
+			int offset = 0;
+			memset(buffer, static_cast<char>(cmd), sizeof(char));
+			memcpy(buffer + (++offset), message, size);
+			memset(buffer + offset + size, '\0', sizeof(char));
+
+			int s = size + 2;
+
+			Send(cmd, socket_->other_, buffer, s);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -197,6 +207,25 @@ namespace snuffbox
 #else
 			error_handler_(std::to_string(error).c_str());
 #endif
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LoggingStream::Send(const Commands& cmd, const int& other, const char* buffer, const int& size)
+		{
+			std::lock_guard<std::mutex> lock(connection_mutex_);
+
+			PacketHeader header;
+			header.command = cmd;
+			header.size = size;
+
+			bool connected = socket_->Send(other, &header, should_quit_);
+			connected = connected == false ? false : socket_->Receive(other, &header, should_quit_);
+
+			if (connected == true && (header.command == Commands::kWaiting || header.command == Commands::kAccept))
+			{
+				connected = socket_->SendPacket(other, buffer, size, should_quit_);
+				socket_->Receive(other, &header, should_quit_);
+			}
 		}
 	}
 }

@@ -111,19 +111,65 @@ namespace snuffbox
 			bool connected = true;
 			LoggingStream::PacketHeader header;
 
-			if (last_message_ == LoggingStream::Commands::kWaiting)
+			if (last_message_ < LoggingStream::Commands::kCommand)
 			{
-				connected = SendWait(socket_, quit);
+				connected = SendCommand(LoggingStream::Commands::kWaiting, socket_, quit);
 				connected = connected == false ? false : Receive(socket_, &header, quit);
 				if (connected == true)
 				{
 					last_message_ = header.command;
+
+					if (last_message_ == LoggingStream::Commands::kCommand ||
+						last_message_ == LoggingStream::Commands::kJavaScript)
+					{
+						expected_ = header.size;
+						connected = SendCommand(LoggingStream::Commands::kAccept, socket_, quit);
+
+						if (connected == false)
+						{
+							return ConnectionStatus::kDisconnected;
+						}
+
+						return ConnectionStatus::kBusy;
+					}
+
+					return ConnectionStatus::kWaiting;
+				}
+			}
+			else
+			{
+				connected = ReceivePacket(socket_, expected_, quit);
+
+				if (connected == true)
+				{
+					const LoggingStream::Commands& cmd = *reinterpret_cast<LoggingStream::Commands*>(buffer_);
+					LoggingClient::CommandTypes type = CommandTypes::kConsole;
+
+					switch (cmd)
+					{
+					case LoggingStream::Commands::kCommand:
+						type = CommandTypes::kConsole;
+						break;
+
+					case LoggingStream::Commands::kJavaScript:
+						type = CommandTypes::kJavaScript;
+						break;
+					}
+
+					OnCommand(type, buffer_ + 1);
+					last_message_ = LoggingStream::Commands::kWaiting;
 
 					return ConnectionStatus::kWaiting;
 				}
 			}
 
 			return ConnectionStatus::kDisconnected;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LoggingClient::OnCommand(const CommandTypes& cmd, const char* message)
+		{
+			printf("%s\n", message);
 		}
 	}
 }

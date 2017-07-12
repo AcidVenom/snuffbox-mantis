@@ -34,11 +34,11 @@ namespace snuffbox
 			enum Commands : char
 			{
 				kWaiting, //!< When both client and server are idle
-				kAccept, //!< When the server accepts a message
+				kAccept, //!< When the server or client accepts a message
 				kLog, //!< When the client wants to log something to the server
 				kCommand, //!< When the server wants to execute a command on the client
 				kJavaScript, //!< When the server wants to execute JavaScript on the client
-				kProcessing //!< When either the client or server is processing
+				kCount //!< The number of commands
 			};
 
 			/**
@@ -49,7 +49,6 @@ namespace snuffbox
 			struct PacketHeader
 			{
 				Commands command; //!< The command to execute
-				console::LogSeverity severity; //!< The severity to log with, if applicable
 				int size; //!< The size of the upcoming buffer
 			};
 
@@ -102,6 +101,14 @@ namespace snuffbox
 			void Log(const console::LogSeverity& severity, const char* message, const int& size, const unsigned char* col_bg = nullptr, const unsigned char* col_fg = nullptr);
 
 			/**
+			* @brief Sends a command to the client, server only
+			* @param[in] cmd (const snuffbox::logging::LoggingStream::Commands&) The command type
+			* @param[in] message (const char*) The message to send
+			* @param[in] size (const int&) The size of the message
+			*/
+			void SendCommand(const Commands& cmd, const char* message, const int& size);
+
+			/**
 			* @brief Closes the stream and kills the connection if it exists
 			* @remarks This function call has a slight delay to make sure all log messages were received (SNUFF_SLEEP_SHUTDOWN)
 			*/
@@ -120,6 +127,15 @@ namespace snuffbox
 			* @param[in] error (const int&) The error code
 			*/
 			void LogError(const int& error) const;
+
+			/**
+			* @brief Sends a packet from this stream's socket to a specified socket
+			* @param[in] cmd (const snuffbox::logging::LoggingStream::Commands&) The command to send
+			* @param[in] other (const int&) The other socket to send to
+			* @param[in] buffer (const char*) The buffer to send
+			* @param[in] size (const int&) The size of the buffer
+			*/
+			void Send(const Commands& cmd, const int& other, const char* buffer, const int& size);
 
 			static const unsigned int STARTUP_SLEEP_; //!< The client-sided wait time so we can receive initialisation logs
 			static const unsigned int WAIT_SLEEP_; //!< The sleep to prevent busy-waiting while the console isn't doing anything

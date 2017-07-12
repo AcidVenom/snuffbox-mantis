@@ -105,23 +105,12 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool LoggingServer::SendAccept(const bool& quit)
-		{
-			LoggingStream::PacketHeader header;
-			header.command = LoggingStream::Commands::kAccept;
-			header.severity = console::LogSeverity::kCount;
-			header.size = -1;
-
-			return Send(other_, &header, quit);
-		}
-
-		//-----------------------------------------------------------------------------------------------
 		LoggingSocket::ConnectionStatus LoggingServer::Update(const bool& quit)
 		{
 			bool connected = true;
 			LoggingStream::PacketHeader header;
 
-			if (last_message_ < LoggingStream::Commands::kLog || last_message_ == LoggingStream::Commands::kProcessing)
+			if (last_message_ < LoggingStream::Commands::kLog)
 			{
 				connected = Receive(other_, &header, quit);
 				if (connected == true)
@@ -131,9 +120,7 @@ namespace snuffbox
 					if (last_message_ == LoggingStream::Commands::kLog)
 					{
 						expected_ = header.size;
-						severity_ = header.severity;
-
-						connected = SendAccept(quit);
+						connected = SendCommand(LoggingStream::Commands::kAccept, other_, quit);
 
 						if (connected == false)
 						{
@@ -143,7 +130,7 @@ namespace snuffbox
 						return ConnectionStatus::kBusy;
 					}
 
-					SendWait(other_, quit);
+					SendCommand(LoggingStream::Commands::kWaiting, other_, quit);
 
 					return ConnectionStatus::kWaiting;
 				}
@@ -154,18 +141,12 @@ namespace snuffbox
 
 				if (connected == true)
 				{
-					if (severity_ == console::LogSeverity::kRGB)
-					{
-						OnLog(severity_, buffer_,
-							reinterpret_cast<unsigned char*>(buffer_ + expected_ - 6),
-							reinterpret_cast<unsigned char*>(buffer_ + expected_ - 3));
-					}
-					else
-					{
-						OnLog(severity_, buffer_);
-					}
+					OnLog(*reinterpret_cast<console::LogSeverity*>(buffer_), 
+						buffer_ + 1,
+						reinterpret_cast<unsigned char*>(buffer_ + expected_ - 6),
+						reinterpret_cast<unsigned char*>(buffer_ + expected_ - 3));
 
-					connected = SendWait(other_, quit);
+					connected = SendCommand(LoggingStream::Commands::kWaiting, other_, quit);
 					last_message_ = LoggingStream::Commands::kWaiting;
 
 					return ConnectionStatus::kWaiting;

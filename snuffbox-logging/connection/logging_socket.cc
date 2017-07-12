@@ -96,10 +96,10 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool LoggingSocket::SendWait(const int& socket, const bool& quit)
+		bool LoggingSocket::SendCommand(const char& cmd, const int& socket, const bool& quit)
 		{
 			LoggingStream::PacketHeader header;
-			header.command = LoggingStream::Commands::kWaiting;
+			header.command = static_cast<LoggingStream::Commands>(cmd);
 			header.size = 0;
 			return Send(socket, &header, quit);
 		}

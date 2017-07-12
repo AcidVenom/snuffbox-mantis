@@ -17,6 +17,15 @@ namespace snuffbox
 		public:
 
 			/**
+			* @brief The different command types
+			*/
+			enum CommandTypes
+			{
+				kConsole, //!< Console command
+				kJavaScript //!< JavaScript command
+			};
+
+			/**
 			* @brief Default constructor
 			*/
 			LoggingClient();
@@ -42,6 +51,12 @@ namespace snuffbox
 			* @see snuffbox::logging::LoggingSocket::Update
 			*/
 			ConnectionStatus Update(const bool& quit) override;
+
+			/**
+			* @brief Called when a command is received from the server
+			* @param[in] cmd (const snuffbox::logging::LoggingClient::CommandTypes&) The command type
+			*/
+			virtual void OnCommand(const CommandTypes& cmd, const char* message);
 		};
 	}
 }

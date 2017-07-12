@@ -99,12 +99,13 @@ namespace snuffbox
 			bool Send(const int& socket, const T* buffer, const bool& quit);
 
 			/**
-			* @brief Sends a wait command packet
+			* @brief Sends a command packet
+			* @param[in] cmd (const char&) The command to send
 			* @param[in] socket (const int&) The socket to send with
 			* @param[in] quit (const bool&) Has the logging stream been closed yet?
 			* @return (bool) Are we still connected?
 			*/
-			bool SendWait(const int& socket, const bool& quit);
+			bool SendCommand(const char& cmd, const int& socket, const bool& quit);
 
 			/**
 			* @brief Updates the connection between server and client

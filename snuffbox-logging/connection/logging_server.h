@@ -40,13 +40,6 @@ namespace snuffbox
 			void CloseSocket(const bool& quit) override;
 
 			/**
-			* @brief Sends an accept message to the client
-			* @param[in] quit (const bool&) Has the logging stream been closed yet?
-			* @return (bool) Are we still connected?
-			*/
-			bool SendAccept(const bool& quit);
-
-			/**
 			* @see snuffbox::logging::LoggingSocket::Update
 			*/
 			ConnectionStatus Update(const bool& quit) override;
@@ -59,10 +52,6 @@ namespace snuffbox
 			* @param[in] col_bg (const unsigned char*) The colour values for the background when logged with an RGB severity, default = nullptr
 			*/
 			virtual void OnLog(const console::LogSeverity& severity, const char* message, const unsigned char* col_fg = nullptr, const unsigned char* col_bg = nullptr);
-
-		private:
-
-			console::LogSeverity severity_; //!< The received severity from the client of the previous packet
 		};
 	}
 }
