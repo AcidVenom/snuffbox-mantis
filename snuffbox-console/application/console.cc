@@ -1,5 +1,7 @@
 #include "console.h"
 
+#include <snuffbox-logging/logging_stream.h>
+
 #include <wx/fontutil.h>
 #include <chrono>
 #include <ctime>
@@ -88,9 +90,10 @@ namespace snuffbox
 		};
 
 		//-----------------------------------------------------------------------------------------------
-		Console::Console(wxWindow* parent, const int& max_lines) :
+		Console::Console(wxWindow* parent, logging::LoggingStream* stream, const int& max_lines) :
 			MainWindow(parent),
 			messages_(0),
+			stream_(stream),
 			max_line_count_(max_lines),
 			last_message_(""),
 			last_severity_(LogSeverity::kCount),
@@ -103,11 +106,17 @@ namespace snuffbox
             font_.SetFaceName("Ubuntu Mono");
 #endif
 			output_console->SetBackgroundColour(BACKGROUND_COLOUR_);
+			input_button->Bind(wxEVT_BUTTON, &Console::OnInput, this);
+			
+			wxAcceleratorEntry entries[1];
+			entries[0].Set(wxACCEL_NORMAL, wxKeyCode::WXK_RETURN, MainWindow::ID_InputButton);
+
+			wxAcceleratorTable accel(1, entries);
+			SetAcceleratorTable(accel);
 
 			output_status->AppendTextColumn("Severity");
 			output_status->AppendTextColumn("Count");
-
-
+			
 			wxVector<wxVariant> values;
 			values.resize(2);
 
@@ -119,7 +128,6 @@ namespace snuffbox
 				output_status->InsertItem(i, values);
 			}
 			
-
 			Bind(CONSOLE_MSG_EVT, &Console::AddLine, this);
 		}
 
@@ -247,6 +255,28 @@ namespace snuffbox
 			++messages_;
 
 			output_console->EndSuppressUndo();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Console::OnInput(wxCommandEvent& evt)
+		{
+			if (stream_ != nullptr)
+			{
+				wxString val = input_box->GetValue();
+
+				if (val.size() == 0)
+				{
+					return;
+				}
+
+				int idx = input_type->GetSelection();
+				stream_->SendCommand(
+					idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
+					val.c_str(),
+					val.size());
+
+				input_box->SetValue("");
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -89,7 +89,7 @@ MainWindow::MainWindow( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	sizer_input_buttons->Add( input_type, 0, wxALL, 5 );
 	
-	input_button = new wxButton( this, wxID_ANY, wxT("Send"), wxDefaultPosition, wxDefaultSize, 0 );
+	input_button = new wxButton( this, ID_InputButton, wxT("Send"), wxDefaultPosition, wxDefaultSize, 0 );
 	input_button->SetMaxSize( wxSize( -1,24 ) );
 	
 	sizer_input_buttons->Add( input_button, 0, wxALL, 5 );

@@ -55,7 +55,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool ConsoleApp::OnInit()
 		{
-			console_ = new Console(nullptr);
+			console_ = new Console(nullptr, &stream_);
 			console_->Show(true);
 			console_->AddMessage(LogSeverity::kInfo, "Looking for an available connection..");
 

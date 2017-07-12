@@ -40,6 +40,11 @@ namespace snuffbox
 		private:
 		
 		protected:
+			enum
+			{
+				ID_InputButton = 1000
+			};
+			
 			wxStatusBar* status_bar;
 			wxMenuBar* menu_bar;
 			wxMenu* file;

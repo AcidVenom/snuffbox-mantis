@@ -8,6 +8,11 @@
 
 namespace snuffbox
 {
+	namespace logging
+	{
+		class LoggingStream;
+	}
+
 	namespace console
 	{
 		class ConsoleServer;
@@ -40,6 +45,11 @@ namespace snuffbox
 			};
 
 		public:
+
+			enum
+			{
+				ID_InputButton = 1
+			};
 
 			/**
 			* @class snuffbox::console::Console::Event : public wxCommandEvent
@@ -88,9 +98,10 @@ namespace snuffbox
 			/**
 			* @brief Default constructor, requires a parent window to construct the underlying MainWindow form
 			* @param[in] parent (wxWindow*) The parent window to assign to the MainWindow
+			* @param[in] stream (snuffbox::logging::LoggingStream*) The logging stream
 			* @param[in] max_lines (const int&) The maximum number of lines in the console, default = 200
 			*/
-			Console(wxWindow* parent, const int& max_lines = 200);
+			Console(wxWindow* parent, logging::LoggingStream* stream, const int& max_lines = 200);
 
 			/**
 			* @brief Adds a message with a severity and a timestamp to the console
@@ -106,6 +117,12 @@ namespace snuffbox
 			* @param[in] evt (const snuffbox::console::Console::Event&) The event received from wxWidgets
 			*/
 			void AddLine(const Event& evt);
+
+			/**
+			* @brief Called when the user provides input in the input box and sends it
+			* @param[in] evt (wxCommandEvent&) The wxWidgets event
+			*/
+			void OnInput(wxCommandEvent& evt);
 
 		protected:
 
@@ -126,6 +143,7 @@ namespace snuffbox
 
 			wxFont font_; //!< The font of the console
 			unsigned int messages_; //!< The number of messages
+			logging::LoggingStream* stream_; //!< The logging stream
 			unsigned int max_line_count_; //!< The maximum line count for this console
 
 			wxString last_message_; //!< The last message sent to the console
