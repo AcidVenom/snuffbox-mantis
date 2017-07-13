@@ -187,6 +187,12 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		bool LoggingStream::Connected() const
+		{
+			return socket_ != nullptr && socket_->connected_ == true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void LoggingStream::SetErrorHandler(void(*func)(const char*))
 		{
 			error_handler_ = func;

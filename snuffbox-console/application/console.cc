@@ -50,7 +50,7 @@ namespace snuffbox
 			{ { BACKGROUND_COLOUR_.Red(), BACKGROUND_COLOUR_.Green(), BACKGROUND_COLOUR_.Blue() },{ 180, 180, 180 } },
 			{ { BACKGROUND_COLOUR_.Red(), BACKGROUND_COLOUR_.Green(), BACKGROUND_COLOUR_.Blue() },{ 255, 255, 255 } },
 			{ { 0, 100, 50 },{ 0, 255, 100 } },
-			{ { 125, 100, 0 },{ 255, 200, 0 } },
+			{ { 75, 50, 0 },{ 255, 200, 0 } },
 			{ { 80, 0, 0 },{ 255, 0, 0 } },
 			{ { 255, 0, 0 },{ 255, 255, 255 } }
 		};
@@ -260,23 +260,25 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Console::OnInput(wxCommandEvent& evt)
 		{
-			if (stream_ != nullptr)
+			if (stream_ == nullptr || stream_->Connected() == false)
 			{
-				wxString val = input_box->GetValue();
-
-				if (val.size() == 0)
-				{
-					return;
-				}
-
-				int idx = input_type->GetSelection();
-				stream_->SendCommand(
-					idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
-					val.c_str(),
-					val.size());
-
-				input_box->SetValue("");
+				AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
 			}
+
+			wxString val = input_box->GetValue();
+
+			if (val.size() == 0)
+			{
+				return;
+			}
+
+			int idx = input_type->GetSelection();
+			stream_->SendCommand(
+				idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
+				val.c_str(),
+				val.size());
+
+			input_box->SetValue("");
 		}
 
 		//-----------------------------------------------------------------------------------------------

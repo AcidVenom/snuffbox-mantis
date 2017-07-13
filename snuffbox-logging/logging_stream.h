@@ -120,6 +120,11 @@ namespace snuffbox
 			*/
 			void SetErrorHandler(void(*func)(const char*));
 
+			/**
+			* @return (bool) Is the stream connected?
+			*/
+			bool Connected() const;
+
 		protected:
 
 			/**
