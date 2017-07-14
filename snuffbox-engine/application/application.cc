@@ -72,7 +72,9 @@ namespace snuffbox
 		{
 			OnShutdown();
 
+#ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_->Shutdown();
+#endif
 			log_service_->Shutdown();
 
 			Services::Remove<CVarService>();
