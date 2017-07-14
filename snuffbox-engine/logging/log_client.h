@@ -26,6 +26,18 @@ namespace snuffbox
 			void OnCommand(const CommandTypes& cmd, const char* message) override;
 
 			/**
+			* @brief Called when the console sends a command to execute
+			* @param[in] message (const char*) The sent command
+			*/
+			static void OnConsoleCommand(const char* message);
+
+			/**
+			* @brief Called when the console sends JavaScript code to execute
+			* @param[in] message (const char*) The sent source code
+			*/
+			static void OnJSCommand(const char* message);
+
+			/**
 			* @brief Parses a specified command
 			* @param[in] command (const char*) The command to parse
 			* @return (bool) Was this a valid command?

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../defines.h"
+#include "../wx_defines.h"
 
 #include <snuffbox-logging/logging_stream.h>
 #include <snuffbox-logging/connection/logging_server.h>

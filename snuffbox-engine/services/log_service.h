@@ -313,6 +313,12 @@ namespace snuffbox
 		template <typename ... Args>
 		inline void LogService::Assert(const bool& expr, const String& message, const Args&... args)
 		{
+#ifdef SNUFF_DEBUG
+			if (expr == false)
+			{
+				printf("Assertion failed: %s\n", formatted.c_str());
+			}
+#endif
 			String formatted = FormatString(message, nullptr, args...);
 			Assert(expr, formatted);
 		}

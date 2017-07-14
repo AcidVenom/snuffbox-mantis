@@ -1,0 +1,15 @@
+FILE (GLOB_RECURSE SNUFF_JS_ROOT_SOURCES
+	"*.cc"
+	"*.h"
+)
+
+SET (SNUFF_JAVASCRIPT_SOURCES
+	${SNUFF_JS_ROOT_SOURCES}
+)
+
+SOURCE_GROUP("\\" FILES ${SNUFF_JS_ROOT_SOURCES})
+
+MESSAGE(STATUS "Using JavaScript version of the engine")
+
+ADD_EXECUTABLE(snuffbox-javascript ${SNUFF_JAVASCRIPT_SOURCES})
+TARGET_LINK_LIBRARIES(snuffbox-javascript snuffbox-engine)

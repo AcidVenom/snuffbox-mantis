@@ -49,21 +49,21 @@ namespace snuffbox
 
 			/**
 			* @brief Constructs a shared pointer with the EASTL allocator
-			* @param[in] args (const Args&...) The arguments to pass to the constructor
+			* @param[in] args (Args&&...) The arguments to pass to the constructor
 			* @remarks Classes that will be constructed through this interface require friendship with snuffbox::engine::Allocator
 			* @return (snuffbox::engine::SharedPtr<T>) The constructed shared pointer
 			*/
 			template <typename T, typename ... Args>
-			static SharedPtr<T> ConstructShared(const Args&... args);
+			static SharedPtr<T> ConstructShared(Args&&... args);
 
 			/**
 			* @brief Constructs a unique pointer with the EASTL allocator
-			* @param[in] args (const Args&...) The arguments to pass to the constructor
+			* @param[in] args (Args&&...) The arguments to pass to the constructor
 			* @remarks Classes that will be constructed through this interface require friendship with snuffbox::engine::Allocator
 			* @return (snuffbox::engine::UniquePtr<T>) The constructed unique pointer
 			*/
 			template <typename T, typename ... Args>
-			static UniquePtr<T> ConstructUnique(const Args&... args);
+			static UniquePtr<T> ConstructUnique(Args&&... args);
 
 			/**
 			* @return (snuffbox::Allocator&) The default allocator
@@ -102,17 +102,17 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T, typename ... Args>
-		inline SharedPtr<T> Memory::ConstructShared(const Args&... args)
+		inline SharedPtr<T> Memory::ConstructShared(Args&&... args)
 		{
-			T* ptr = EASTL_ALLOCATOR.Construct<T>(args...);
+			T* ptr = EASTL_ALLOCATOR.Construct<T>(std::forward<Args>(args)...);
 			return eastl::shared_ptr<T>(ptr, EASTLDeleter<T>(), EASTLAllocator());
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T, typename ... Args>
-		inline UniquePtr<T> Memory::ConstructUnique(const Args&... args)
+		inline UniquePtr<T> Memory::ConstructUnique(Args&&... args)
 		{
-			T* ptr = EASTL_ALLOCATOR.Construct<T>(args...);
+			T* ptr = EASTL_ALLOCATOR.Construct<T>(std::forward<Args>(args)...);
 			return UniquePtr<T>(ptr);
 		}
 

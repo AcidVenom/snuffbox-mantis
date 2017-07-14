@@ -14,6 +14,10 @@ namespace snuffbox
 		class Log;
 		class CVar;
 
+#ifdef SNUFF_JAVASCRIPT
+		class JSStateWrapper;
+#endif
+
 		/**
 		* @class snuffbox::engine::SnuffboxApp
 		* @brief An application class to use as main entry point for the engine
@@ -35,9 +39,9 @@ namespace snuffbox
 
 			/**
 			* @brief Default constructor
-			* @param[in] max_memory (const size_t&) The maximum amount of memory for the application to use
+			* @param[in] max_memory (const size_t&) The maximum amount of memory for the application to use, default = 4Gb
 			*/
-			SnuffboxApp(const size_t& max_memory);
+			SnuffboxApp(const size_t& max_memory = static_cast<size_t>(4294967296));
 
 			/**
 			* @brief Runs the application
@@ -97,6 +101,10 @@ namespace snuffbox
 			bool running_; //!< Is the application still running?
 
 		protected:
+
+#ifdef SNUFF_JAVASCRIPT
+			UniquePtr<JSStateWrapper> js_state_wrapper_; //!< The JavaScript state wrapper
+#endif
 
 			UniquePtr<Log> log_service_; //!< The logging service
 			UniquePtr<CVar> cvar_service_; //!< The CVar service

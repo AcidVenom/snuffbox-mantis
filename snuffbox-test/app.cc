@@ -10,8 +10,7 @@ namespace snuffbox
 	namespace test
 	{
 		//-----------------------------------------------------------------------------------------------
-		App::App() :
-			SnuffboxApp(static_cast<size_t>(4294967296))
+		App::App()
 		{
 			
 		}

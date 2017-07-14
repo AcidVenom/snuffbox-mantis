@@ -48,7 +48,7 @@ namespace snuffbox
 			* @return (T*) The allocated object
 			*/
 			template <typename T, typename ... Args>
-			T* Construct(const Args... args);
+			T* Construct(Args&&... args);
 
 			/**
 			* @brief Destructs an object of type T
@@ -98,7 +98,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T, typename ... Args>
-		inline T* Allocator::Construct(const Args... args)
+		inline T* Allocator::Construct(Args&&... args)
 		{
 			assert(allocated_ + sizeof(T) <= max_memory_);
 

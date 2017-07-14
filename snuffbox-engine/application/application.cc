@@ -6,6 +6,10 @@
 
 #include <iostream>
 
+#ifdef SNUFF_JAVASCRIPT
+#include "../js/js_state_wrapper.h"
+#endif
+
 namespace snuffbox
 {
 	namespace engine
@@ -53,6 +57,11 @@ namespace snuffbox
 			Services::Provide<CVarService>(cvar_service_.get());
 			Services::Provide<LogService>(log_service_.get());
 
+#ifdef SNUFF_JAVASCRIPT
+			js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
+			js_state_wrapper_->Initialise();
+#endif
+
 			cvar_service_->LogAll();
 
 			OnInit();
@@ -62,6 +71,8 @@ namespace snuffbox
 		void SnuffboxApp::Shutdown()
 		{
 			OnShutdown();
+
+			js_state_wrapper_->Shutdown();
 			log_service_->Shutdown();
 
 			Services::Remove<CVarService>();

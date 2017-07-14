@@ -2,12 +2,34 @@
 #include "log.h" 
 #include "cvar.h"
 
+#ifdef SNUFF_JAVASCRIPT
+#include "../js/js_state_wrapper.h"
+#endif
+
 namespace snuffbox
 {
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
 		void LogClient::OnCommand(const logging::LoggingClient::CommandTypes& cmd, const char* message)
+		{
+			switch (cmd)
+			{
+			case CommandTypes::kConsole:
+				OnConsoleCommand(message);
+				break;
+
+			case CommandTypes::kJavaScript:
+				OnJSCommand(message);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LogClient::OnConsoleCommand(const char* message)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -45,6 +67,25 @@ namespace snuffbox
 			}
 
 			log.Log(console::LogSeverity::kError, "Invalid command '{0}', type 'help' for a list of available commands", message);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LogClient::OnJSCommand(const char* message)
+		{
+			LogService& log = Services::Get<LogService>();
+
+#ifndef SNUFF_JAVASCRIPT
+			log.Log(console::LogSeverity::kWarning, "JavaScript is disabled, so the code will not be executed");
+#else
+			JSStateWrapper* js = JSStateWrapper::Instance();
+			v8::Isolate* isolate = js->isolate();
+
+			isolate->Enter();
+
+			js->Run(message, "console", true);
+
+			isolate->Exit();
+#endif
 		}
 
 		//-----------------------------------------------------------------------------------------------
