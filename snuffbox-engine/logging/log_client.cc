@@ -2,6 +2,8 @@
 #include "log.h" 
 #include "cvar.h"
 
+#include <cctype>
+
 #ifdef SNUFF_JAVASCRIPT
 #include "../js/js_state_wrapper.h"
 #endif
@@ -13,14 +15,17 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LogClient::OnCommand(const logging::LoggingClient::CommandTypes& cmd, const char* message)
 		{
+			String msg = message;
+			Services::Get<LogService>().Log(console::LogSeverity::kDebug, "{0}", msg.c_str());
+
 			switch (cmd)
 			{
 			case CommandTypes::kConsole:
-				OnConsoleCommand(message);
+				OnConsoleCommand(msg.c_str());
 				break;
 
 			case CommandTypes::kJavaScript:
-				OnJSCommand(message);
+				OnJSCommand(msg.c_str());
 				break;
 
 			default:
@@ -128,7 +133,7 @@ namespace snuffbox
 			LogService& log = Services::Get<LogService>();
 			CVarService& cvar = Services::Get<CVarService>();
 
-			if (strlen(args) > 0 && args[0] != ' ')
+			if (strlen(args) == 0 || std::isspace(args[0]) == 0)
 			{
 				return false;
 			}
@@ -143,7 +148,7 @@ namespace snuffbox
 
 				for (int i = 0; i < strlen(args); ++i)
 				{
-					if (args[i] == ' ' && split == false)
+					if (std::isspace(args[i]) != 0 && split == false)
 					{
 						split = true;
 						continue;
@@ -198,7 +203,7 @@ namespace snuffbox
 
 				for (int i = 0; i < strlen(args); ++i)
 				{
-					if (args[i] == ' ')
+					if (std::isspace(args[i]) != 0)
 					{
 						log.Log(console::LogSeverity::kError, "Invalid syntax for command 'get', usage: get <name>");
 						return true;
