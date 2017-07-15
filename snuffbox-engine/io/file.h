@@ -56,6 +56,11 @@ namespace snuffbox
 			* @return (snuffbox::engine::File*) The opened file, File::file_ will be nullptr if opening failed
 			*/
 			static File* Open(const engine::String& path, const unsigned int& flags);
+
+			/**
+			* @brief Closes the file and deallocates all used memory
+			* @param[in] file (snuffbox::engine::File*) The file to close
+			*/
 			static void Close(File* file);
 
 			/**
