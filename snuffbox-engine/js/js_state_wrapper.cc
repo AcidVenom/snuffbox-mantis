@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "js_state_wrapper.h"
+#include "js_wrapper.h"
 #include "js_function_register.h"
 
 #include "../services/log_service.h"
@@ -52,8 +53,21 @@ namespace snuffbox
 			context->Enter();
 
 			instance_ = this;
+			RegisterCommon();
 
 			log.Log(console::LogSeverity::kSuccess, "Successfully initialised V8");
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void JSStateWrapper::RegisterCommon()
+		{
+			JSFunctionRegister funcs[] = {
+				JS_FUNCTION_REG(require),
+				JS_FUNCTION_REG(assert),
+				JS_FUNCTION_REG_END
+			};
+
+			JSFunctionRegister::Register(funcs);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -250,13 +264,21 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(JSStateWrapper, require,
 		{
-			
+			JSWrapper wrapper(args);
+			if (wrapper.Check("S") == true)
+			{
+				engine::String path = wrapper.GetValue<String>(0, "");
+			}
 		});
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(JSStateWrapper, assert,
 		{
-
+			JSWrapper wrapper(args);
+			if (wrapper.Check("BS") == true)
+			{
+				Services::Get<LogService>().Assert(wrapper.GetValue<bool>(0, true), wrapper.GetValue<String>(1, ""));
+			}
 		});
 	}
 }

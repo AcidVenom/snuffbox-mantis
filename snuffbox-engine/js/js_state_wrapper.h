@@ -13,6 +13,8 @@ namespace snuffbox
 	{
 		class SnuffboxApp;
 		class LogClient;
+		class JSWrapper;
+		struct JSFunctionRegister;
 
 		/**
 		* @class snuffbox::engine::JSStateWrapper
@@ -25,6 +27,8 @@ namespace snuffbox
 			friend class SnuffboxApp;
 			friend class Allocator;
 			friend class LogClient;
+			friend class JSWrapper;
+			friend struct JSFunctionRegister;
 
 		protected:
 
@@ -38,6 +42,11 @@ namespace snuffbox
 			* @brief Initialises V8 and the JavaScript context
 			*/
 			void Initialise();
+
+			/**
+			* @brief Registers all common JavaScript functions (e.g. require, assert, etc.)
+			*/
+			void RegisterCommon();
 
 			/**
 			* @brief Creates the global scope and returns it

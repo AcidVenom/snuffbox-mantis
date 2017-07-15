@@ -95,7 +95,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LogService::Assert(const bool& expr, const String& message)
+		void LogService::DoAssert(const bool& expr, const String& message)
 		{
 			if (expr == false)
 			{

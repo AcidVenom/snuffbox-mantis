@@ -4,10 +4,10 @@
 
 namespace snuffbox
 {
-	namespace javascript
+	namespace engine
 	{
 		/**
-		* @struct snuffbox::javascript::JSFunctionRegister
+		* @struct snuffbox::engine::JSFunctionRegister
 		* @brief A description to expose different C++ functions to JavaScript
 		* @author Daniël Konings
 		*/
@@ -18,7 +18,7 @@ namespace snuffbox
 
 			/**
 			* @brief Registers the provided functions to an object template
-			* @param[in] funcs (snuffbox::javascript::JSFunctionRegister*) The functions to register
+			* @param[in] funcs (snuffbox::engine::JSFunctionRegister*) The functions to register
 			* @param[in] obj (const v8::Handle<v8::ObjectTemplate>&) The object template to register the functions to
 			* @remarks The functions should contain a null-terminated function register for counting
 			*/
@@ -26,7 +26,7 @@ namespace snuffbox
 
 			/**
 			* @brief Registers the provided functions to an object
-			* @param[in] funcs (snuffbox::javascript::JSFunctionRegister*) The functions to register
+			* @param[in] funcs (snuffbox::engine::JSFunctionRegister*) The functions to register
 			* @param[in] obj (const v8::Handle<v8::Object>&) The object to register the functions to
 			* @remarks The functions should contain a null-terminated function register for counting
 			*/
@@ -34,10 +34,10 @@ namespace snuffbox
 
 			/**
 			* @brief Registers the provided functions in the global scope
-			* @param[in] funcs (snuffbox::javascript::JSFunctionRegister*) The functions to register
+			* @param[in] funcs (snuffbox::engine::JSFunctionRegister*) The functions to register
 			* @remarks The functions should contain a null-terminated function register for counting
 			*/
-			static void RegisterGlobal(JSFunctionRegister* funcs);
+			static void Register(JSFunctionRegister* funcs);
 		};
 	}
 }

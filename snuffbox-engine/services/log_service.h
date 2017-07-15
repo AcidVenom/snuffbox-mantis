@@ -169,7 +169,7 @@ namespace snuffbox
 			* @param[in] expr (const bool&) The expression to evaluate
 			* @param[in] message (const snuffbox::engine::String&) The message to log with fatal severity if the evaluation was false
 			*/
-			virtual void Assert(const bool& expr, const String& message);
+			virtual void DoAssert(const bool& expr, const String& message);
 		};
 
 		//-----------------------------------------------------------------------------------------------
@@ -313,14 +313,16 @@ namespace snuffbox
 		template <typename ... Args>
 		inline void LogService::Assert(const bool& expr, const String& message, const Args&... args)
 		{
+			String formatted = FormatString(message, nullptr, args...);
+
 #ifdef SNUFF_DEBUG
 			if (expr == false)
 			{
 				printf("Assertion failed: %s\n", formatted.c_str());
 			}
 #endif
-			String formatted = FormatString(message, nullptr, args...);
-			Assert(expr, formatted);
+
+			DoAssert(expr, formatted);
 		}
 	}
 }

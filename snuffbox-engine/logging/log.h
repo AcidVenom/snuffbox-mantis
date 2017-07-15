@@ -78,9 +78,9 @@ namespace snuffbox
 			void RGB(const String& message, const console::LogColour& colour) override;
 
 			/**
-			* @see snuffbox::engine::LogService::Assert
+			* @see snuffbox::engine::LogService::DoAssert
 			*/
-			void Assert(const bool& expr, const String& message) override;
+			void DoAssert(const bool& expr, const String& message) override;
 
 		private:
 
