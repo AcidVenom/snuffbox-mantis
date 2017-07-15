@@ -1,5 +1,6 @@
 #include "content_manager.h"
 #include "../services/log_service.h"
+#include "../logging/cvar.h"
 
 namespace snuffbox
 {
@@ -14,7 +15,24 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void ContentManager::Initialise(CVar* cvar)
 		{
+			LogService& log = Services::Get<LogService>();
+			CVarString* src = cvar->Get<CVarString>("src_directory");
 
+			if (src != nullptr)
+			{
+				src_directory_ = src->value();
+
+				log.Log(console::LogSeverity::kInfo, "Set the source directory of the project to '{0}'", src_directory_.c_str());
+
+				return;
+			}
+			else
+			{
+				src_directory_ = "";
+				cvar->Set<CVarString>("src_directory", "");
+
+				log.Log(console::LogSeverity::kInfo, "Set the source directory of the project to the target root directory");
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -74,5 +92,28 @@ namespace snuffbox
 
 			log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was never loaded, skipping unload", path.c_str());
 		}
+
+		//-----------------------------------------------------------------------------------------------
+		JS_REGISTER_IMPL_SINGLE(ContentManager, JS_BODY({
+			
+			JSFunctionRegister funcs[] =
+			{
+				JS_FUNCTION_REG(load),
+				JS_FUNCTION_REG(unload),
+				JS_FUNCTION_REG_END
+			};
+
+			JSFunctionRegister::Register(funcs, obj);
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(ContentManager, load, JS_BODY({
+
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(ContentManager, unload, JS_BODY({
+
+		}));
 	}
 }

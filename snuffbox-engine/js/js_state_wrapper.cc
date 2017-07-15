@@ -283,7 +283,7 @@ namespace snuffbox
 			{
 				engine::String path = wrapper.GetValue<String>(0, "");
 			}
-		}))
+		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(JSStateWrapper, assert, JS_BODY({
@@ -292,6 +292,6 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Assert(wrapper.GetValue<bool>(0, true), wrapper.GetValue<String>(1, ""));
 			}
-		}))
+		}));
 	}
 }

@@ -10,14 +10,18 @@ namespace snuffbox
 	namespace engine
 	{
 		class CVar;
+		class SnuffboxApp;
 
 		/**
-		* @class snuffbox::engine::ContentManager : public snuffbox::engine::ContentService
+		* @class snuffbox::engine::ContentManager : [JSObject] public snuffbox::engine::ContentService
 		* @brief The content manager to load, unload and reload all content with
 		* @author Daniël Konings
 		*/
 		class ContentManager : JS_OBJECT_MULTI public ContentService
 		{
+
+			friend class SnuffboxApp;
+			friend class Allocator;
 
 		protected:
 
@@ -51,6 +55,8 @@ namespace snuffbox
 
 			typedef Map<String, SharedPtr<ContentBase>> ContentMap;
 			ContentMap loaded_content_[ContentBase::Types::kCount]; //!< The currently loaded content per content type
+
+			String src_directory_; //!< The working directory
 
 		public:
 

@@ -3,6 +3,8 @@
 #include "../services/cvar_service.h"
 #include "../memory/memory.h"
 
+#include "../js/js_defines.h"
+
 namespace snuffbox
 {
 	namespace engine
@@ -11,11 +13,11 @@ namespace snuffbox
 		class Allocator;
 
 		/**
-		* @class snuffbox::engine::CVar
+		* @class snuffbox::engine::CVar : [JSObject] public snuffbox::engine::CVarService
 		* @brief A CVar service to store and retrieve CVars set via the command line or console
 		* @author Daniël Konings
 		*/
-		class CVar : public CVarService
+		class CVar : JS_OBJECT_MULTI public CVarService
 		{
 
 			friend class SnuffboxApp;
@@ -86,6 +88,12 @@ namespace snuffbox
 			typedef Map<String, SharedPtr<CVarBase>> CVarMap;
 
 			CVarMap cvars_[CVarBase::CVarTypes::kCount]; //!< All the currently stored CVars
+
+		public:
+
+			JS_NAME_SINGLE(CVar);
+			JS_FUNCTION_DECL(set);
+			JS_FUNCTION_DECL(get);
 		};
 
 		//-----------------------------------------------------------------------------------------------

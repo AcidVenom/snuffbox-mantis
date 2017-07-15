@@ -162,6 +162,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		JS_REGISTER_IMPL_SINGLE(Log, JS_BODY({
+			
 			JSFunctionRegister funcs[] =
 			{
 				JS_FUNCTION_REG(debug),
@@ -175,7 +176,7 @@ namespace snuffbox
 			};
 
 			JSFunctionRegister::Register(funcs, obj);
-		}))
+		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Log, debug, JS_BODY({
@@ -184,7 +185,7 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Log(console::LogSeverity::kDebug, wrapper.GetValue<String>(0, ""));
 			}
-		}))
+		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Log, info, JS_BODY({
@@ -193,7 +194,7 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Log(console::LogSeverity::kInfo, wrapper.GetValue<String>(0, ""));
 			}
-		}))
+		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Log, success, JS_BODY({
@@ -202,7 +203,7 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Log(console::LogSeverity::kSuccess, wrapper.GetValue<String>(0, ""));
 			}
-		}))
+		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Log, warning, JS_BODY({
@@ -211,7 +212,7 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Log(console::LogSeverity::kWarning, wrapper.GetValue<String>(0, ""));
 			}
-		}))
+		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Log, error, JS_BODY({
@@ -220,7 +221,7 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Log(console::LogSeverity::kError, wrapper.GetValue<String>(0, ""));
 			}
-		}))
+		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Log, fatal, JS_BODY({
@@ -229,7 +230,7 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Log(console::LogSeverity::kFatal, wrapper.GetValue<String>(0, ""));
 			}
-		}))
+		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Log, rgb, JS_BODY({
@@ -248,6 +249,6 @@ namespace snuffbox
 
 				Services::Get<LogService>().Log(console::LogSeverity::kRGB, wrapper.GetValue<String>(0, ""), col);
 			}
-		}))
+		}));
 	}
 }

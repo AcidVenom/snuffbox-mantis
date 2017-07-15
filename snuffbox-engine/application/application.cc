@@ -3,6 +3,7 @@
 
 #include "../logging/log.h"
 #include "../logging/cvar.h"
+#include "../io/content_manager.h"
 
 #include <iostream>
 
@@ -50,12 +51,17 @@ namespace snuffbox
 		{
 			cvar_service_ = Memory::ConstructUnique<CVar>();
 			log_service_ = Memory::ConstructUnique<Log>();
+			content_service_ = Memory::ConstructUnique<ContentManager>();
 
 			cvar_service_->ParseCommandLine(argc, argv);
 			log_service_->Initialise(cvar_service_.get());
 
 			Services::Provide<CVarService>(cvar_service_.get());
 			Services::Provide<LogService>(log_service_.get());
+
+			content_service_->Initialise(cvar_service_.get());
+
+			Services::Provide<ContentService>(content_service_.get());
 
 #ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
@@ -79,6 +85,7 @@ namespace snuffbox
 
 			Services::Remove<CVarService>();
 			Services::Remove<LogService>();
+			Services::Remove<ContentService>();
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -13,6 +13,7 @@ namespace snuffbox
 	{
 		class Log;
 		class CVar;
+		class ContentManager;
 
 #ifdef SNUFF_JAVASCRIPT
 		class JSStateWrapper;
@@ -108,6 +109,7 @@ namespace snuffbox
 
 			UniquePtr<Log> log_service_; //!< The logging service
 			UniquePtr<CVar> cvar_service_; //!< The CVar service
+			UniquePtr<ContentManager> content_service_; //!< The content service
 		};
 	}
 }
