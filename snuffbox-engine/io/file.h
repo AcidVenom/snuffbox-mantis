@@ -10,6 +10,11 @@ namespace snuffbox
 	{
 		class Allocator;
 
+		/**
+		* @class snuffbox::engine::File
+		* @brief A helper class for cross-platform file reading/writing
+		* @author Daniël Konings
+		*/
 		class File
 		{
 
@@ -22,6 +27,9 @@ namespace snuffbox
 			*/
 			File();
 
+			/**
+			* @brief Remove copy constructor from public scope
+			*/
 			File(const File& other) = default;
 
 			/**
@@ -31,17 +39,33 @@ namespace snuffbox
 
 		public:
 
+			/**
+			* @brief Bit-shiftable access flags for the access mode of the file
+			*/
 			enum AccessFlags : unsigned int
 			{
-				kRead = 0x1,
-				kWrite = 0x2,
-				kBinary = 0x4
+				kRead = 0x1, //!< Read access
+				kWrite = 0x2, //!< Write access
+				kBinary = 0x4 //!< Binary read
 			};
 
+			/**
+			* @brief Opens the file for use with specified access flags
+			* @param[in] path (const snuffbox::engine::String&) The path to load the file from
+			* @param[in] flags (const unsigned int&) The access flags to open the file with
+			* @return (snuffbox::engine::File*) The opened file, File::file_ will be nullptr if opening failed
+			*/
 			static File* Open(const engine::String& path, const unsigned int& flags);
 			static void Close(File* file);
 
+			/**
+			* @return (const unsigned char*) The file's buffer as a binary format
+			*/
 			const unsigned char* Binary();
+
+			/**
+			* @return (const char*) The file's buffer as a string format
+			*/
 			const char* String();
 
 			/**
