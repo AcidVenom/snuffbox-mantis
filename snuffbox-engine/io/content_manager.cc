@@ -1,6 +1,10 @@
 #include "content_manager.h"
+#include "file.h"
+
 #include "../services/log_service.h"
 #include "../logging/cvar.h"
+
+#include "script.h"
 
 namespace snuffbox
 {
@@ -66,9 +70,25 @@ namespace snuffbox
 				return it->second.get();
 			}
 
+			String full_path = src_directory_ + "/" + path;
+
 			ContentBase* content = nullptr;
+			
+			switch (type)
+			{
+			case ContentBase::Types::kScript:
+				content = Memory::default_allocator().Construct<Script>();
+				break;
+
+			default:
+				break;
+			}
 
 			log.Assert(content != nullptr, "Content to be loaded from path '{0}' with type '{1}' was null after file reading", path.c_str(), type);
+
+			File* f = File::Open(full_path, File::AccessFlags::kRead | File::AccessFlags::kBinary);
+			content->Load(f);
+			File::Close(f);
 
 			SharedPtr<ContentBase> shared = Memory::MakeShared<ContentBase>(content);
 			map.emplace(path, shared);

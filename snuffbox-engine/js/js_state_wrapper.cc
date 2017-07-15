@@ -7,6 +7,9 @@
 #include "js_object_register.h"
 
 #include "../services/log_service.h"
+#include "../services/content_service.h"
+
+#include "../io/script.h"
 
 using namespace v8;
 
@@ -233,7 +236,7 @@ namespace snuffbox
 
 			TryCatch try_catch;
 
-			Local<Script> script = Script::Compile(v8::String::NewFromUtf8(isolate_, src.c_str()), v8::String::NewFromUtf8(isolate_, file_name.c_str()));
+			Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate_, src.c_str()), v8::String::NewFromUtf8(isolate_, file_name.c_str()));
 			Local<Value> result = script->Run();
 
 			if (result.IsEmpty() == true)
@@ -281,7 +284,8 @@ namespace snuffbox
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
-				engine::String path = wrapper.GetValue<String>(0, "");
+				engine::String path = wrapper.GetValue<engine::String>(0, "");
+				Services::Get<ContentService>().Load<engine::Script>(path);
 			}
 		}));
 
@@ -290,7 +294,7 @@ namespace snuffbox
 			JSWrapper wrapper(args);
 			if (wrapper.Check("BS") == true)
 			{
-				Services::Get<LogService>().Assert(wrapper.GetValue<bool>(0, true), wrapper.GetValue<String>(1, ""));
+				Services::Get<LogService>().Assert(wrapper.GetValue<bool>(0, true), wrapper.GetValue<engine::String>(1, ""));
 			}
 		}));
 	}

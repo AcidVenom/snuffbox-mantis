@@ -9,6 +9,7 @@
 
 #ifdef SNUFF_JAVASCRIPT
 #include "../js/js_state_wrapper.h"
+#include "../io/script.h"
 #endif
 
 namespace snuffbox
@@ -66,6 +67,8 @@ namespace snuffbox
 #ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
 			js_state_wrapper_->Initialise();
+
+			content_service_->Load<Script>("main.js");
 #endif
 
 			cvar_service_->LogAll();

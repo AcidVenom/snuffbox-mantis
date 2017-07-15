@@ -6,33 +6,38 @@ namespace snuffbox
 	{
 		class File;
 
-		template <int T>
-		class Content;
-		class ContentManager;
-		class ContentService;
-
 		/**
-		* @struct snuffbox::engine::ContentBase
+		* @class snuffbox::engine::ContentBase
 		* @brief The base class for every type of content to use
 		* @author Daniël Konings
 		*/
-		struct ContentBase
+		class ContentBase
 		{
-			template <int T>
-			friend class Content;
-			friend class ContentManager;
-			friend class ContentService;
 
-		protected:
+		public:
 
 			/**
 			* @brief The types of content available
 			*/
 			enum Types : int
 			{
-				kJavaScript, //!< The JavaScript file type
+				kScript, //!< The JavaScript file type
 				kCount //!< The total number of types
 			};
+
+			/**
+			* @brief Loads the actual data from a provided file
+			* @param[in] file (snuffbox::engine::File*) The file to load the data of this content from
+			* @return (bool) Was the load a success?
+			*/
+			virtual bool Load(File* file) = 0;
+
+			/**
+			* @brief Reloads the actual data from a provided file
+			* @param[in] file (snuffbox::engine::File*) The file to reload the data of this content from
+			* @return (bool) Was the reload a success?
+			*/
+			virtual bool Reload(File* file) = 0;
 		};
 
 		/**
@@ -45,20 +50,6 @@ namespace snuffbox
 		{
 
 			friend class ContentService;
-
-		public:
-
-			/**
-			* @brief Loads the actual data from a provided file
-			* @param[in] file (const snuffbox::engine::File*) The file to load the data of this content from
-			*/
-			virtual void Load(const File* file) = 0;
-
-			/**
-			* @brief Reloads the actual data from a provided file
-			* @param[in] file (const snuffbox::engine::File*) The file to reload the data of this content from
-			*/
-			virtual void Reload(const File* file) = 0;
 
 		protected:
 

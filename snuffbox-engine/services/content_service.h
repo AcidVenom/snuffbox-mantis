@@ -30,6 +30,16 @@ namespace snuffbox
 		public:
 
 			/**
+			* @brief Delete copy constructor
+			*/
+			ContentService(const ContentService& other) = delete;
+
+			/**
+			* @brief Delete assignment operator
+			*/
+			ContentService operator=(const ContentService& other) = delete;
+
+			/**
 			* @brief Retrieves a piece of content of type T from a path
 			* @param[in] path (const String&) The path to retrieve the content from
 			* @return (T*) A pointer to the retrieved content, or nullptr if it doesn't exist
@@ -78,7 +88,7 @@ namespace snuffbox
 		inline T* ContentService::Get(const String& path)
 		{
 			static_assert(is_content<T>::value, "Attempted to Get content of a non-content type T");
-			ContentBase* ptr = GetContent(path, T::TYPE_ID);
+			ContentBase* ptr = GetContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID));
 			return static_cast<T*>(ptr);
 		}
 
@@ -87,7 +97,7 @@ namespace snuffbox
 		inline T* ContentService::Load(const String& path)
 		{
 			static_assert(is_content<T>::value, "Attempted to Load content of a non-content type T");
-			ContentBase* ptr = LoadContent(path, T::TYPE_ID);
+			ContentBase* ptr = LoadContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID));
 			return static_cast<T*>(ptr);
 		}
 
@@ -96,7 +106,7 @@ namespace snuffbox
 		inline void ContentService::Unload(const String& path)
 		{
 			static_assert(is_content<T>::value, "Attempted to Unload content of a non-content type T");
-			UnloadContent(path, T::TYPE_ID);
+			UnloadContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID));
 		}
 	}
 }
