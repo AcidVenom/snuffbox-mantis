@@ -57,6 +57,14 @@ namespace snuffbox
 			static SharedPtr<T> ConstructShared(Args&&... args);
 
 			/**
+			* @brief Makes a raw pointer a shared pointer
+			* @param[in] ptr (T*) The raw pointer
+			* @return (snuffbox::engine::SharedPtr<T>) The constructed shared pointer
+			*/
+			template <typename T>
+			static SharedPtr<T> MakeShared(T* ptr);
+
+			/**
 			* @brief Constructs a unique pointer with the EASTL allocator
 			* @param[in] args (Args&&...) The arguments to pass to the constructor
 			* @remarks Classes that will be constructed through this interface require friendship with snuffbox::engine::Allocator
@@ -105,6 +113,13 @@ namespace snuffbox
 		inline SharedPtr<T> Memory::ConstructShared(Args&&... args)
 		{
 			T* ptr = EASTL_ALLOCATOR.Construct<T>(std::forward<Args>(args)...);
+			return eastl::shared_ptr<T>(ptr, EASTLDeleter<T>(), EASTLAllocator());
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		template <typename T>
+		inline SharedPtr<T> Memory::MakeShared(T* ptr)
+		{
 			return eastl::shared_ptr<T>(ptr, EASTLDeleter<T>(), EASTLAllocator());
 		}
 
