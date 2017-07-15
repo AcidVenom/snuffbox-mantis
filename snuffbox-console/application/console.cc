@@ -220,6 +220,10 @@ namespace snuffbox
 
 			col = msg.colour.background;
 			bg_col.Set(col.r, col.g, col.b, 255);
+			if (col.r == 0 && col.g == 0 && col.b == 0)
+			{
+				bg_col = BACKGROUND_COLOUR_;
+			}
 
 			output_console->MoveEnd();
 

@@ -239,13 +239,13 @@ namespace snuffbox
 			{
 				console::LogColour col;
 
-				col.background.r = static_cast<unsigned char>(wrapper.GetValue<float>(1, 0.0f));
-				col.background.g = static_cast<unsigned char>(wrapper.GetValue<float>(2, 0.0f));
-				col.background.b = static_cast<unsigned char>(wrapper.GetValue<float>(3, 0.0f));
-				
-				col.foreground.r = static_cast<unsigned char>(wrapper.GetValue<float>(4, 255.0f));
-				col.foreground.g = static_cast<unsigned char>(wrapper.GetValue<float>(5, 255.0f));
-				col.foreground.b = static_cast<unsigned char>(wrapper.GetValue<float>(6, 255.0f));
+				col.foreground.r = static_cast<unsigned char>(wrapper.GetValue<float>(1, 255.0f));
+				col.foreground.g = static_cast<unsigned char>(wrapper.GetValue<float>(2, 255.0f));
+				col.foreground.b = static_cast<unsigned char>(wrapper.GetValue<float>(3, 255.0f));
+
+				col.background.r = static_cast<unsigned char>(wrapper.GetValue<float>(4, 0.0f));
+				col.background.g = static_cast<unsigned char>(wrapper.GetValue<float>(5, 0.0f));
+				col.background.b = static_cast<unsigned char>(wrapper.GetValue<float>(6, 0.0f));
 
 				Services::Get<LogService>().Log(console::LogSeverity::kRGB, wrapper.GetValue<String>(0, ""), col);
 			}

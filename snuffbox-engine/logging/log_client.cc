@@ -16,7 +16,11 @@ namespace snuffbox
 		void LogClient::OnCommand(const logging::LoggingClient::CommandTypes& cmd, const char* message)
 		{
 			String msg = message;
-			Services::Get<LogService>().Log(console::LogSeverity::kDebug, "{0}", msg.c_str());
+			console::LogColour colour;
+			colour.foreground = { 200, 0, 200 };
+			colour.background = { 0, 0, 0 };
+
+			Services::Get<LogService>().Log(console::LogSeverity::kRGB, "{0}", msg.c_str(), colour);
 
 			switch (cmd)
 			{
