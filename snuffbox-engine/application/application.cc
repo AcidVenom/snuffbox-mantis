@@ -33,6 +33,7 @@ namespace snuffbox
 
 			while (std::cin.get() != 'q')
 			{
+				content_service_->Update();
 				OnUpdate();
 			}
 

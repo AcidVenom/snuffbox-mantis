@@ -227,6 +227,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, const bool& echo) const
 		{
+			isolate_->Enter();
+
 			HandleScope scope(isolate_);
 
 			LogService& log = Services::Get<LogService>();

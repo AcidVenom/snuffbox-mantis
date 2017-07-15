@@ -3,6 +3,15 @@
 #include <stdio.h>
 
 #include "../core/eastl.h"
+#include <time.h>
+
+#ifdef SNUFF_WIN32
+#define fopen(out, path, flags) fopen_s(&out, path, flags);
+#define fread(out, size, file) fread_s(out, size, size, 1, file)
+#else
+#define fopen(out, path, flags) out = fopen(path, flags);
+#define fread(out, size, file) fread(&out, size, 1, file);
+#endif
 
 namespace snuffbox
 {

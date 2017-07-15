@@ -26,8 +26,6 @@ namespace snuffbox
 		{
 			engine::LogService& log = engine::Services::Get<engine::LogService>();
 			engine::CVarService& cvar = engine::Services::Get<engine::CVarService>();
-
-			log.Log(console::LogSeverity::kDebug, "Update");
 		}
 
 		//-----------------------------------------------------------------------------------------------

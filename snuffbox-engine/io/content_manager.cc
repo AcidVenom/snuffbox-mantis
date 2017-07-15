@@ -11,7 +11,8 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		ContentManager::ContentManager()
+		ContentManager::ContentManager() :
+			watch_(FileWatch(this))
 		{
 
 		}
@@ -40,12 +41,46 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void ContentManager::Reload(const String& path)
+		{
+			for (int i = 0; i < ContentBase::Types::kCount; ++i)
+			{
+				ContentMap& map = loaded_content_[i];
+				
+				ContentMap::iterator it = map.find(path);
+				if (it != map.end())
+				{
+					File* f = File::Open(path, File::AccessFlags::kRead | File::AccessFlags::kBinary);
+					it->second->Reload(f);
+					File::Close(f);
+
+					break;
+				}
+			}
+
+			Services::Get<LogService>().Log(console::LogSeverity::kInfo, "Reloaded file: '{0}'", path.c_str());
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void ContentManager::Update()
+		{
+			CVarBoolean* reload = Services::Get<CVarService>().Get<CVarBoolean>("reload");
+
+			if (reload != nullptr && reload->value() == true)
+			{
+				watch_.Update();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		ContentBase* ContentManager::GetContent(const String& path, const ContentBase::Types& type)
 		{
 			LogService& log = Services::Get<LogService>();
 
+			String full_path = FullPath(path);
+
 			ContentMap& map = loaded_content_[type];
-			ContentMap::iterator it = map.find(path);
+			ContentMap::iterator it = map.find(full_path);
 
 			if (it != map.end())
 			{
@@ -70,7 +105,7 @@ namespace snuffbox
 				return it->second.get();
 			}
 
-			String full_path = src_directory_ + "/" + path;
+			String full_path = FullPath(path);
 
 			ContentBase* content = nullptr;
 			
@@ -91,26 +126,38 @@ namespace snuffbox
 			File::Close(f);
 
 			SharedPtr<ContentBase> shared = Memory::MakeShared<ContentBase>(content);
-			map.emplace(path, shared);
+			map.emplace(full_path, shared);
 			
+			watch_.Add(full_path);
+
 			return shared.get();
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void ContentManager::UnloadContent(const String& path, const ContentBase::Types& type)
 		{
+			String full_path = FullPath(path);
+
 			LogService& log = Services::Get<LogService>();
 
 			ContentMap& map = loaded_content_[type];
-			ContentMap::iterator it = map.find(path);
+			ContentMap::iterator it = map.find(full_path);
 
 			if (it != map.end())
 			{
+				watch_.Remove(full_path);
+
 				map.erase(it);
 				return;
 			}
 
 			log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was never loaded, skipping unload", path.c_str());
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		String ContentManager::FullPath(const String& path) const
+		{
+			return src_directory_ + "/" + path;
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -3,14 +3,6 @@
 #include "../services/log_service.h"
 #include "../memory/memory.h"
 
-#ifdef SNUFF_WIN32
-#define fopen(out, path, flags) fopen_s(&out, path, flags);
-#define fread(out, size, file) fread_s(out, size, size, 1, file)
-#else
-#define fopen(out, path, flags) out = fopen(path, flags);
-#define fread(out, size, file) fread(&out, size, 1, file);
-#endif
-
 namespace snuffbox
 {
 	namespace engine
@@ -80,7 +72,6 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void File::Close(File* file)
 		{
-			assert(file != nullptr);
 			Memory::default_allocator().Destruct<File>(file);
 		}
 

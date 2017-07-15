@@ -220,6 +220,11 @@ namespace snuffbox
 		{
 			std::lock_guard<std::recursive_mutex> lock(connection_mutex_);
 
+			if (socket_->connected_ == false)
+			{
+				return;
+			}
+
 			PacketHeader header;
 			header.command = cmd;
 			header.size = size;
