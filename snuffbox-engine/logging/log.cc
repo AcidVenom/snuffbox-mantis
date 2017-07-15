@@ -159,5 +159,95 @@ namespace snuffbox
 				SNUFF_ASSERT();
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------
+		JS_REGISTER_IMPL_SINGLE(Log, JS_BODY({
+			JSFunctionRegister funcs[] =
+			{
+				JS_FUNCTION_REG(debug),
+				JS_FUNCTION_REG(info),
+				JS_FUNCTION_REG(success),
+				JS_FUNCTION_REG(warning),
+				JS_FUNCTION_REG(error),
+				JS_FUNCTION_REG(fatal),
+				JS_FUNCTION_REG(rgb),
+				JS_FUNCTION_REG_END
+			};
+
+			JSFunctionRegister::Register(funcs, obj);
+		}))
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Log, debug, JS_BODY({
+			JSWrapper wrapper(args);
+			if (wrapper.Check("S") == true)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kDebug, wrapper.GetValue<String>(0, ""));
+			}
+		}))
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Log, info, JS_BODY({
+			JSWrapper wrapper(args);
+			if (wrapper.Check("S") == true)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kInfo, wrapper.GetValue<String>(0, ""));
+			}
+		}))
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Log, success, JS_BODY({
+			JSWrapper wrapper(args);
+			if (wrapper.Check("S") == true)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kSuccess, wrapper.GetValue<String>(0, ""));
+			}
+		}))
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Log, warning, JS_BODY({
+			JSWrapper wrapper(args);
+			if (wrapper.Check("S") == true)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kWarning, wrapper.GetValue<String>(0, ""));
+			}
+		}))
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Log, error, JS_BODY({
+			JSWrapper wrapper(args);
+			if (wrapper.Check("S") == true)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kError, wrapper.GetValue<String>(0, ""));
+			}
+		}))
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Log, fatal, JS_BODY({
+			JSWrapper wrapper(args);
+			if (wrapper.Check("S") == true)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kFatal, wrapper.GetValue<String>(0, ""));
+			}
+		}))
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Log, rgb, JS_BODY({
+			JSWrapper wrapper(args);
+			if (wrapper.Check("S") == true)
+			{
+				console::LogColour col;
+
+				col.background.r = static_cast<unsigned char>(wrapper.GetValue<float>(1, 0.0f));
+				col.background.g = static_cast<unsigned char>(wrapper.GetValue<float>(2, 0.0f));
+				col.background.b = static_cast<unsigned char>(wrapper.GetValue<float>(3, 0.0f));
+				
+				col.foreground.r = static_cast<unsigned char>(wrapper.GetValue<float>(4, 255.0f));
+				col.foreground.g = static_cast<unsigned char>(wrapper.GetValue<float>(5, 255.0f));
+				col.foreground.b = static_cast<unsigned char>(wrapper.GetValue<float>(6, 255.0f));
+
+				Services::Get<LogService>().Log(console::LogSeverity::kRGB, wrapper.GetValue<String>(0, ""), col);
+			}
+		}))
 	}
 }

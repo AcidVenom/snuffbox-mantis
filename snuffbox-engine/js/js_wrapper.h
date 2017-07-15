@@ -7,7 +7,7 @@
 
 #include "../core/eastl.h"
 
-#define JS_SETUP(type) JSWrapper wrapper(args); type* self = wrapper.GetPointer<type>(args.This());
+#define JS_SETUP(type) JSWrapper wrapper(args); type* self = wrapper.GetPointer<type>(args.This())
 
 namespace snuffbox
 {
@@ -260,9 +260,11 @@ namespace snuffbox
 				return nullptr;
 			}
 
-			v8::Local<v8::Value> ext = obj->GetHiddenValue(v8::String::NewFromUtf8(JSStateWrapper::Instance()->isolate(), "__ptr"));
+			JSStateWrapper* wrapper = JSStateWrapper::Instance();
+			v8::Local<v8::Value> ext = obj->GetPrivate(wrapper->Context(), 
+				v8::Private::ForApi(wrapper->isolate(), v8::String::NewFromUtf8(wrapper->isolate(), "__ptr"))).ToLocalChecked();
 
-			if (ext.IsEmpty() || ext->IsExternal() == false)
+			if (ext.IsEmpty() && ext->IsExternal())
 			{
 				return nullptr;
 			}
@@ -282,9 +284,11 @@ namespace snuffbox
 				return nullptr;
 			}
 
-			v8::Local<v8::Value> ext = obj->GetHiddenValue(v8::String::NewFromUtf8(JSStateWrapper::Instance()->isolate(), "__ptr"));
+			JSStateWrapper* wrapper = JSStateWrapper::Instance();
+			v8::Local<v8::Value> ext = obj->GetPrivate(wrapper->Context(), 
+				v8::Private::ForApi(wrapper->isolate(), v8::String::NewFromUtf8(wrapper->isolate(), "__ptr"))).ToLocalChecked();
 
-			if (ext.IsEmpty() || ext->IsExternal() == false)
+			if (ext.IsEmpty() && ext->IsExternal())
 			{
 				return nullptr;
 			}

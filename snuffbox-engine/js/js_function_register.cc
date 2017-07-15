@@ -62,7 +62,7 @@ namespace snuffbox
 			int current = -1;
 			while (funcs[++current].name != nullptr)
 			{
-				global->Set(v8::String::NewFromUtf8(isolate, funcs[current].name), Function::New(isolate, funcs[current].function));
+				wrapper->RegisterGlobal(funcs[current].name, Function::New(isolate, funcs[current].function));
 			}
 		}
 	}

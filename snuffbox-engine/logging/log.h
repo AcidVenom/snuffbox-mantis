@@ -5,6 +5,8 @@
 
 #include "log_client.h"
 
+#include "../js/js_defines.h" 
+
 namespace snuffbox
 {
 	namespace engine
@@ -18,7 +20,7 @@ namespace snuffbox
 		* @brief The logging system to log all types of different messages and throw assertions with
 		* @author Daniël Konings
 		*/
-		class Log : public LogService
+		class Log : JS_OBJECT_MULTI public LogService
 		{
 
 			friend class SnuffboxApp;
@@ -87,6 +89,18 @@ namespace snuffbox
 			bool enabled_; //!< Has the console been enabled?
 			LogClient client_; //!< The logging client
 			logging::LoggingStream stream_; //!< The logging stream
+
+		public:
+
+			JS_NAME_SINGLE(Log);
+
+			JS_FUNCTION_DECL(debug);
+			JS_FUNCTION_DECL(info);
+			JS_FUNCTION_DECL(success);
+			JS_FUNCTION_DECL(warning);
+			JS_FUNCTION_DECL(error);
+			JS_FUNCTION_DECL(fatal);
+			JS_FUNCTION_DECL(rgb);
 		};
 	}
 }

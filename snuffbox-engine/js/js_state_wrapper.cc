@@ -1,9 +1,10 @@
-#include <libplatform\libplatform.h>
+#include <libplatform/libplatform.h>
 #include <algorithm>
 
 #include "js_state_wrapper.h"
-#include "js_wrapper.h"
+#include "js_defines.h"
 #include "js_function_register.h"
+#include "js_object_register.h"
 
 #include "../services/log_service.h"
 
@@ -47,27 +48,16 @@ namespace snuffbox
 			Handle<ObjectTemplate> global = CreateGlobal();
 			global_.Reset(isolate_, global);
 
-			Handle<Context> context = CreateContext(global);
+			Handle<v8::Context> context = CreateContext(global);
 			context_.Reset(isolate_, context);
 
 			context->Enter();
 
 			instance_ = this;
 			RegisterCommon();
+			JSRegister::Register();
 
 			log.Log(console::LogSeverity::kSuccess, "Successfully initialised V8");
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void JSStateWrapper::RegisterCommon()
-		{
-			JSFunctionRegister funcs[] = {
-				JS_FUNCTION_REG(require),
-				JS_FUNCTION_REG(assert),
-				JS_FUNCTION_REG_END
-			};
-
-			JSFunctionRegister::Register(funcs);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -165,6 +155,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void JSStateWrapper::RegisterGlobal(const char* name, const Handle<Value>& value)
+		{
+			Local<Object> global = Global();
+			global->Set(v8::String::NewFromUtf8(isolate_, name), value);
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void JSStateWrapper::CollectGarbage()
 		{
 			LogService& log = Services::Get<LogService>();
@@ -209,7 +206,13 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		Local<Object> JSStateWrapper::Global() const
 		{
-			return Local<Context>::New(isolate_, context_)->Global();
+			return Local<v8::Context>::New(isolate_, context_)->Global();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		Local<Context> JSStateWrapper::Context() const
+		{
+			return Local<v8::Context>::New(isolate_, context_);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -225,7 +228,7 @@ namespace snuffbox
 
 			LogService& log = Services::Get<LogService>();
 
-			Local<Context> context = Local<Context>::New(isolate_, context_);
+			Local<v8::Context> context = Local<v8::Context>::New(isolate_, context_);
 			Context::Scope context_scope(context);
 
 			TryCatch try_catch;
@@ -262,23 +265,33 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(JSStateWrapper, require,
+		void JSStateWrapper::RegisterCommon()
 		{
+			JSFunctionRegister funcs[] = {
+				JS_FUNCTION_REG(require),
+				JS_FUNCTION_REG(assert),
+				JS_FUNCTION_REG_END
+			};
+
+			JSFunctionRegister::Register(funcs);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(JSStateWrapper, require, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
 				engine::String path = wrapper.GetValue<String>(0, "");
 			}
-		});
+		}))
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(JSStateWrapper, assert,
-		{
+		JS_FUNCTION_IMPL(JSStateWrapper, assert, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("BS") == true)
 			{
 				Services::Get<LogService>().Assert(wrapper.GetValue<bool>(0, true), wrapper.GetValue<String>(1, ""));
 			}
-		});
+		}))
 	}
 }

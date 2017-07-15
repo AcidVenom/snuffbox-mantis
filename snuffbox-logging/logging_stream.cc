@@ -136,11 +136,11 @@ namespace snuffbox
 
 			if (severity == console::LogSeverity::kRGB && col_fg != nullptr && col_bg != nullptr)
 			{
-				memcpy(buffer + size + offset, col_fg, sizeof(unsigned char) * 3);
+				memcpy(buffer + size + 1 + offset, col_fg, sizeof(unsigned char) * 3);
 				offset += 3;
-				memcpy(buffer + size + offset, col_bg, sizeof(unsigned char) * 3);
+				memcpy(buffer + size + 1 + offset, col_bg, sizeof(unsigned char) * 3);
 
-				extra_size = sizeof(unsigned char) * 6;
+				extra_size += sizeof(unsigned char) * 6;
 			}
 
 			int s = size + 1 + extra_size;

@@ -13,7 +13,7 @@ namespace snuffbox
 			args_(args),
 			error_checks_(true)
 		{
-			JSStateWrapper::Instance()->isolate()->Enter();
+			args_.GetIsolate()->Enter();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ namespace snuffbox
 				return;
 			}
 
-			Isolate* isolate = JSStateWrapper::Instance()->isolate();
+			Isolate* isolate = args_.GetIsolate();
 			engine::String error = "(";
 
 			error += *v8::String::Utf8Value(args_.This()->ToString());
@@ -186,7 +186,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		JSWrapper::~JSWrapper()
 		{
-			JSStateWrapper::Instance()->isolate()->Exit();
+			args_.GetIsolate()->Exit();
 		}
 	}
 }
