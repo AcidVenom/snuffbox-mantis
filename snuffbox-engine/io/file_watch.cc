@@ -35,7 +35,6 @@ namespace snuffbox
 
 			if (f == nullptr)
 			{
-				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "Couldn't open file '{0}' for reloading");
 				return file_times_[path];
 			}
 

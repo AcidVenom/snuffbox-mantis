@@ -18,6 +18,8 @@ namespace snuffbox
 		template <typename T>
 		struct JSObjectRegister;
 
+		class Script;
+
 		/**
 		* @class snuffbox::engine::JSStateWrapper
 		* @brief The state wrapper for the JavaScript state
@@ -34,6 +36,8 @@ namespace snuffbox
 
 			template<typename T>
 			friend struct JSObjectRegister;
+
+			friend class Script;
 
 		protected:
 

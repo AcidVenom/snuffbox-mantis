@@ -31,7 +31,7 @@ namespace snuffbox
 
 			OnStartup();
 
-			while (std::cin.get() != 'q')
+			while (true)
 			{
 				content_service_->Update();
 				OnUpdate();
