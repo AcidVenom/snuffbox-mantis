@@ -1,7 +1,9 @@
 #include "file_watch.h"
 #include "file.h"
 #include "content_manager.h"
+
 #include "../services/log_service.h"
+#include "../services/cvar_service.h"
 
 #ifdef SNUFF_WIN32
 #define localtime(out, time) { localtime_s(&out, time); }
@@ -27,7 +29,7 @@ namespace snuffbox
 			FILE* f = nullptr;
 
 			int attempts = 0;
-			while (f == nullptr && attempts < 100)
+			while (f == nullptr && attempts < 1000)
 			{
 				fopen(f, path.c_str(), "r");
 				++attempts;
@@ -77,7 +79,15 @@ namespace snuffbox
 
 			++frame_count_;
 
-			if (frame_count_ > SNUFF_RELOAD_AFTER)
+			unsigned int reload_after = SNUFF_RELOAD_AFTER;
+
+			CVarNumber* freq = Services::Get<CVarService>().Get<CVarNumber>("reload_freq");
+			if (freq != nullptr)
+			{
+				reload_after = freq->As<unsigned int>();
+			}
+
+			if (frame_count_ > reload_after)
 			{
 				tm last, now;
 				String path;
