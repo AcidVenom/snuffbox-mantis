@@ -22,12 +22,7 @@ namespace snuffbox
 			}
 
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
-
-			wrapper->isolate()->Enter();
-			bool result = wrapper->Run(buffer, file->path(), false);
-			wrapper->isolate()->Exit();
-
-			return result;
+			return wrapper->Run(buffer, file->path(), false);
 #else
 			return false;
 #endif

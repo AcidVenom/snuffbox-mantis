@@ -5,6 +5,8 @@
 #include "js_allocator.h"
 #include "js_object.h"
 
+#include <mutex>
+
 namespace snuffbox
 {
 	namespace engine
@@ -126,7 +128,7 @@ namespace snuffbox
 			* @param[in] echo (const bool&) Should the result be echo'd to the console?
 			* @return (bool) Was the execution succesful?
 			*/
-			bool Run(const engine::String& src, const engine::String& file_name, const bool& echo) const;
+			bool Run(const engine::String& src, const engine::String& file_name, const bool& echo);
 
 			/**
 			* @return (snuffbox::engine::JSStateWrapper*) The current instance
@@ -157,6 +159,8 @@ namespace snuffbox
 			v8::Persistent<v8::Context> context_; //!< The context we will use for this JavaScript state
 			v8::Persistent<v8::ObjectTemplate> global_; //!< The global scope for use with the JavaScript state
 			v8::Platform* platform_; //!< The V8 platform
+
+			std::recursive_mutex run_mutex_; //!< The mutex to run JavaScript code from multiple threads
 
 			static JSStateWrapper* instance_; //!< The current instance
 

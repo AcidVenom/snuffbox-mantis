@@ -104,6 +104,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool JSWrapper::Check(const engine::String& format)
 		{
+#ifdef SNUFF_DEBUG
 			if (format.size() == 0)
 			{
 				return true;
@@ -152,6 +153,7 @@ namespace snuffbox
 					return false;
 				}
 			}
+#endif
 
 			return true;
 		}

@@ -60,6 +60,8 @@ namespace snuffbox
 			RegisterCommon();
 			JSRegister::Register();
 
+			isolate_->Exit();
+
 			log.Log(console::LogSeverity::kSuccess, "Successfully initialised V8");
 		}
 
@@ -225,8 +227,11 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, const bool& echo) const
+		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, const bool& echo)
 		{
+			std::lock_guard<std::recursive_mutex> lock(run_mutex_);
+
+			isolate_->Enter();
 			HandleScope scope(isolate_);
 
 			LogService& log = Services::Get<LogService>();
@@ -249,6 +254,7 @@ namespace snuffbox
 					log.Log(console::LogSeverity::kError, "{0}", error.c_str());
 				}
 
+				isolate_->Exit();
 				return false;
 			}
 			
@@ -257,6 +263,7 @@ namespace snuffbox
 				log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString()));
 			}
 
+			isolate_->Exit();
 			return true;
 		}
 
