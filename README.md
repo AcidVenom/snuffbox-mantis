@@ -32,6 +32,7 @@ To put it simply, I went with the easy way and just preformed
 
 ### Important notes for building V8 for Windows x86_64
 
+#### Install git
 #### Install 'Debugging Tools for Windows' from [this](https://download.microsoft.com/download/3/6/3/36301F10-B142-46FA-BE8C-728ECFD62EA5/windowssdk/winsdksetup.exe) installer package
 #### Download [depot_tools](https://storage.googleapis.com/chrome-infra/depot_tools.zip) and drag it somewhere to your liking
 
@@ -77,13 +78,10 @@ If you reinstall any Visual Studio dependencies, don't forget to reinstall the D
 
 ### Important notes for building V8 for Linux x86_64
 
-#### Install the following dependencies:
+#### Install the following dependencies (assuming you have git and python installed)
 
 ```bash
--  (sudo apt-get install <name>)
-
--  libc++-dev
--  libc++abi-dev
+-  sudo apt-get install libc++-dev libc++abi-dev  
 ```
 
 #### Setup environment
