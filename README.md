@@ -1,15 +1,28 @@
 # snuffbox-mantis
 ## The mantis revision of Snuffbox, which is cross-platform on Windows and Linux (Ubuntu).
 
-#### Note: all Linux code was compiled and tested with GCC under Ubuntu 16.04.2 LTS
+#### Note: all Linux code was compiled and tested with GCC under Ubuntu 16.04.2 LTS in the QtCreator IDE
 
 ### Important CMake variables
 
-| Tables              | Optional      | Description                                                                      |
+| Name                | Optional      | Description                                                                      |
 |:--------------------|:--------------|:---------------------------------------------------------------------------------|
 | EASTL_ROOT_DIR      | No            | Points to the root directory of the EASTL git revision cloned to the machine     |
 | V8_ROOT_DIR         | Yes           | Points to the V8 root directory from 'fetch v8' (containing 'out.gn')            |
 | wxWidgets_ROOT_DIR  | No            | Windows only, as this should be found on Ubuntu, wxWidgets-3.1.0 root directory  |
+
+#### Note: in QtCreator the dialog for variables doesn't update until you set the EASTL_ROOT_DIR to a valid location
+
+### Get EASTL from the official repo
+You can clone the repository like so:
+
+```bash
+-  git clone https://github.com/electronicarts/EASTL
+```
+
+Place this in a folder and let EASTL_ROOT_DIR point to it
+
+<dl><hr></hr></dl>
 
 ### Building wxWidgets-3.1.0 on Windows
 
