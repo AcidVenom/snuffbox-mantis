@@ -45,9 +45,9 @@ Generate GN files
 ```
 
 Generate Ninja files
-(A text editor will open, probably VIM, copy the arguments from 'v8_args.x64.<configuration>.gn' in snuffbox-javascript)
-[x64.debug](../blob/master/snuffbox-javascript/v8_args.x64.debug.gn)
-[x64.debug](../blob/master/snuffbox-javascript/v8_args.x64.release.gn)
+(A text editor will open, probably VIM, copy the arguments from 'v8_args.x64.conf.gn' in 'snuffbox-javascript')
+Debug: [x64.debug](snuffbox-javascript/v8_args.x64.debug.gn)
+Release: [x64.release](snuffbox-javascript/v8_args.x64.release.gn)
 
 ```bash
 -  gn args "out.gn/x64.debug"
