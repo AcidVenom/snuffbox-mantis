@@ -86,8 +86,8 @@ namespace snuffbox
 #ifndef SNUFF_JAVASCRIPT
 			log.Log(console::LogSeverity::kWarning, "JavaScript is disabled, so the code will not be executed");
 #else
-			JSStateWrapper* js = JSStateWrapper::Instance();
-			js->Run(message, "console", true);
+            JSStateWrapper* js = JSStateWrapper::Instance();
+            js->Run(message, "console", true);
 #endif
 		}
 

@@ -2,58 +2,75 @@ SET (V8_ROOT_DIR "" CACHE PATH "The root directory of Google's V8")
 
 FIND_PATH(V8_INCLUDE_DIR "v8.h"
 	 PATHS
-	 "${V8_ROOT_DIR}/include"
+         "${V8_ROOT_DIR}/include"
      "$ENV{V8_ROOT_DIR}/include"
 )
 
 SET (V8_LIBNAMES
-	"v8_base_0"
-	"v8_base_1"
-	"v8_libbase"
-	"v8_libplatform"
-	"v8_libsampler"
-	"v8_snapshot"
-	"v8_nosnapshot"
-	"icui18n"
-	"icuuc"
+        "v8_libbase"
+        "v8_snapshot"
+        "v8_libsampler"
+        "v8_nosnapshot"
+        "icui18n"
+        "icuuc"
 )
 
-FOREACH(V8_LIB ${V8_LIBNAMES})
-	FIND_LIBRARY(V8_LIB_DEBUG_${V8_LIB}
-		NAMES "${V8_LIB}"
-		PATHS 
-		"${V8_ROOT_DIR}/out.gn/x64.debug/obj"
-		"$ENV{V8_ROOT_DIR}/out.gn/x64.debug/obj"
-		"${V8_ROOT_DIR}/out.gn/x64.debug/obj/third_party/icu"
-		"$ENV{V8_ROOT_DIR}/out.gn/x64.debug/obj/third_party/icu"
-	)
-	
-	IF (V8_FIND_REQUIRED AND NOT V8_LIB_DEBUG_${V8_LIB})
-		MESSAGE (FATAL_ERROR "Could not find ${V8_LIB} for x64.debug")
-	ELSE ()
-		SET (V8_LIBS_DEBUG ${V8_LIBS_DEBUG} ${V8_LIB_DEBUG_${V8_LIB}})
-	ENDIF ()
+IF (WIN32)
+    SET (V8_LIBNAMES "v8_libplatform" "v8_base_0" "v8_base_1" ${V8_LIBNAMES})
+ELSE ()
+    SET (V8_LIBNAMES "v8_libplatform" "v8_base" ${V8_LIBNAMES} "c++" "c++abi")
 
-	MARK_AS_ADVANCED(V8_LIB_DEBUG_${V8_LIB})
+    SET (V8_LIBS_DEBUG
+        "-L${V8_ROOT_DIR}/out.gn/x64.debug/obj -L${V8_ROOT_DIR}/out.gn/x64.debug/obj/third_party/icu"
+    )
+
+    SET (V8_LIBS_RELEASE
+        "-L${V8_ROOT_DIR}/out.gn/x64.release/obj -L${V8_ROOT_DIR}/out.gn/x64.release/obj/third_party/icu"
+    )
+ENDIF ()
+
+FOREACH(V8_LIB ${V8_LIBNAMES})
+        FIND_LIBRARY(V8_LIB_DEBUG_${V8_LIB}
+                NAMES "${V8_LIB}"
+                PATHS
+                "${V8_ROOT_DIR}/out.gn/x64.debug/obj"
+                "${V8_ROOT_DIR}/out.gn/x64.debug/obj/third_party/icu"
+                "/usr/lib/x86_64-linux-gnu"
+        )
+
+        IF (V8_FIND_REQUIRED AND NOT V8_LIB_DEBUG_${V8_LIB})
+                MESSAGE (FATAL_ERROR "Could not find ${V8_LIB} for x64.debug")
+        ELSE ()
+                IF (WIN32)
+                        SET (V8_LIBS_DEBUG "${V8_LIBS_DEBUG}${V8_LIB_DEBUG_${V8_LIB}}")
+                ELSE ()
+                        SET (V8_LIBS_DEBUG "${V8_LIBS_DEBUG} -l${V8_LIB}")
+                ENDIF ()
+        ENDIF ()
+
+        MARK_AS_ADVANCED(V8_LIB_DEBUG_${V8_LIB})
 ENDFOREACH ()
 
 FOREACH(V8_LIB ${V8_LIBNAMES})
-	FIND_LIBRARY(V8_LIB_RELEASE_${V8_LIB}
-		NAMES "${V8_LIB}"
-		PATHS 
-		"${V8_ROOT_DIR}/out.gn/x64.release/obj"
-		"$ENV{V8_ROOT_DIR}/out.gn/x64.release/obj"
-		"${V8_ROOT_DIR}/out.gn/x64.release/obj/third_party/icu"
-		"$ENV{V8_ROOT_DIR}/out.gn/x64.release/obj/third_party/icu"
-	)
-	
-	IF (V8_FIND_REQUIRED AND NOT V8_LIB_RELEASE_${V8_LIB})
-		MESSAGE (FATAL_ERROR "Could not find ${V8_LIB} for x64.release")
-	ELSE ()
-		SET (V8_LIBS_RELEASE ${V8_LIBS_RELEASE} ${V8_LIB_RELEASE_${V8_LIB}})
-	ENDIF ()
+        FIND_LIBRARY(V8_LIB_RELEASE_${V8_LIB}
+                NAMES "${V8_LIB}"
+                PATHS
+                "${V8_ROOT_DIR}/out.gn/x64.release/obj"
+                "${V8_ROOT_DIR}/out.gn/x64.release/obj/third_party/icu"
+                "/usr/lib/x86_64-linux-gnu"
+        )
 
-	MARK_AS_ADVANCED(V8_LIB_RELEASE_${V8_LIB})
+        IF (V8_FIND_REQUIRED AND NOT V8_LIB_RELEASE_${V8_LIB})
+                MESSAGE (FATAL_ERROR "Could not find ${V8_LIB} for x64.release")
+        ELSE ()
+                IF (WIN32)
+                        SET (V8_LIBS_RELEASE "${V8_LIBS_RELEASE}${V8_LIB_RELEASE_${V8_LIB}}")
+                ELSE ()
+                        SET (V8_LIBS_RELEASE "${V8_LIBS_RELEASE} -l${V8_LIB}")
+                ENDIF ()
+        ENDIF ()
+
+        MARK_AS_ADVANCED(V8_LIB_RELEASE_${V8_LIB})
 ENDFOREACH ()
 
 IF (V8_INCLUDE_DIR)

@@ -67,7 +67,7 @@ namespace snuffbox
 			* @see snuffbox::engine::CVarValue<T>::VALUE_TYPE
 			*/
 			template <typename T>
-			void Set(const String& name, typename const CVarBase::value_type<T>::type& value);
+            void Set(const String& name, const typename CVarBase::value_type<T>::type& value);
 
 			/**
 			* @brief Retrieves a CVar value by name
@@ -124,7 +124,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <>
-		inline void CVarService::Set<CVarString>(const String& name, typename const CVarBase::value_type<CVarString>::type& value)
+        inline void CVarService::Set<CVarString>(const String& name, const typename CVarBase::value_type<CVarString>::type& value)
 		{
 			if (name.find(' ') != -1)
 			{
@@ -136,7 +136,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <>
-		inline void CVarService::Set<CVarBoolean>(const String& name, typename const CVarBase::value_type<CVarBoolean>::type& value)
+        inline void CVarService::Set<CVarBoolean>(const String& name, const typename CVarBase::value_type<CVarBoolean>::type& value)
 		{
 			if (name.find(' ') != -1)
 			{
@@ -148,7 +148,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <>
-		inline void CVarService::Set<CVarNumber>(const String& name, typename const CVarBase::value_type<CVarNumber>::type& value)
+        inline void CVarService::Set<CVarNumber>(const String& name, const typename CVarBase::value_type<CVarNumber>::type& value)
 		{
 			if (name.find(' ') != -1)
 			{

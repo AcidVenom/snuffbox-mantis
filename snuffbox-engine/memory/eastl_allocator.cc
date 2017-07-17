@@ -35,6 +35,12 @@ namespace snuffbox
 			return *this;
 		}
 
+        //-----------------------------------------------------------------------------------------------
+        bool EASTLAllocator::operator==(const EASTLAllocator& x)
+        {
+            return true;
+        }
+
 		//-----------------------------------------------------------------------------------------------
 		void* EASTLAllocator::allocate(size_t n, int flags)
 		{

@@ -10,7 +10,7 @@
 #define fread(out, size, file) fread_s(out, size, size, 1, file)
 #else
 #define fopen(out, path, flags) out = fopen(path, flags);
-#define fread(out, size, file) fread(&out, size, 1, file);
+#define fread(out, size, file) size_t filesize_fread = fread(out, size, 1, file);
 #endif
 
 namespace snuffbox

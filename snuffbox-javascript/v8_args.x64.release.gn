@@ -4,3 +4,6 @@ is_component_build = false
 v8_use_snapshot = false
 v8_static_library = true
 symbol_level = 0
+
+--Linux only
+is_clang = false

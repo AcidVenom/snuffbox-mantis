@@ -71,5 +71,30 @@ namespace snuffbox
 			stream_.Close();
 			return 0;
 		}
+
+        //-----------------------------------------------------------------------------------------------
+        int ConsoleApp::FilterEvent(wxEvent& evt)
+        {
+            if (evt.GetEventType() == wxEVT_KEY_DOWN)
+            {
+                int key = static_cast<wxKeyEvent&>(evt).GetKeyCode();
+
+                switch (key)
+                {
+                case wxKeyCode::WXK_RETURN:
+                    console_->SendInput();
+                    return 1;
+
+                case wxKeyCode::WXK_TAB:
+                    console_->ToggleMode();
+                    return 1;
+
+                default:
+                    return -1;
+                }
+            }
+
+            return -1;
+        }
 	}
 }

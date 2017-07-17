@@ -71,7 +71,6 @@ namespace snuffbox
 				splitter_main->SetSashPosition( 580 );
 				splitter_main->Disconnect( wxEVT_IDLE, wxIdleEventHandler( MainWindow::splitter_mainOnIdle ), NULL, this );
 			}
-		
 	};
 	
 } // namespace snuffbox

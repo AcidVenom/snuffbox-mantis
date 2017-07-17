@@ -3,10 +3,10 @@
 
 namespace snuffbox
 {
-	namespace engine
-	{
+    namespace engine
+    {
 		//-----------------------------------------------------------------------------------------------
-		JSAllocator::JSAllocator(engine::Allocator& allocator) :
+        JSAllocator::JSAllocator(engine::Allocator& allocator) :
 			allocator_(allocator)
 		{
 
@@ -30,5 +30,5 @@ namespace snuffbox
 		{ 
 			allocator_.Free(data);
 		}
-	}
+    }
 }

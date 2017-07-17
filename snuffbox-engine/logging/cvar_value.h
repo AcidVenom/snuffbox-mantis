@@ -49,40 +49,40 @@ namespace snuffbox
 			{
 
 			};
-
-			/**
-			* @struct snuffbox::engine::CVarBase::value_type<CVarString>
-			* @brief A CVarString's value type
-			* @author Daniël Konings
-			*/
-			template <>
-			struct value_type<CVarString>
-			{
-				typedef String type;
-			};
-
-			/**
-			* @struct snuffbox::engine::CVarBase::value_type<CVarBoolean>
-			* @brief A CVarBoolean's value type
-			* @author Daniël Konings
-			*/
-			template <>
-			struct value_type<CVarBoolean>
-			{
-				typedef bool type;
-			};
-
-			/**
-			* @struct snuffbox::engine::CVarBase::value_type<CVarNumber>
-			* @brief A CVarNumber's value type
-			* @author Daniël Konings
-			*/
-			template <>
-			struct value_type<CVarNumber>
-			{
-				typedef float type;
-			};
 		};
+
+        /**
+        * @struct snuffbox::engine::CVarBase::value_type<CVarString>
+        * @brief A CVarString's value type
+        * @author Daniël Konings
+        */
+        template <>
+        struct CVarBase::value_type<CVarString>
+        {
+            typedef String type;
+        };
+
+        /**
+        * @struct snuffbox::engine::CVarBase::value_type<CVarBoolean>
+        * @brief A CVarBoolean's value type
+        * @author Daniël Konings
+        */
+        template <>
+        struct CVarBase::value_type<CVarBoolean>
+        {
+            typedef bool type;
+        };
+
+        /**
+        * @struct snuffbox::engine::CVarBase::value_type<CVarNumber>
+        * @brief A CVarNumber's value type
+        * @author Daniël Konings
+        */
+        template <>
+        struct CVarBase::value_type<CVarNumber>
+        {
+            typedef float type;
+        };
 
 		/**
 		* @class snuffbox::engine::CVarValue<T, Y> : public snuffbox::engine::CVarBase

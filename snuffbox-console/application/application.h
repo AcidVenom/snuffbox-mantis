@@ -73,6 +73,13 @@ namespace snuffbox
 			*/
 			int OnExit() override;
 
+            /**
+            * @brief Called when the wxApp receives an event
+            * @param[in] evt (wxEvent&) The received event
+            * @return (int) -1 if the event was skipped for this filter
+            */
+            int FilterEvent(wxEvent& evt) override;
+
 		private:
 
 			Console* console_; //!< The main console window of the application generated through a form

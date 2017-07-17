@@ -33,9 +33,16 @@ namespace snuffbox
 
 			/**
 			* @brief Copy assignment operaetor
-			* @param[in] x (const EASTLAllocator&) The allocator to copy from
+            * @param[in] x (const snuffbox::engine::EASTLAllocator&) The allocator to copy from
 			*/
 			EASTLAllocator& operator=(const EASTLAllocator& x);
+
+            /**
+            * @brief Comparison operator, always returns true
+            * @param[in] x (const snuffbox::engine::EASTLAllocator&) The allocator to compare against
+            * @return (bool) Always true, as there is only 1 EASTLAllocator
+            */
+            bool operator==(const EASTLAllocator& x);
 
 			/**
 			* @brief Allocate with a given size

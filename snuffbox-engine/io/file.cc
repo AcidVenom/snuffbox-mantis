@@ -30,7 +30,7 @@ namespace snuffbox
 				buffer_ = nullptr;
 			}
 
-			fseek(file_, 0L, SEEK_END);
+            fseek(file_, 0, SEEK_END);
 			size_t size = ftell(file_);
 
 			if (size == 0)
@@ -41,7 +41,7 @@ namespace snuffbox
 
 			buffer_ = reinterpret_cast<unsigned char*>(Memory::default_allocator().Malloc(size + 1));
 
-			fseek(file_, 0L, SEEK_SET);
+            fseek(file_, 0, SEEK_SET);
 			fread(buffer_, size, file_);
 
 			memset(buffer_ + size, '\0', sizeof(char));

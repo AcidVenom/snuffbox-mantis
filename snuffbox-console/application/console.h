@@ -44,12 +44,7 @@ namespace snuffbox
 				bool repeat; //!< Should the message be repeated?
 			};
 
-		public:
-
-			enum
-			{
-				ID_InputButton = 1
-			};
+        public:
 
 			/**
 			* @class snuffbox::console::Console::Event : public wxCommandEvent
@@ -119,10 +114,14 @@ namespace snuffbox
 			void AddLine(const Event& evt);
 
 			/**
-			* @brief Called when the user provides input in the input box and sends it
-			* @param[in] evt (wxCommandEvent&) The wxWidgets event
+            * @brief Called when the user provides input in the input box and sends it
 			*/
-			void OnInput(wxCommandEvent& evt);
+            void SendInput();
+
+            /**
+            * @brief Toggles between Command and JavaScript mode
+            */
+            void ToggleMode();
 
 		protected:
 

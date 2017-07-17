@@ -22,7 +22,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		JSStateWrapper::JSStateWrapper(Allocator& allocator) :
-			allocator_(allocator),
+            allocator_(allocator),
 			isolate_(nullptr),
 			platform_(nullptr)
 		{
@@ -42,7 +42,7 @@ namespace snuffbox
 			V8::InitializePlatform(platform_);
 
 			Isolate::CreateParams params;
-			params.array_buffer_allocator = &allocator_;
+            params.array_buffer_allocator = &allocator_;
 			isolate_ = Isolate::New(params);
 			isolate_->Enter();
 
@@ -58,9 +58,7 @@ namespace snuffbox
 
 			instance_ = this;
 			RegisterCommon();
-			JSRegister::Register();
-
-			isolate_->Exit();
+            JSRegister::Register();
 
 			log.Log(console::LogSeverity::kSuccess, "Successfully initialised V8");
 		}
@@ -139,7 +137,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		engine::String JSStateWrapper::StackTrace(const unsigned int& max) const
-		{
+        {
 			HandleScope scope(isolate_);
 			engine::String error;
 			Local<v8::StackTrace> stack = StackTrace::CurrentStackTrace(isolate_, max);
@@ -228,42 +226,43 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, const bool& echo)
-		{
-			std::lock_guard<std::recursive_mutex> lock(run_mutex_);
+        {
+            std::lock_guard<std::recursive_mutex> lock(run_mutex_);
 
-			isolate_->Enter();
-			HandleScope scope(isolate_);
+            isolate_->Enter();
+            isolate_->SetStackLimit(1024 * 1024 * 2);
+            HandleScope scope(isolate_);
 
-			LogService& log = Services::Get<LogService>();
+            TryCatch try_catch;
 
-			Local<v8::Context> context = Local<v8::Context>::New(isolate_, context_);
-			Context::Scope context_scope(context);
+            LogService& log = Services::Get<LogService>();
 
-			TryCatch try_catch;
+            Local<v8::Context> context = Local<v8::Context>::New(isolate_, context_);
+            Context::Scope context_scope(context);
 
-			Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate_, src.c_str()), v8::String::NewFromUtf8(isolate_, file_name.c_str()));
-			Local<Value> result = script->Run();
+            Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate_, src.c_str()), v8::String::NewFromUtf8(isolate_, file_name.c_str()));
+            Local<Value> result = script->Run();
 
-			if (result.IsEmpty() == true)
-			{
-				engine::String error;
-				bool has_error = GetException(&try_catch, &error);
+            if (result.IsEmpty() == true)
+            {
+                engine::String error;
+                bool has_error = GetException(&try_catch, &error);
 
-				if (has_error == true)
-				{
-					log.Log(console::LogSeverity::kError, "{0}", error.c_str());
-				}
+                if (has_error == true)
+                {
+                    log.Log(console::LogSeverity::kError, "{0}", error.c_str());
+                }
 
-				isolate_->Exit();
-				return false;
-			}
+                isolate_->Exit();
+                return false;
+            }
 			
 			if (echo == true)
 			{
 				log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString()));
 			}
 
-			isolate_->Exit();
+            isolate_->Exit();
 			return true;
 		}
 

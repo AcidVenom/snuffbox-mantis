@@ -6,3 +6,6 @@ v8_optimized_debug = false
 is_component_build = false
 v8_use_snapshot = false
 v8_static_library = true
+
+-- Linux only
+is_clang = false

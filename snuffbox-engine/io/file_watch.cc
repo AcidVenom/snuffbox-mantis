@@ -8,6 +8,7 @@
 #ifdef SNUFF_WIN32
 #define localtime(out, time) { localtime_s(&out, time); }
 #else
+#include <sys/stat.h>
 #define localtime(out, time) { out = *localtime(time); }
 #endif
 
@@ -92,7 +93,7 @@ namespace snuffbox
 				tm last, now;
 				String path;
 
-				for (FileTimeMap::iterator& it = file_times_.begin(); it != file_times_.end(); ++it)
+                for (FileTimeMap::iterator it = file_times_.begin(); it != file_times_.end(); ++it)
 				{
 					path = it->first;
 

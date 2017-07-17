@@ -105,14 +105,7 @@ namespace snuffbox
 #elif SNUFF_LINUX
             font_.SetFaceName("Ubuntu Mono");
 #endif
-			output_console->SetBackgroundColour(BACKGROUND_COLOUR_);
-			input_button->Bind(wxEVT_BUTTON, &Console::OnInput, this);
-			
-			wxAcceleratorEntry entries[1];
-			entries[0].Set(wxACCEL_NORMAL, wxKeyCode::WXK_RETURN, MainWindow::ID_InputButton);
-
-			wxAcceleratorTable accel(1, entries);
-			SetAcceleratorTable(accel);
+            output_console->SetBackgroundColour(BACKGROUND_COLOUR_);
 
 			output_status->AppendTextColumn("Severity");
 			output_status->AppendTextColumn("Count");
@@ -262,7 +255,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Console::OnInput(wxCommandEvent& evt)
+        void Console::SendInput()
 		{
 			if (stream_ == nullptr || stream_->Connected() == false)
 			{
@@ -284,6 +277,13 @@ namespace snuffbox
 
 			input_box->SetValue("");
 		}
+
+        //-----------------------------------------------------------------------------------------------
+        void Console::ToggleMode()
+        {
+            int current = input_type->GetCurrentSelection();
+            input_type->SetSelection(current == 0 ? 1 : 0);
+        }
 
 		//-----------------------------------------------------------------------------------------------
 		wxString Console::CreateTimeStamp()
