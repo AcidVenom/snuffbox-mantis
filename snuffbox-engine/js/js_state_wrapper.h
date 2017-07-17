@@ -163,6 +163,7 @@ namespace snuffbox
             std::recursive_mutex run_mutex_; //!< The mutex to run JavaScript code from multiple threads
 
             static JSStateWrapper* instance_; //!< The current instance
+			static const unsigned int STACK_LIMIT_; //!< The stack limit for each isolate
 
         public:
 

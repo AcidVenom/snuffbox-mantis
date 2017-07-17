@@ -21,6 +21,9 @@ namespace snuffbox
 		JSStateWrapper* JSStateWrapper::instance_ = nullptr;
 
 		//-----------------------------------------------------------------------------------------------
+		const unsigned int JSStateWrapper::STACK_LIMIT_ = 1024 * 1024 * 2;
+
+		//-----------------------------------------------------------------------------------------------
 		JSStateWrapper::JSStateWrapper(Allocator& allocator) :
             allocator_(allocator),
 			isolate_(nullptr),
@@ -230,7 +233,7 @@ namespace snuffbox
             std::lock_guard<std::recursive_mutex> lock(run_mutex_);
 
             isolate_->Enter();
-            isolate_->SetStackLimit(1024 * 1024 * 2);
+            isolate_->SetStackLimit(STACK_LIMIT_);
             HandleScope scope(isolate_);
 
             TryCatch try_catch;
