@@ -171,3 +171,19 @@ As for linking; link order is important here. This configuration seems to work w
 -  libc++ 
 -  libc++abi
 ```
+
+<dl><hr></hr></dl>
+
+#### A list of available console variables
+
+Booleans are set by 'true' and 'false'
+
+|Name              |Type         |Description                                     |Default                                |
+|:-----------------|:------------|:-----------------------------------------------|:--------------------------------------|
+|console           |Boolean      |Should the console be enabled?                  |false                                  |
+|console_ip        |String       |The IP of the external console to connect with  |127.0.0.1                              |
+|console_port      |Number       |The port of the external console to connect on  |SNUFF_DEFAULT_PORT in CMake            |
+|reload            |Boolean      |Should files be hot-reloaded?                   |false                                  |
+|reload_freq       |Number       |The number of frames to wait for a reload check |SNUFF_RELOAD_AFTER in CMake            |
+|src_directory     |String       |The working directory to load content from      |<empty>, the target path will be used  |
+
