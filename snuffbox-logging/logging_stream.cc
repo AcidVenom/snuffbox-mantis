@@ -82,7 +82,6 @@ namespace snuffbox
 			connection_thread_ = std::thread([=]()
 			{
 				LoggingSocket::ConnectionStatus status = LoggingSocket::ConnectionStatus::kWaiting;
-				socket->last_message_ = Commands::kWaiting;
 				bool disconnect = false;
 
 				while (should_quit_ == false)
@@ -97,8 +96,11 @@ namespace snuffbox
 					if (socket->Connect(port, ip, should_quit_) == 0)
 					{
 						connection_mutex_.lock();
+
 						status = socket->Update(should_quit_);
+
 						connection_mutex_.unlock();
+
 						switch (status)
 						{
 						case LoggingSocket::ConnectionStatus::kWaiting:
@@ -218,25 +220,41 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LoggingStream::Send(const Commands& cmd, const int& other, const char* buffer, const int& size)
 		{
-			std::lock_guard<std::recursive_mutex> lock(connection_mutex_);
-
 			if (socket_->connected_ == false)
 			{
 				return;
 			}
 
+			while (socket_->status_ != LoggingSocket::ConnectionStatus::kWaiting) {}
+
+			std::lock_guard<std::recursive_mutex> lock(connection_mutex_);
+
+			socket_->status_ = LoggingSocket::ConnectionStatus::kSending;
+
 			PacketHeader header;
+			
+			bool connected = true;
+			if (is_server_ == true)
+			{
+				connected = socket_->Receive(other, &header, should_quit_);
+				if (connected == false || header.command != Commands::kWaiting)
+				{
+					return;
+				}
+			}
+
 			header.command = cmd;
 			header.size = size;
 
-			bool connected = socket_->Send(other, &header, should_quit_);
+			connected = socket_->Send(other, &header, should_quit_);
 			connected = connected == false ? false : socket_->Receive(other, &header, should_quit_);
 
-			if (connected == true && (header.command == Commands::kWaiting || header.command == Commands::kAccept))
+			if (connected == true && header.command == Commands::kAccept)
 			{
 				connected = socket_->SendPacket(other, buffer, size, should_quit_);
-				socket_->Receive(other, &header, should_quit_);
 			}
+
+			socket_->status_ = LoggingSocket::ConnectionStatus::kWaiting;
 		}
 	}
 }

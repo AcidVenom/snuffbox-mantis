@@ -26,7 +26,9 @@ namespace snuffbox
 			enum ConnectionStatus
 			{
 				kWaiting, //!< We're waiting for packets and there's a connection
+				kAccepting, //!< We're accepting a packet
 				kBusy, //!< We're busy with consuming packets
+				kSending, //!< We're sending a packet to the other socket
 				kDisconnected //!< Either the server or client was disconnected
 			};
 
@@ -131,10 +133,11 @@ namespace snuffbox
 
 			const static unsigned int DISCONNECTED_SLEEP_; //!< The sleep when there is no connection to prevent busy waiting
 
+			ConnectionStatus status_; //!< The current status of the connection
+
 			int socket_; //!< The socket of this client or server
 			int other_; //!< The socket ID of the connected client or server
 			bool connected_; //!< Is there a connection?
-			char last_message_; //!< The last message received
 			int expected_; //!< The next expected size
 
 			time_t last_time_; //!< The last time a connection was available

@@ -53,6 +53,24 @@ namespace snuffbox
 			ConnectionStatus Update(const bool& quit) override;
 
 			/**
+			* @brief When we are waiting
+			* @param[in] quit (const bool&) Has the logging stream been closed yet?
+			*/
+			bool Waiting(const bool& quit);
+
+			/**
+			* @brief When we are accepting a packet
+			* @param[in] quit (const bool&) Has the logging stream been closed yet?
+			*/
+			bool Accepting(const bool& quit);
+
+			/**
+			* @brief When we are busy consuming a packet
+			* @param[in] quit (const bool&) Has the logging stream been closed yet?
+			*/
+			bool Busy(const bool& quit);
+
+			/**
 			* @brief Called when a command is received from the server
 			* @param[in] cmd (const snuffbox::logging::LoggingClient::CommandTypes&) The command type
 			*/

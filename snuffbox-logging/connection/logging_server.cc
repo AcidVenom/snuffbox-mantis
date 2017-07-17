@@ -108,52 +108,76 @@ namespace snuffbox
 		LoggingSocket::ConnectionStatus LoggingServer::Update(const bool& quit)
 		{
 			bool connected = true;
+
+			switch (status_)
+			{
+			case ConnectionStatus::kWaiting:
+				connected = Waiting(quit);
+				break;
+
+			case ConnectionStatus::kAccepting:
+				connected = Accepting(quit);
+				break;
+
+			case ConnectionStatus::kBusy:
+				connected = Busy(quit);
+				break;
+			}
+
+			return connected == true ? status_ : ConnectionStatus::kDisconnected;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool LoggingServer::Waiting(const bool& quit)
+		{
 			LoggingStream::PacketHeader header;
+			bool connected = Receive(other_, &header, quit);
 
-			if (last_message_ < LoggingStream::Commands::kLog)
+			if (connected == true)
 			{
-				connected = Receive(other_, &header, quit);
-				if (connected == true)
+				if (header.command == LoggingStream::Commands::kLog)
 				{
-					last_message_ = header.command;
-
-					if (last_message_ == LoggingStream::Commands::kLog)
-					{
-						expected_ = header.size;
-						connected = SendCommand(LoggingStream::Commands::kAccept, other_, quit);
-
-						if (connected == false)
-						{
-							return ConnectionStatus::kDisconnected;
-						}
-
-						return ConnectionStatus::kBusy;
-					}
-
-					SendCommand(LoggingStream::Commands::kWaiting, other_, quit);
-
-					return ConnectionStatus::kWaiting;
+					expected_ = header.size;
+					status_ = ConnectionStatus::kAccepting;
+					return true;
 				}
-			}
-			else
-			{
-				connected = ReceivePacket(other_, expected_, quit);
 
-				if (connected == true)
-				{
-					OnLog(*reinterpret_cast<console::LogSeverity*>(buffer_), 
-						buffer_ + 1,
-						reinterpret_cast<unsigned char*>(buffer_ + expected_ - 6),
-						reinterpret_cast<unsigned char*>(buffer_ + expected_ - 3));
-
-					connected = SendCommand(LoggingStream::Commands::kWaiting, other_, quit);
-					last_message_ = LoggingStream::Commands::kWaiting;
-
-					return ConnectionStatus::kWaiting;
-				}
+				connected = SendCommand(LoggingStream::Commands::kWaiting, other_, quit);
 			}
 
-			return ConnectionStatus::kDisconnected;
+			return connected;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool LoggingServer::Accepting(const bool& quit)
+		{
+			bool connected = SendCommand(LoggingStream::Commands::kAccept, other_, quit);
+
+			if (connected == true)
+			{
+				status_ = ConnectionStatus::kBusy;
+				return true;
+			}
+
+			return connected;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool LoggingServer::Busy(const bool& quit)
+		{
+			bool connected = ReceivePacket(other_, expected_, quit);
+
+			if (connected == true)
+			{
+				status_ = ConnectionStatus::kWaiting;
+
+				OnLog(*reinterpret_cast<console::LogSeverity*>(buffer_),
+					buffer_ + 1,
+					reinterpret_cast<unsigned char*>(buffer_ + expected_ - 6),
+					reinterpret_cast<unsigned char*>(buffer_ + expected_ - 3));
+			}
+
+			return connected;
 		}
 
 		//-----------------------------------------------------------------------------------------------
