@@ -15,7 +15,7 @@
 
 #### Compilation
 
-Compilation is as simple as opening 'wxWidgetsRoot/buid/msw/wx_vc14.sln' in Visual Studio 2015
+Compilation is as simple as opening 'wxWidgetsRoot/buid/msw/wx_vc14.sln' in Visual Studio 2015.
 After this change all projects to be **/MTd** in Debug and **/MT** in Release (under **C++/Code Generation** in the properties)
 
 <dl><hr></hr></dl>
@@ -119,8 +119,11 @@ Generate GN files
 ```
 
 Generate Ninja files
-(A text editor will open, probably VIM, copy the arguments from 'v8_args.x64.conf.gn' in 'snuffbox-javascript')
+
+*A text editor will open, probably VIM, copy the arguments from either of the following*
+
 Debug: [x64.debug](snuffbox-javascript/v8_args.x64.debug.gn)
+
 Release: [x64.release](snuffbox-javascript/v8_args.x64.release.gn)
 
 ```bash
