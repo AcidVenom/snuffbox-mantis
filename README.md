@@ -51,8 +51,8 @@ To put it simply, I went with the easy way and just preformed
 
 ### Important notes for building V8 for Windows x86_64
 
-#### Install [git](https://git-scm.com/download/win)
-#### Install 'Debugging Tools for Windows' from [this](https://download.microsoft.com/download/3/6/3/36301F10-B142-46FA-BE8C-728ECFD62EA5/windowssdk/winsdksetup.exe) installer package
+#### Download & install [git](https://git-scm.com/download/win)
+#### Download & install 'Debugging Tools for Windows' from [this](https://download.microsoft.com/download/3/6/3/36301F10-B142-46FA-BE8C-728ECFD62EA5/windowssdk/winsdksetup.exe) installer package
 #### Download [depot_tools](https://storage.googleapis.com/chrome-infra/depot_tools.zip) and drag it somewhere to your liking
 
 #### Set environment variables
