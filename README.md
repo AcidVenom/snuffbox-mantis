@@ -1,6 +1,7 @@
 # snuffbox-mantis
-## The mantis revision of Snuffbox, which is cross-platform on Windows and Linux (Ubunutu).
-## All Linux code was compiled and tested with GCC under Ubuntu 16.04.2 LTS
+## The mantis revision of Snuffbox, which is cross-platform on Windows and Linux (Ubuntu).
+
+#### Note: all Linux code was compiled and tested with GCC under Ubuntu 16.04.2 LTS
 
 ### Important CMake variables
 
@@ -8,7 +9,7 @@
 |:--------------------|:--------------|:---------------------------------------------------------------------------------|
 | EASTL_ROOT_DIR      | No            | Points to the root directory of the EASTL git revision cloned to the machine     |
 | V8_ROOT_DIR         | Yes           | Points to the V8 root directory from 'fetch v8' (containing 'out.gn')            |
-| wxWidgets_ROOT_DIR  | No            | Windows only, as this should be found on Ubunutu, wxWidgets-3.1.0 root directory |
+| wxWidgets_ROOT_DIR  | No            | Windows only, as this should be found on Ubuntu, wxWidgets-3.1.0 root directory  |
 
 ### Building wxWidgets-3.1.0 on Windows
 
@@ -21,7 +22,7 @@ After this change all projects to be **/MTd** in Debug and **/MT** in Release (u
 
 <dl><hr></hr></dl>
 
-### Getting wxWidgets-3.0.0 on Ubunutu
+### Getting wxWidgets-3.0.0 on Ubuntu
 
 To put it simply, I went with the easy way and just preformed
 
@@ -73,11 +74,11 @@ Make sure you have the following folder in "DriveLetter:/Program Files (x86)/Mic
 
 If you reinstall any Visual Studio dependencies, don't forget to reinstall the Debug Tools mentioned above as well.
 
-#### Now follow the same build principles as on Ubunutu, under 'Generation & compilation'
+#### Now follow the same build principles as on Ubuntu, under 'Generation & compilation'
 
 <dl><hr></hr></dl>
 
-### Important notes for building V8 for Ubunutu x86_64
+### Important notes for building V8 for Ubuntu x86_64
 
 #### Install the following dependencies (assuming you have git and python installed)
 
