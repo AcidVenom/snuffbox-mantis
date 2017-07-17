@@ -3,6 +3,8 @@
 
 #### Note: all Linux code was compiled and tested with GCC under Ubuntu 16.04.2 LTS in the QtCreator IDE
 
+<dl><hr></hr></dl>
+
 ### Important CMake variables
 
 | Name                | Optional      | Description                                                                      |
@@ -49,7 +51,7 @@ To put it simply, I went with the easy way and just preformed
 
 ### Important notes for building V8 for Windows x86_64
 
-#### Install git
+#### Install [git](https://git-scm.com/download/win)
 #### Install 'Debugging Tools for Windows' from [this](https://download.microsoft.com/download/3/6/3/36301F10-B142-46FA-BE8C-728ECFD62EA5/windowssdk/winsdksetup.exe) installer package
 #### Download [depot_tools](https://storage.googleapis.com/chrome-infra/depot_tools.zip) and drag it somewhere to your liking
 
@@ -65,7 +67,7 @@ You can check if we're using the python in depot_tools by running the command:
 Set the following user variables:
 
 ```
--  DEPOT_TOOLS_WIN_TOOLCHAIN=0
+-  DEPOT_TOOLS_WIN_TOOLCHAIN = 0
 -  GYP_MSVS_VERSION = 2015
 ```
 
