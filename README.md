@@ -13,6 +13,8 @@
 
 #### Note: in QtCreator the dialog for variables doesn't update until you set the EASTL_ROOT_DIR to a valid location
 
+<dl><hr></hr></dl>
+
 ### Get EASTL from the official repo
 You can clone the repository like so:
 
@@ -20,7 +22,7 @@ You can clone the repository like so:
 -  git clone https://github.com/electronicarts/EASTL
 ```
 
-Place this in a folder and let EASTL_ROOT_DIR point to it
+Place this in a folder and let **EASTL_ROOT_DIR** point to it
 
 <dl><hr></hr></dl>
 
