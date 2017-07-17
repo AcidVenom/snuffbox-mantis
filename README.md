@@ -16,7 +16,7 @@
 #### Compilation
 
 Compilation is as simple as opening 'wxWidgetsRoot/buid/msw/wx_vc14.sln' in Visual Studio 2015
-After this change all projects to be */MTd* in Debug and */MT* in Release (under *C++/Code Generation* in the properties)
+After this change all projects to be **/MTd** in Debug and **/MT** in Release (under **C++/Code Generation** in the properties)
 
 <dl><hr></hr></dl>
 
@@ -100,6 +100,8 @@ Prepend depot_tools to $PATH, preferably in .bashrc
 -  export PATH=`pwd`/path/to/depot_tools:"$PATH"
 ```
 
+#### Generation & compilation
+
 Run the following commands in the directory where you want to save V8:
 
 ```bash
@@ -108,8 +110,6 @@ Run the following commands in the directory where you want to save V8:
 -  cd v8
 -  gclient sync
 ```
-
-#### Generation & compilation
 
 Generate GN files
 
