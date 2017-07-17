@@ -3,6 +3,27 @@
 
 ### Important notes for building V8 for Windows x86_64
 
+#### Install 'Debugging Tools for Windows' from [this](https://download.microsoft.com/download/3/6/3/36301F10-B142-46FA-BE8C-728ECFD62EA5/windowssdk/winsdksetup.exe) installer package
+#### Download [depot_tools](https://storage.googleapis.com/chrome-infra/depot_tools.zip) and drag it somewhere to your liking
+
+#### Set environment variables
+
+Add the depot_tools to your PATH, make sure it's prepended so the right version of python is used.
+You can check if we're using the python in depot_tools by running the command:
+
+```bash
+-  where python
+```
+
+Set the following user variables:
+
+```
+-  DEPOT_TOOLS_WIN_TOOLCHAIN=0
+-  GYP_MSVS_VERSION = 2015
+```
+
+#### Visual Studio
+
 Make sure to only have Visual Studio 2015 installed. 2017 seems to conflict a lot with the V8 library setup.
 Also; apparently it matters in what order VS dependencies are installed. Make sure to deinstall any older versions
 of libraries like VS Build Tools.
@@ -18,6 +39,12 @@ Make sure you have the following folder in "DriveLetter:/Program Files (x86)/Mic
 ```
 - VC/vcvarsall.bat
 ```
+
+If you reinstall any Visual Studio dependencies, don't forget to reinstall the Debug Tools mentioned above as well.
+
+#### Now follow the same build principles as on Linux, under 'Generation & compilation'
+
+<dl><hr></hr></dl>
 
 ### Important notes for building V8 for Linux x86_64
 
