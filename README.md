@@ -1,6 +1,35 @@
 # snuffbox-mantis
 ## The mantis revision of Snuffbox, which is cross-platform on Windows and Linux.
 
+### Important CMake variables
+
+| Tables              | Optional      | Description                                                                    |
+|:--------------------|:--------------|:-------------------------------------------------------------------------------|
+| EASTL_ROOT_DIR      | No            | Points to the root directory of the EASTL git revision cloned to the machine   |
+| V8_ROOT_DIR         | Yes           | Points to the V8 root directory from 'fetch v8' (containing 'out.gn')          |
+| wxWidgets_ROOT_DIR  | No            | Windows only, as this should be found on Linux, wxWidgets-3.1.0 root directory |
+
+### Building wxWidgets-3.1.0 on Windows
+
+#### Download wxWidgets from [here](https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxMSW-3.1.0-Setup.exe)
+
+#### Compilation
+
+Compilation is as simple as opening 'wxWidgetsRoot/buid/msw/wx_vc14.sln' in Visual Studio 2015
+After this change all projects to be */MTd* in Debug and */MT* in Release (under *C++/Code Generation* in the properties)
+
+<dl><hr></hr></dl>
+
+### Getting wxWidgets-3.0.0 on Linux
+
+To put it simply, I went with the easy way and just preformed
+
+```bash
+-  sudo apt-get install libwxbase3.0-dev libwxgtk3.0-dev
+```
+
+<dl><hr></hr></dl>
+
 ### Important notes for building V8 for Windows x86_64
 
 #### Install 'Debugging Tools for Windows' from [this](https://download.microsoft.com/download/3/6/3/36301F10-B142-46FA-BE8C-728ECFD62EA5/windowssdk/winsdksetup.exe) installer package
