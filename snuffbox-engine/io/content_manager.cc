@@ -157,7 +157,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		String ContentManager::FullPath(const String& path) const
 		{
-			return src_directory_ + "/" + path;
+			return src_directory_.size() > 0 ? src_directory_ + "/" + path : path;
 		}
 
 		//-----------------------------------------------------------------------------------------------

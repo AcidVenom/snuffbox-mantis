@@ -292,21 +292,21 @@ namespace snuffbox
 		template<>
         inline v8::Local<v8::Value> JSWrapper::CastValue<int>(const int& val)
 		{
-			return CastValue<int>(static_cast<double>(val));
+			return CastValue<double>(static_cast<double>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
 		template<>
 		inline v8::Local<v8::Value> JSWrapper::CastValue<unsigned int>(const unsigned int& val)
 		{
-			return CastValue<unsigned int>(static_cast<double>(val));
+			return CastValue<double>(static_cast<double>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
 		template<>
         inline v8::Local<v8::Value> JSWrapper::CastValue<float>(const float& val)
 		{
-			return CastValue<float>(static_cast<double>(val));
+			return CastValue<double>(static_cast<double>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------

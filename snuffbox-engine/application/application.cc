@@ -38,12 +38,11 @@ namespace snuffbox
 
 			OnStartup();
 
-			while (window_service_->ShouldClose() == false)
+			while (window_service_->Closed() == false)
 			{
 				window_service_->Poll();
 				content_service_->Update();
 				OnUpdate();
-				std::this_thread::sleep_for(std::chrono::milliseconds(16));
 			}
 
 			Shutdown();
@@ -87,6 +86,8 @@ namespace snuffbox
 			content_service_->Load<Script>("main.js");
 #endif
 
+			engine::Services::Get<engine::LogService>().Log(console::LogSeverity::kSuccess, "Initialised the application");
+
 			OnInit();
 		}
 
@@ -94,6 +95,8 @@ namespace snuffbox
 		void SnuffboxApp::Shutdown()
 		{
 			OnShutdown();
+
+			engine::Services::Get<engine::LogService>().Log(console::LogSeverity::kInfo, "Shutting down..");
 
 #ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_->Shutdown();

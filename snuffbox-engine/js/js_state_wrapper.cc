@@ -8,6 +8,7 @@
 
 #include "../services/log_service.h"
 #include "../services/content_service.h"
+#include "../services/window_service.h"
 
 #include "../io/script.h"
 
@@ -267,7 +268,7 @@ namespace snuffbox
                 return false;
             }
 			
-			if (echo == true)
+			if (echo == true && Services::Get<WindowService>().Closed() == false)
 			{
                 log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString(ctx).ToLocalChecked()));
 			}

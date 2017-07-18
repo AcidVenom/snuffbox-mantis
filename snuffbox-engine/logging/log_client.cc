@@ -8,6 +8,8 @@
 #include "../js/js_state_wrapper.h"
 #endif
 
+#include "../services/window_service.h"
+
 namespace snuffbox
 {
 	namespace engine
@@ -48,6 +50,7 @@ namespace snuffbox
 					"set <name> <value> - Sets a CVar by name",
 					"get <name> - Outputs a CVar by name",
 					"show_all - Outputs all currently registered CVars",
+					"quit - Closes the window and shuts down the application",
 					"help - Shows this dialog"
 				};
 
@@ -65,6 +68,11 @@ namespace snuffbox
 			else if (strcmp(message, "show_all") == 0)
 			{
 				Services::Get<CVarService>().LogAll();
+				return;
+			}
+			else if (strcmp(message, "quit") == 0)
+			{
+				Services::Get<WindowService>().Close();
 				return;
 			}
 			else

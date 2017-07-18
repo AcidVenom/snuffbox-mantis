@@ -1,7 +1,8 @@
 #include "window.h"
-#include "GLFW/glfw3.h"
 
 #include "../services/log_service.h"
+
+#include "GLFW/glfw3.h"
 
 namespace snuffbox
 {
@@ -103,7 +104,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool Window::ShouldClose()
+		bool Window::Closed() const
 		{
 			return should_close_ == true || glfwWindowShouldClose(window_) == GL_TRUE;
 		}

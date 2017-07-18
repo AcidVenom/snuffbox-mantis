@@ -122,6 +122,7 @@ namespace snuffbox
 				}
 
 				socket->CloseSocket(should_quit_);
+				connection_cv_.notify_all();
 			});
 		}
 
@@ -235,6 +236,11 @@ namespace snuffbox
 
 			std::unique_lock<std::mutex> lock(connection_mutex_);
 			connection_cv_.wait(lock);
+
+			if (socket_->connected_ == false)
+			{
+				return;
+			}
 
 			socket_->skip_ = true;
 

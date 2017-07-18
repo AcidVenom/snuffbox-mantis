@@ -5,7 +5,7 @@
 
 #include "../services/window_service.h"
 
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace snuffbox
 {
@@ -71,9 +71,9 @@ namespace snuffbox
 			unsigned int Height() const override;
 
 			/**
-			* @return (bool) Should the window and application close?
+			* @see snuffbox::engine::WindowService::Closed
 			*/
-			bool ShouldClose();
+			bool Closed() const override;
 
 			/**
 			* @brief Poll events sent to the window from the OS

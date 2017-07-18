@@ -58,6 +58,11 @@ namespace snuffbox
 			* @return The height of the window
 			*/
 			virtual unsigned int Height() const;
+
+			/**
+			* @brief Is the window closed?
+			*/
+			virtual bool Closed() const;
 		};
 	}
 }

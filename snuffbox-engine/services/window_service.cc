@@ -45,5 +45,11 @@ namespace snuffbox
 		{
 			return 0;
 		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool WindowService::Closed() const
+		{
+			return true;
+		}
 	}
 }

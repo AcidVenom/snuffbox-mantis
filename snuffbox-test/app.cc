@@ -18,22 +18,19 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void App::OnInit()
 		{
-			engine::Services::Get<engine::LogService>().Log(console::LogSeverity::kSuccess, "Initialised the application");
+
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void App::OnUpdate()
 		{
-			engine::LogService& log = engine::Services::Get<engine::LogService>();
-			engine::CVarService& cvar = engine::Services::Get<engine::CVarService>();
-			
-            log.Log(console::LogSeverity::kDebug, "Update");
+
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void App::OnShutdown()
 		{
-			engine::Services::Get<engine::LogService>().Log(console::LogSeverity::kInfo, "Shutting down..");
+
 		}
 	}
 }
