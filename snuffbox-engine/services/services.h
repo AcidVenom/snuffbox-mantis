@@ -2,6 +2,7 @@
 
 #include "service.h"
 #include <assert.h>
+#include <mutex>
 
 namespace snuffbox
 {
@@ -43,6 +44,7 @@ namespace snuffbox
 		private:
 
 			static void* services_[ServiceIDs::kCount]; //!< The list of current services
+			static std::recursive_mutex service_mutex_[ServiceIDs::kCount]; //!< Thread safe gets
 		};
 
 		//-----------------------------------------------------------------------------------------------
@@ -59,6 +61,9 @@ namespace snuffbox
 		inline T& Services::Get()
 		{
 			static_assert(is_service<T>::value, "Service type to retrieve in the service locator is not a service");
+
+			std::lock_guard<std::recursive_mutex> lock(service_mutex_[T::SERVICE_ID]);
+
 			void* ptr = services_[T::SERVICE_ID];
 			if (ptr == nullptr)
 			{

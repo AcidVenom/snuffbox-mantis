@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 #include <time.h>
 
 #include <snuffbox-console/logging/logging.h>
@@ -34,7 +35,6 @@ namespace snuffbox
 			enum Commands : char
 			{
 				kWaiting, //!< When both client and server are idle
-				kAccept, //!< When the server or client accepts a message
 				kLog, //!< When the client wants to log something to the server
 				kCommand, //!< When the server wants to execute a command on the client
 				kJavaScript, //!< When the server wants to execute JavaScript on the client
@@ -42,14 +42,14 @@ namespace snuffbox
 			};
 
 			/**
-			* @struct snuffbox::logging::LoggingStream::PacketHeader
-			* @brief A structure to send information of what to receive or send between a connected client and server
+			* @struct snuffbox::logging::Packet
+			* @brief A packet structure to send over the logging connection
 			* @author Daniël Konings
 			*/
-			struct PacketHeader
+			struct Packet
 			{
-				Commands command; //!< The command to execute
-				int size; //!< The size of the upcoming buffer
+				Commands command;
+				char buffer[SNUFF_LOG_BUFFERSIZE - sizeof(Commands)];
 			};
 
 			/**

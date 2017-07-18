@@ -93,6 +93,11 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LoggingClient::CloseSocket(const bool& quit)
 		{
+			if (command_thread_.joinable())
+			{
+				command_thread_.join();
+			}
+
 			if (socket_ > 0)
 			{
 				closesocket(socket_);
@@ -108,71 +113,23 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		LoggingSocket::ConnectionStatus LoggingClient::Update(const bool& quit)
 		{
+			const int size = sizeof(LoggingStream::Packet);
+
 			bool connected = true;
 
-			switch (status_)
+			if (skip_ == false)
 			{
-			case ConnectionStatus::kWaiting:
-				connected = Waiting(quit);
-				break;
-
-			case ConnectionStatus::kAccepting:
-				connected = Accepting(quit);
-				break;
-
-			case ConnectionStatus::kBusy:
-				connected = Busy(quit);
-				break;
+				buffer_[0] = LoggingStream::Commands::kWaiting;
+				connected = SendPacket(socket_, buffer_, size, quit);
 			}
 
-			return connected == true ? status_ : ConnectionStatus::kDisconnected;
-		}
+			connected = connected == false ? false : ReceivePacket(socket_, size, quit);
 
-		//-----------------------------------------------------------------------------------------------
-		bool LoggingClient::Waiting(const bool& quit)
-		{
-			bool connected = SendCommand(LoggingStream::Commands::kWaiting, socket_, quit);
+			LoggingStream::Packet* packet = reinterpret_cast<LoggingStream::Packet*>(buffer_);
 
-			if (connected == true)
+			if (packet->command == LoggingStream::Commands::kCommand || packet->command == LoggingStream::Commands::kJavaScript)
 			{
-				LoggingStream::PacketHeader header;
-				connected = Receive(socket_, &header, quit);
-
-				if (connected == true && 
-					(header.command == LoggingStream::Commands::kCommand || header.command == LoggingStream::Commands::kJavaScript))
-				{
-					expected_ = header.size;
-					status_ = ConnectionStatus::kAccepting;
-
-					return true;
-				}
-			}
-
-			return connected;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool LoggingClient::Accepting(const bool& quit)
-		{
-			bool connected = SendCommand(LoggingStream::Commands::kAccept, socket_, quit);
-
-			if (connected == true)
-			{
-				status_ = ConnectionStatus::kBusy;
-				return true;
-			}
-
-			return connected;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool LoggingClient::Busy(const bool& quit)
-		{
-			bool connected = ReceivePacket(socket_, expected_, quit);
-
-			if (connected == true)
-			{
-				const LoggingStream::Commands& cmd = *reinterpret_cast<LoggingStream::Commands*>(buffer_);
+				const LoggingStream::Commands& cmd = *reinterpret_cast<LoggingStream::Commands*>(packet->buffer);
 				LoggingClient::CommandTypes type = CommandTypes::kConsole;
 
 				switch (cmd)
@@ -186,13 +143,17 @@ namespace snuffbox
 					break;
 				}
 
-				status_ = ConnectionStatus::kWaiting;
-				OnCommand(type, buffer_ + 1);
+				if (command_thread_.joinable())
+				{
+					command_thread_.join();
+				}
 
-				return true;
+				command_thread_.swap(std::thread([=]() { OnCommand(type, packet->buffer + 1); }));
 			}
+			
+			skip_ = false;
 
-			return connected;
+			return connected == true ? ConnectionStatus::kWaiting : ConnectionStatus::kDisconnected;
 		}
 
 		//-----------------------------------------------------------------------------------------------

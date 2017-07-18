@@ -11,13 +11,15 @@
 
 #include "connection/logging_wrapper.h"
 
+std::condition_variable_any connection_cv;
+
 namespace snuffbox
 {
 	namespace logging
 	{
 		//-----------------------------------------------------------------------------------------------
 		const unsigned int LoggingStream::STARTUP_SLEEP_ = 1500;
-		const unsigned int LoggingStream::WAIT_SLEEP_ = 1;
+		const unsigned int LoggingStream::WAIT_SLEEP_ = 8;
 		const unsigned int LoggingStream::SHUTDOWN_SLEEP_ = 500;
 
 		//-----------------------------------------------------------------------------------------------
@@ -95,22 +97,30 @@ namespace snuffbox
 
 					if (socket->Connect(port, ip, should_quit_) == 0)
 					{
-						connection_mutex_.lock();
+						std::unique_lock<std::recursive_mutex> lock(connection_mutex_);
+
+						if (is_server_ == true)
+						{
+							connection_cv.notify_one();
+						}
 
 						status = socket->Update(should_quit_);
-
-						connection_mutex_.unlock();
 
 						switch (status)
 						{
 						case LoggingSocket::ConnectionStatus::kWaiting:
-							std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_SLEEP_));
+							if (is_server_ == false)
+							{
+								connection_cv.notify_one();
+							}
 							break;
 						case LoggingSocket::ConnectionStatus::kDisconnected:
 							disconnect = true;
 							break;
 						}
 					}
+
+					std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_SLEEP_));
 				}
 
 				socket->CloseSocket(should_quit_);
@@ -225,36 +235,16 @@ namespace snuffbox
 				return;
 			}
 
-			while (socket_->status_ != LoggingSocket::ConnectionStatus::kWaiting) {}
+			std::unique_lock<std::recursive_mutex> lock(connection_mutex_);
+			connection_cv.wait(lock);
 
-			std::lock_guard<std::recursive_mutex> lock(connection_mutex_);
+			socket_->skip_ = true;
 
-			socket_->status_ = LoggingSocket::ConnectionStatus::kSending;
+			Packet packet;
+			packet.command = cmd;
+			memcpy(packet.buffer, buffer, sizeof(Packet) - sizeof(Commands));
 
-			PacketHeader header;
-			
-			bool connected = true;
-			if (is_server_ == true)
-			{
-				connected = socket_->Receive(other, &header, should_quit_);
-				if (connected == false || header.command != Commands::kWaiting)
-				{
-					return;
-				}
-			}
-
-			header.command = cmd;
-			header.size = size;
-
-			connected = socket_->Send(other, &header, should_quit_);
-			connected = connected == false ? false : socket_->Receive(other, &header, should_quit_);
-
-			if (connected == true && header.command == Commands::kAccept)
-			{
-				connected = socket_->SendPacket(other, buffer, size, should_quit_);
-			}
-
-			socket_->status_ = LoggingSocket::ConnectionStatus::kWaiting;
+			bool connected = socket_->SendPacket(other, reinterpret_cast<char*>(&packet), sizeof(Packet), should_quit_);
 		}
 	}
 }

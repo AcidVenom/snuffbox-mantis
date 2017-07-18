@@ -11,6 +11,53 @@ namespace snuffbox
 	namespace console
 	{
 		//-----------------------------------------------------------------------------------------------
+		ConsoleServer::ConsoleServer()
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		ConsoleServer::ConsoleServer(Console* console) :
+			console_(console)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void ConsoleServer::OnConnect(const bool& stream_quit) const
+		{
+			if (stream_quit == false)
+			{
+				console_->AddMessage(LogSeverity::kSuccess, "Succesfully connected to the engine");
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void ConsoleServer::OnDisconnect(const bool& stream_quit) const
+		{
+			if (stream_quit == false)
+			{
+				console_->AddMessage(LogSeverity::kInfo, "Disconnected from the engine, looking for a new connection..");
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void ConsoleServer::OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg)
+		{
+			if (severity == LogSeverity::kRGB && col_fg != nullptr && col_bg != nullptr)
+			{
+				LogColour col;
+				col.foreground = LogColour::Colour{ col_fg[0], col_fg[1], col_fg[2] };
+				col.background = LogColour::Colour{ col_bg[0], col_bg[1], col_bg[2] };
+
+				console_->AddMessage(severity, message, col);
+				return;
+			}
+
+			console_->AddMessage(severity, message);
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		Console::Event::Event(const wxEventType& type, const int& id) :
 			wxCommandEvent(type, id)
 		{
@@ -90,10 +137,9 @@ namespace snuffbox
 		};
 
 		//-----------------------------------------------------------------------------------------------
-		Console::Console(wxWindow* parent, logging::LoggingStream* stream, const int& max_lines) :
+		Console::Console(wxWindow* parent, const int& max_lines) :
 			MainWindow(parent),
 			messages_(0),
-			stream_(stream),
 			max_line_count_(max_lines),
 			last_message_(""),
 			last_severity_(LogSeverity::kCount),
@@ -122,6 +168,9 @@ namespace snuffbox
 			}
 			
 			Bind(CONSOLE_MSG_EVT, &Console::AddLine, this);
+
+			server_ = ConsoleServer(this);
+			stream_.Open(&server_, SNUFF_DEFAULT_PORT);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -257,11 +306,6 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
         void Console::SendInput()
 		{
-			if (stream_ == nullptr || stream_->Connected() == false)
-			{
-				AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
-			}
-
 			wxString val = input_box->GetValue();
 
 			if (val.size() == 0)
@@ -269,8 +313,13 @@ namespace snuffbox
 				return;
 			}
 
+			if (stream_.Connected() == false)
+			{
+				AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
+			}
+
 			int idx = input_type->GetSelection();
-			stream_->SendCommand(
+			stream_.SendCommand(
 				idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
 				val.c_str(),
 				val.size());
@@ -286,6 +335,12 @@ namespace snuffbox
         }
 
 		//-----------------------------------------------------------------------------------------------
+		Console::~Console()
+		{
+			stream_.Close();
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		wxString Console::CreateTimeStamp()
 		{
 			std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
@@ -299,7 +354,7 @@ namespace snuffbox
 
 				return formatted;
 			};
-
+			
 			return FormatTime(time->tm_hour) + ":" + FormatTime(time->tm_min) + ":" + FormatTime(time->tm_sec);
 		}
 

@@ -16,11 +16,10 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		LoggingSocket::LoggingSocket() :
-			status_(ConnectionStatus::kWaiting),
 			socket_(-1),
 			other_(-1),
 			connected_(false),
-			expected_(0)
+			skip_(false)
 		{
 			time(&last_time_);
 		}
@@ -93,15 +92,6 @@ namespace snuffbox
 			}
 
 			return false;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool LoggingSocket::SendCommand(const char& cmd, const int& socket, const bool& quit)
-		{
-			LoggingStream::PacketHeader header;
-			header.command = static_cast<LoggingStream::Commands>(cmd);
-			header.size = 0;
-			return Send(socket, &header, quit);
 		}
 
 		//-----------------------------------------------------------------------------------------------

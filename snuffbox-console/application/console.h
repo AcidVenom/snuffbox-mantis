@@ -6,6 +6,9 @@
 #include <string.h>
 #include <wx/font.h>
 
+#include <snuffbox-logging/logging_stream.h>
+#include <snuffbox-logging/connection/logging_server.h>
+
 namespace snuffbox
 {
 	namespace logging
@@ -15,7 +18,48 @@ namespace snuffbox
 
 	namespace console
 	{
-		class ConsoleServer;
+		class Console;
+
+		/**
+		* @class snuffbox::console::ConsoleServer : public snuffbox::LoggingServer
+		* @brief The console server that we can log message from the logging stream with
+		* @author Daniël Konings
+		*/
+		class ConsoleServer : public logging::LoggingServer
+		{
+
+		public:
+
+			/**
+			* @brief Default constructor
+			*/
+			ConsoleServer();
+
+			/**
+			* @brief Construct by providing the console that we'll append to
+			* @param[in] console (snuffbox::console::Console*) The console
+			*/
+			ConsoleServer(Console* console);
+
+			/**
+			* @see snuffbox::logging::LoggingServer::OnConnect
+			*/
+			void OnConnect(const bool& stream_quit) const override;
+
+			/**
+			* @see snuffbox::logging::LoggingServer::OnDisconnect
+			*/
+			void OnDisconnect(const bool& stream_quit) const override;
+
+			/**
+			* @see snuffbox::logging::LoggingServer::OnLog
+			*/
+			void OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg) override;
+
+		private:
+
+			Console* console_; //!< The console form running in the wxApp
+		};
 
 		/**
 		* @class snuffbox::console::Console : public MainWindow
@@ -93,10 +137,9 @@ namespace snuffbox
 			/**
 			* @brief Default constructor, requires a parent window to construct the underlying MainWindow form
 			* @param[in] parent (wxWindow*) The parent window to assign to the MainWindow
-			* @param[in] stream (snuffbox::logging::LoggingStream*) The logging stream
 			* @param[in] max_lines (const int&) The maximum number of lines in the console, default = 200
 			*/
-			Console(wxWindow* parent, logging::LoggingStream* stream, const int& max_lines = 200);
+			Console(wxWindow* parent, const int& max_lines = 200);
 
 			/**
 			* @brief Adds a message with a severity and a timestamp to the console
@@ -123,6 +166,11 @@ namespace snuffbox
             */
             void ToggleMode();
 
+			/**
+			* @brief Default destructor, closes the stream
+			*/
+			~Console();
+
 		protected:
 
 			/**
@@ -142,7 +190,8 @@ namespace snuffbox
 
 			wxFont font_; //!< The font of the console
 			unsigned int messages_; //!< The number of messages
-			logging::LoggingStream* stream_; //!< The logging stream
+			logging::LoggingStream stream_; //!< The logging stream
+			ConsoleServer server_; //!< The logging server
 			unsigned int max_line_count_; //!< The maximum line count for this console
 
 			wxString last_message_; //!< The last message sent to the console
