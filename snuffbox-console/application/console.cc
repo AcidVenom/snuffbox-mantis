@@ -11,12 +11,6 @@ namespace snuffbox
 	namespace console
 	{
 		//-----------------------------------------------------------------------------------------------
-		ConsoleServer::ConsoleServer()
-		{
-
-		}
-
-		//-----------------------------------------------------------------------------------------------
 		ConsoleServer::ConsoleServer(Console* console) :
 			console_(console)
 		{
@@ -140,6 +134,7 @@ namespace snuffbox
 		Console::Console(wxWindow* parent, const int& max_lines) :
 			MainWindow(parent),
 			messages_(0),
+			server_(this),
 			max_line_count_(max_lines),
 			last_message_(""),
 			last_severity_(LogSeverity::kCount),
@@ -169,7 +164,6 @@ namespace snuffbox
 			
 			Bind(CONSOLE_MSG_EVT, &Console::AddLine, this);
 
-			server_ = ConsoleServer(this);
 			stream_.Open(&server_, SNUFF_DEFAULT_PORT);
 		}
 

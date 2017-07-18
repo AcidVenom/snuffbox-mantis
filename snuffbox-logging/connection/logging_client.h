@@ -58,10 +58,6 @@ namespace snuffbox
 			* @param[in] cmd (const snuffbox::logging::LoggingClient::CommandTypes&) The command type
 			*/
 			virtual void OnCommand(const CommandTypes& cmd, const char* message);
-
-		private:
-
-			std::thread command_thread_;
 		};
 	}
 }

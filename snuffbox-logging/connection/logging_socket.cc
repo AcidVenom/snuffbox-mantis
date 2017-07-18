@@ -7,6 +7,9 @@
 
 #include "logging_wrapper.h"
 
+#include "logging_client.h"
+#include "logging_server.h"
+
 namespace snuffbox
 {
 	namespace logging
@@ -95,6 +98,17 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void LoggingSocket::Execute(const std::function<void()>& func)
+		{
+			if (execution_thread_.joinable() == true)
+			{
+				execution_thread_.join();
+			}
+
+			execution_thread_ = std::thread(func);
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void LoggingSocket::OnConnect(const bool& stream_quit) const
 		{
 
@@ -104,6 +118,15 @@ namespace snuffbox
 		void LoggingSocket::OnDisconnect(const bool& stream_quit) const
 		{
 
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		LoggingSocket::~LoggingSocket()
+		{
+			if (execution_thread_.joinable() == true)
+			{
+				execution_thread_.join();
+			}
 		}
 	}
 }

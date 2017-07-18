@@ -93,11 +93,6 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LoggingClient::CloseSocket(const bool& quit)
 		{
-			if (command_thread_.joinable())
-			{
-				command_thread_.join();
-			}
-
 			if (socket_ > 0)
 			{
 				closesocket(socket_);
@@ -143,12 +138,13 @@ namespace snuffbox
 					break;
 				}
 
-				if (command_thread_.joinable())
+				auto to_execute = [=]()
 				{
-					command_thread_.join();
-				}
+					OnCommand(type, packet->buffer + 1);
+				};
 
-                command_thread_ = std::thread([=]() { OnCommand(type, packet->buffer + 1); });
+				std::function<void()> func = to_execute;
+				Execute(func);
 			}
 			
 			skip_ = false;

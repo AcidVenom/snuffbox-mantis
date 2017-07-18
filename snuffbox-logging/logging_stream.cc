@@ -11,8 +11,6 @@
 
 #include "connection/logging_wrapper.h"
 
-std::condition_variable_any connection_cv;
-
 namespace snuffbox
 {
 	namespace logging
@@ -97,11 +95,11 @@ namespace snuffbox
 
 					if (socket->Connect(port, ip, should_quit_) == 0)
 					{
-						std::unique_lock<std::recursive_mutex> lock(connection_mutex_);
+						std::unique_lock<std::mutex> lock(connection_mutex_);
 
 						if (is_server_ == true)
 						{
-							connection_cv.notify_one();
+							connection_cv_.notify_one();
 						}
 
 						status = socket->Update(should_quit_);
@@ -111,7 +109,7 @@ namespace snuffbox
 						case LoggingSocket::ConnectionStatus::kWaiting:
 							if (is_server_ == false)
 							{
-								connection_cv.notify_one();
+								connection_cv_.notify_one();
 							}
 							break;
 						case LoggingSocket::ConnectionStatus::kDisconnected:
@@ -235,8 +233,8 @@ namespace snuffbox
 				return;
 			}
 
-			std::unique_lock<std::recursive_mutex> lock(connection_mutex_);
-			connection_cv.wait(lock);
+			std::unique_lock<std::mutex> lock(connection_mutex_);
+			connection_cv_.wait(lock);
 
 			socket_->skip_ = true;
 

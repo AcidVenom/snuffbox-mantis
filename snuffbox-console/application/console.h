@@ -31,11 +31,6 @@ namespace snuffbox
 		public:
 
 			/**
-			* @brief Default constructor
-			*/
-			ConsoleServer();
-
-			/**
 			* @brief Construct by providing the console that we'll append to
 			* @param[in] console (snuffbox::console::Console*) The console
 			*/

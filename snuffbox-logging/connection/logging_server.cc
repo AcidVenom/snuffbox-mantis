@@ -114,10 +114,19 @@ namespace snuffbox
 			if (packet->command == LoggingStream::Commands::kLog)
 			{
 				int len = static_cast<int>(strlen(buffer_ + 1));
-				OnLog(*reinterpret_cast<console::LogSeverity*>(packet->buffer),
-					packet->buffer + 1,
-					reinterpret_cast<unsigned char*>(packet->buffer + len + 1),
-					reinterpret_cast<unsigned char*>(packet->buffer + len + 4));
+
+				using namespace std::placeholders;
+
+				auto to_execute = [=]() 
+				{
+					OnLog(*reinterpret_cast<console::LogSeverity*>(packet->buffer),
+						packet->buffer + 1,
+						reinterpret_cast<unsigned char*>(packet->buffer + len + 1),
+						reinterpret_cast<unsigned char*>(packet->buffer + len + 4));
+				};
+
+				std::function<void()> func = to_execute;
+				Execute(func);
 			}
 
 			if (skip_ == false)

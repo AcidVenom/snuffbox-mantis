@@ -1,6 +1,8 @@
 #pragma once
 
 #include <time.h>
+#include <thread>
+#include <functional>
 
 namespace snuffbox
 {
@@ -92,6 +94,13 @@ namespace snuffbox
 			virtual ConnectionStatus Update(const bool& quit) = 0;
 
 			/**
+			* @brief Executes a function on the execution thread
+			* @remarks This is useful for when server/client commands are recursively called, the logging stream is still updated so our conditional variable still runs
+			* @param[in] func (const std::function<void()>&) The function pointer to the function to run
+			*/
+			void Execute(const std::function<void()>& func);
+
+			/**
 			* @brief Called when the server is connected to a client
 			* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
 			*/
@@ -102,6 +111,10 @@ namespace snuffbox
 			* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
 			*/
 			virtual void OnDisconnect(const bool& stream_quit) const;
+
+		public:
+
+			virtual ~LoggingSocket();
 
 		protected:
 
@@ -115,6 +128,7 @@ namespace snuffbox
 			char buffer_[SNUFF_LOG_BUFFERSIZE + sizeof(char)]; //!< The buffer to receive messages with
 
 			bool skip_; //!< Skip the next wait message as we have a packet instead
+			std::thread execution_thread_; //!< The thread to run when we received a packet to consume
 		};
 	}
 }
