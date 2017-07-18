@@ -148,7 +148,7 @@ namespace snuffbox
 					command_thread_.join();
 				}
 
-				command_thread_.swap(std::thread([=]() { OnCommand(type, packet->buffer + 1); }));
+                command_thread_ = std::thread([=]() { OnCommand(type, packet->buffer + 1); });
 			}
 			
 			skip_ = false;
