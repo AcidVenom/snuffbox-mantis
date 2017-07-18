@@ -15,6 +15,7 @@ SET(SNUFF_OGL_VERSION "ogl" CACHE STRING "Specifies whether to use OpenGL or Vul
 SET_PROPERTY(CACHE "SNUFF_DIRECTX_VERSION" PROPERTY STRINGS "11" "12")
 SET_PROPERTY(CACHE "SNUFF_OGL_VERSION" PROPERTY STRINGS "ogl" "vulkan")
 SET(SNUFF_RELOAD_AFTER "1000" CACHE STRING "Specifies after how many frames the file watcher should reload")
+OPTION(SNUFF_BUILD_TEST "Build the test environment project 'snuffbox-test'")
 
 OPTION(SNUFF_JAVASCRIPT "Should V8 (JavaScript) be enabled for this build?")
 
@@ -56,7 +57,11 @@ ENDIF ()
 ADD_SUBDIRECTORY("snuffbox-logging")
 ADD_SUBDIRECTORY("snuffbox-console")
 ADD_SUBDIRECTORY("snuffbox-engine")
-ADD_SUBDIRECTORY("snuffbox-test")
+
+IF (SNUFF_BUILD_TEST)
+	ADD_SUBDIRECTORY("snuffbox-test")
+	SET_TARGET_PROPERTIES(snuffbox-test PROPERTIES FOLDER "snuffbox-mantis")
+ENDIF ()
 
 IF (SNUFF_JAVASCRIPT)
 	ADD_SUBDIRECTORY("snuffbox-javascript")
@@ -68,4 +73,3 @@ SET_TARGET_PROPERTIES(EABase_ide PROPERTIES FOLDER "deps/eastl")
 SET_TARGET_PROPERTIES(snuffbox-logging PROPERTIES FOLDER "snuffbox-mantis")
 SET_TARGET_PROPERTIES(snuffbox-console PROPERTIES FOLDER "snuffbox-mantis")
 SET_TARGET_PROPERTIES(snuffbox-engine PROPERTIES FOLDER "snuffbox-mantis")
-SET_TARGET_PROPERTIES(snuffbox-test PROPERTIES FOLDER "snuffbox-mantis")
