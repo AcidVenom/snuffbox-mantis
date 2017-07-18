@@ -31,10 +31,22 @@ namespace snuffbox
 
 			OnStartup();
 
-			while (std::cin.get() != 'q')
+            char input[8192];
+            while (input != "quit")
 			{
+                std::cin.getline(input, sizeof(input));
 				content_service_->Update();
-				OnUpdate();
+
+                if (strlen(input) == 0)
+                {
+                    OnUpdate();
+                }
+#ifdef SNUFF_JAVASCRIPT
+                else
+                {
+                    JSStateWrapper::Instance()->Run(input, "terminal", true);
+                }
+#endif
 			}
 
 			Shutdown();

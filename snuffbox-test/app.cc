@@ -27,9 +27,7 @@ namespace snuffbox
 			engine::LogService& log = engine::Services::Get<engine::LogService>();
 			engine::CVarService& cvar = engine::Services::Get<engine::CVarService>();
 			
-			log.Log(console::LogSeverity::kDebug, "Update");
-
-			std::this_thread::sleep_for(std::chrono::milliseconds(4));
+            log.Log(console::LogSeverity::kDebug, "Update");
 		}
 
 		//-----------------------------------------------------------------------------------------------
