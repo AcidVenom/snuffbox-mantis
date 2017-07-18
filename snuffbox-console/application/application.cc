@@ -8,8 +8,27 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool ConsoleApp::OnInit()
 		{
-			console_ = new Console(nullptr);
+            int port = SNUFF_DEFAULT_PORT;
+
+            for (int i = 1; i < argc; ++i)
+            {
+                if (strcmp(argv[i], "port") == 0)
+                {
+                    if (i + 1 < argc)
+                    {
+                        port = atoi(argv[i + 1]);
+                        break;
+                    }
+                }
+            }
+
+            console_ = new Console(nullptr, port);
+
 			console_->Show(true);
+            if (port != SNUFF_DEFAULT_PORT)
+            {
+                console_->AddMessage(LogSeverity::kInfo, "Set custom port: " + std::to_string(port));
+            }
 			console_->AddMessage(LogSeverity::kInfo, "Looking for an available connection..");
 
 			return true;

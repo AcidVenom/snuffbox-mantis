@@ -131,7 +131,7 @@ namespace snuffbox
 		};
 
 		//-----------------------------------------------------------------------------------------------
-		Console::Console(wxWindow* parent, const int& max_lines) :
+        Console::Console(wxWindow* parent, const int& port, const int& max_lines) :
 			MainWindow(parent),
 			messages_(0),
 			server_(this),
@@ -164,7 +164,7 @@ namespace snuffbox
 			
 			Bind(CONSOLE_MSG_EVT, &Console::AddLine, this);
 
-			stream_.Open(&server_, SNUFF_DEFAULT_PORT);
+            stream_.Open(&server_, port);
 		}
 
 		//-----------------------------------------------------------------------------------------------
