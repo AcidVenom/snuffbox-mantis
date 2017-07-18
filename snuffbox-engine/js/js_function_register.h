@@ -19,18 +19,18 @@ namespace snuffbox
 			/**
 			* @brief Registers the provided functions to an object template
 			* @param[in] funcs (snuffbox::engine::JSFunctionRegister*) The functions to register
-			* @param[in] obj (const v8::Handle<v8::ObjectTemplate>&) The object template to register the functions to
+            * @param[in] obj (const v8::Local<v8::ObjectTemplate>&) The object template to register the functions to
 			* @remarks The functions should contain a null-terminated function register for counting
 			*/
-			static void Register(JSFunctionRegister* funcs, const v8::Handle<v8::ObjectTemplate>& obj);
+            static void Register(JSFunctionRegister* funcs, const v8::Local<v8::ObjectTemplate>& obj);
 
 			/**
 			* @brief Registers the provided functions to an object
 			* @param[in] funcs (snuffbox::engine::JSFunctionRegister*) The functions to register
-			* @param[in] obj (const v8::Handle<v8::Object>&) The object to register the functions to
+            * @param[in] obj (const v8::Local<v8::Object>&) The object to register the functions to
 			* @remarks The functions should contain a null-terminated function register for counting
 			*/
-			static void Register(JSFunctionRegister* funcs, const v8::Handle<v8::Object>& obj);
+            static void Register(JSFunctionRegister* funcs, const v8::Local<v8::Object>& obj);
 
 			/**
 			* @brief Registers the provided functions in the global scope

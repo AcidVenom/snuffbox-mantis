@@ -29,7 +29,7 @@ namespace snuffbox
 			isolate_(nullptr),
 			platform_(nullptr)
 		{
-			
+
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -39,7 +39,6 @@ namespace snuffbox
 
 			LogService& log = Services::Get<LogService>();
 
-			V8::InitializeICU();
 			V8::Initialize();
 			platform_ = platform::CreateDefaultPlatform();
 			V8::InitializePlatform(platform_);
@@ -51,10 +50,10 @@ namespace snuffbox
 
 			HandleScope scope(isolate_);
 
-			Handle<ObjectTemplate> global = CreateGlobal();
+            Local<ObjectTemplate> global = CreateGlobal();
 			global_.Reset(isolate_, global);
 
-			Handle<v8::Context> context = CreateContext(global);
+            Local<v8::Context> context = CreateContext(global);
 			context_.Reset(isolate_, context);
 
 			context->Enter();
@@ -67,13 +66,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		Handle<ObjectTemplate> JSStateWrapper::CreateGlobal() const
+        Local<ObjectTemplate> JSStateWrapper::CreateGlobal() const
 		{
 			return ObjectTemplate::New(isolate_);
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		Handle<Context> JSStateWrapper::CreateContext(const Handle<ObjectTemplate>& global) const
+        Local<Context> JSStateWrapper::CreateContext(const Local<ObjectTemplate>& global) const
 		{
 			return Context::New(isolate_, nullptr, global);
 		}
@@ -83,13 +82,13 @@ namespace snuffbox
 		{
 			HandleScope handle_scope(isolate_);
 			v8::String::Utf8Value exception(try_catch->Exception());
-			Handle<Message> message = try_catch->Message();
+            Local<Message> message = try_catch->Message();
 
 			engine::String error = "";
 
 			if (!message.IsEmpty())
 			{
-				v8::String::Utf8Value sourceline(message->GetSourceLine());
+                v8::String::Utf8Value sourceline(message->GetSourceLine(Context()).ToLocalChecked());
 				error += "\n\n";
 
 				engine::String srcline = *sourceline;
@@ -104,7 +103,7 @@ namespace snuffbox
 				error += srcline;
 				error += "\n";
 
-				int start = message->GetStartColumn();
+                int start = message->GetStartColumn(Context()).ToChecked();
 
 				for (int i = 0; i < start; ++i)
 				{
@@ -118,7 +117,7 @@ namespace snuffbox
 					error += "^";
 				}
 
-				v8::String::Utf8Value stack_trace(try_catch->StackTrace());
+                v8::String::Utf8Value stack_trace(try_catch->StackTrace(Context()).ToLocalChecked());
 
 				error += "\n\t";
 				error += *stack_trace;
@@ -161,10 +160,12 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void JSStateWrapper::RegisterGlobal(const char* name, const Handle<Value>& value)
+        void JSStateWrapper::RegisterGlobal(const char* name, const Local<Value>& value)
 		{
 			Local<Object> global = Global();
-			global->Set(v8::String::NewFromUtf8(isolate_, name), value);
+            global->Set(Context(),
+                        v8::String::NewFromUtf8(isolate_, name, v8::NewStringType::kNormal).ToLocalChecked(),
+                        value);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -176,10 +177,11 @@ namespace snuffbox
 
 			HandleScope scope(isolate_);
 			Local<Object> g = Global();
+            Local<v8::Context> ctx = Context();
 
-			for (unsigned int i = 0; i < g->GetPropertyNames()->Length(); ++i)
+            for (unsigned int i = 0; i < g->GetPropertyNames(ctx).ToLocalChecked()->Length(); ++i)
 			{
-				g->Set(g->GetPropertyNames()->Get(i), v8::Undefined(isolate_));
+                g->Set(ctx, g->GetPropertyNames(ctx).ToLocalChecked()->Get(ctx, i).ToLocalChecked(), v8::Undefined(isolate_));
 			}
 
 			log.Log(console::LogSeverity::kDebug, "Collected all JavaScript garbage");
@@ -230,7 +232,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, const bool& echo)
         {
-            std::lock_guard<std::recursive_mutex> lock(run_mutex_);
+            std::lock_guard<std::mutex> lock(run_mutex_);
 
             isolate_->Enter();
             isolate_->SetStackLimit(STACK_LIMIT_);
@@ -240,13 +242,18 @@ namespace snuffbox
 
             LogService& log = Services::Get<LogService>();
 
-            Local<v8::Context> context = Local<v8::Context>::New(isolate_, context_);
-            Context::Scope context_scope(context);
+            Local<v8::Context> ctx = Context();
+            Context::Scope context_scope(ctx);
 
-            Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate_, src.c_str()), v8::String::NewFromUtf8(isolate_, file_name.c_str()));
-            Local<Value> result = script->Run();
+            v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate_, file_name.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+            v8::ScriptCompiler::Source s(v8::String::NewFromUtf8(isolate_, src.c_str(), v8::NewStringType::kNormal).ToLocalChecked(), origin);
 
-            if (result.IsEmpty() == true)
+            Local<v8::Script> script;
+            bool compiled = v8::ScriptCompiler::Compile(ctx, &s).ToLocal(&script);
+
+            Local<Value> result;
+
+            if (compiled == false || script->Run(ctx).ToLocal(&result) == false)
             {
                 engine::String error;
                 bool has_error = GetException(&try_catch, &error);
@@ -262,7 +269,7 @@ namespace snuffbox
 			
 			if (echo == true)
 			{
-				log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString()));
+                log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString(ctx).ToLocalChecked()));
 			}
 
             isolate_->Exit();

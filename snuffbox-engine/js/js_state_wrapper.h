@@ -56,15 +56,16 @@ namespace snuffbox
 
             /**
             * @brief Creates the global scope and returns it
-            * @return (v8::Handle<v8::ObjectTemplate>) The global scope
+            * @return (v8::Local<v8::ObjectTemplate>) The global scope
             */
-            v8::Handle<v8::ObjectTemplate> CreateGlobal() const;
+            v8::Local<v8::ObjectTemplate> CreateGlobal() const;
 
             /**
             * @brief Creates the context and returns it
-            * @return (v8::Handle<v8::Context>) The context
+            * @param[in] global (const v8::Local<v8::ObjectTemplate>&) The global scope
+            * @return (v8::Local<v8::Context>) The context
             */
-            v8::Handle<v8::Context> CreateContext(const v8::Handle<v8::ObjectTemplate>& global) const;
+            v8::Local<v8::Context> CreateContext(const v8::Local<v8::ObjectTemplate>& global) const;
 
             /**
             * @brief Retrieves an error from a v8::TryCatch, if there is any
@@ -84,9 +85,9 @@ namespace snuffbox
             /**
             * @brief Registers a global value
             * @param[in] name (const char*) The name to register this global under
-            * @param[in] value (const v8::Handle<v8::Value>&) The value to register
+            * @param[in] value (const v8::Local<v8::Value>&) The value to register
             */
-            void RegisterGlobal(const char* name, const v8::Handle<v8::Value>& value);
+            void RegisterGlobal(const char* name, const v8::Local<v8::Value>& value);
 
             /**
             * @brief Collects all garbage
@@ -160,7 +161,7 @@ namespace snuffbox
             v8::Persistent<v8::ObjectTemplate> global_; //!< The global scope for use with the JavaScript state
             v8::Platform* platform_; //!< The V8 platform
 
-            std::recursive_mutex run_mutex_; //!< The mutex to run JavaScript code from multiple threads
+            std::mutex run_mutex_; //!< The mutex to run JavaScript code from multiple threads
 
             static JSStateWrapper* instance_; //!< The current instance
 			static const unsigned int STACK_LIMIT_; //!< The stack limit for each isolate
@@ -186,7 +187,7 @@ namespace snuffbox
             v8::Isolate* isolate = args.GetIsolate();
             T* ptr = Memory::default_allocator().Construct<T>(args);
 
-            v8::Handle<v8::Object> obj = args.This();
+            v8::Local<v8::Object> obj = args.This();
             ptr->object().Reset(isolate, obj);
             ptr->object().SetWeak(ptr, Destroy<T>, v8::WeakCallbackType::kParameter);
             ptr->object().MarkIndependent();

@@ -72,10 +72,12 @@ namespace snuffbox
 
 			v8::HandleScope scope(isolate);
 
-			v8::Handle<v8::Object> object = v8::Object::New(isolate);
+            v8::Local<v8::Object> object = v8::Object::New(isolate);
 			T::RegisterJS(object);
 
-			object->Set(v8::String::NewFromUtf8(isolate, "toString"), v8::Function::New(isolate, JSObjectRegister<T>::ToString));
+            object->Set(wrapper->Context(),
+                        v8::String::NewFromUtf8(isolate, "toString", v8::NewStringType::kNormal).ToLocalChecked(),
+                        v8::Function::New(wrapper->Context(), JSObjectRegister<T>::ToString).ToLocalChecked());
 			
 			wrapper->RegisterGlobal(T::js_name(), object);
 		}
@@ -89,7 +91,7 @@ namespace snuffbox
 
 			v8::HandleScope scope(isolate);
 
-			v8::Handle<v8::FunctionTemplate> object = v8::FunctionTemplate::New(isolate);
+            v8::Local<v8::FunctionTemplate> object = v8::FunctionTemplate::New(isolate);
 			T::RegisterJS(object->PrototypeTemplate());
 			
 			object->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "toString"), v8::FunctionTemplate::New(isolate, JSObjectRegister<T>::ToString));

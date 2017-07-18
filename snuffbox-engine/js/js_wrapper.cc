@@ -13,18 +13,18 @@ namespace snuffbox
 			args_(args),
 			error_checks_(true)
 		{
-			args_.GetIsolate()->Enter();
+            args_.GetIsolate()->Enter();
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		Handle<Object> JSWrapper::CreateObject()
+        Local<Object> JSWrapper::CreateObject()
 		{
 			Isolate* isolate = JSStateWrapper::Instance()->isolate();
 			return Object::New(isolate);
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		Handle<Array> JSWrapper::CreateArray()
+        Local<Array> JSWrapper::CreateArray()
 		{
 			Isolate* isolate = JSStateWrapper::Instance()->isolate();
 			return Array::New(isolate);
@@ -167,11 +167,13 @@ namespace snuffbox
 			}
 
 			Isolate* isolate = args_.GetIsolate();
+            Local<Context> ctx = JSStateWrapper::Instance()->Context();
+
 			engine::String error = "(";
 
-			error += *v8::String::Utf8Value(args_.This()->ToString());
+            error += *v8::String::Utf8Value(args_.This()->ToString(ctx).ToLocalChecked());
 			error += ".";
-			error += *v8::String::Utf8Value(args_.Callee()->GetName()->ToString());
+            error += *v8::String::Utf8Value(args_.Callee()->GetName()->ToString(ctx).ToLocalChecked());
 			error += ") ";
 
 			error += "Expected '" + TypeToString(expected) + "', but got '" + TypeToString(got) + "' for argument " + std::to_string(arg + 1).c_str() + "\n\t";

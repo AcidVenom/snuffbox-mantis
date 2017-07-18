@@ -8,7 +8,7 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		void JSFunctionRegister::Register(JSFunctionRegister* funcs, const Handle<ObjectTemplate>& obj)
+        void JSFunctionRegister::Register(JSFunctionRegister* funcs, const Local<ObjectTemplate>& obj)
 		{
 			if (funcs == nullptr || funcs[0].name == nullptr)
 			{
@@ -27,7 +27,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void JSFunctionRegister::Register(JSFunctionRegister* funcs, const Handle<Object>& obj)
+        void JSFunctionRegister::Register(JSFunctionRegister* funcs, const Local<Object>& obj)
 		{
 			if (funcs == nullptr || funcs[0].name == nullptr)
 			{
@@ -40,9 +40,9 @@ namespace snuffbox
 			int current = -1;
 			while (funcs[++current].name != nullptr)
 			{
-				Local<Function> func = Function::New(isolate, funcs[current].function);
-				func->SetName(v8::String::NewFromUtf8(isolate, funcs[current].name));
-				obj->Set(v8::String::NewFromUtf8(isolate, funcs[current].name), func);
+                Local<Function> func = Function::New(wrapper->Context(), funcs[current].function).ToLocalChecked();
+                func->SetName(v8::String::NewFromUtf8(isolate, funcs[current].name, v8::NewStringType::kNormal).ToLocalChecked());
+                obj->Set(wrapper->Context(), v8::String::NewFromUtf8(isolate, funcs[current].name, v8::NewStringType::kNormal).ToLocalChecked(), func);
 			}
 		}
 
@@ -54,15 +54,14 @@ namespace snuffbox
 				return;
 			}
 
-			JSStateWrapper* wrapper = JSStateWrapper::Instance();
-			Isolate* isolate = wrapper->isolate();
+            JSStateWrapper* wrapper = JSStateWrapper::Instance();
 
 			Local<Object> global = wrapper->Global();
 
 			int current = -1;
 			while (funcs[++current].name != nullptr)
 			{
-				wrapper->RegisterGlobal(funcs[current].name, Function::New(isolate, funcs[current].function));
+                wrapper->RegisterGlobal(funcs[current].name, Function::New(wrapper->Context(), funcs[current].function).ToLocalChecked());
 			}
 		}
 	}
