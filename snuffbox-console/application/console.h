@@ -163,6 +163,12 @@ namespace snuffbox
             void ToggleMode();
 
 			/**
+			* @brief Changes the current history index
+			* @param[in] dir (const int&) The direction to move in
+			*/
+			void HistoryChange(const int& dir);
+
+			/**
 			* @brief Default destructor, closes the stream
 			*/
 			~Console();
@@ -193,6 +199,20 @@ namespace snuffbox
 			wxString last_message_; //!< The last message sent to the console
 			LogSeverity last_severity_; //!< The last log severity
 			unsigned int repeat_count_; //!< The current repeat count
+
+			/**
+			* @struct snuffbox::console::Console::InputHistory
+			* @brief A struct to store information about an input provided by the user
+			* @author Daniël Konings
+			*/
+			struct InputHistory
+			{
+				wxString value; //!< The input value
+				int command; //!< The command index used during this input
+			};
+
+			wxVector<InputHistory> input_history_; //!< The console input history
+			int input_history_index_; //!< The current history index
 		};
 
 		wxDECLARE_EVENT(CONSOLE_MSG_EVT, Console::Event);

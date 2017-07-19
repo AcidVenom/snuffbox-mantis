@@ -130,10 +130,11 @@ namespace snuffbox
 
 			/**
 			* @brief Checks the argument scope if the format is as it should be
-			* @param[in] format (const snuffbox::engine::String&) The format to check
+			* @param[in] format (const char*) The format to check
+			* @remarks e.g. B = Boolean, N = Number, concat the values like so; 'BN' in order of arguments
 			* @return (bool) Was the format check completed succesfully?
 			*/
-			bool Check(const String& format);
+			bool Check(const char* format);
 
 			/**
 			* @brief Disables error checking in snuffbox::engine::JSWrapper::Check

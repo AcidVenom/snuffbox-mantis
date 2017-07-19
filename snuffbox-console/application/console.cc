@@ -138,7 +138,8 @@ namespace snuffbox
 			max_line_count_(max_lines),
 			last_message_(""),
 			last_severity_(LogSeverity::kCount),
-			repeat_count_(1)
+			repeat_count_(1),
+			input_history_index_(0)
 		{
 			font_ = wxFont(10, wxFontFamily::wxFONTFAMILY_DEFAULT, wxFontStyle::wxFONTSTYLE_NORMAL, wxFontWeight::wxFONTWEIGHT_NORMAL);
 #ifdef SNUFF_WIN32
@@ -307,6 +308,12 @@ namespace snuffbox
 				return;
 			}
 
+			if (val == "exit")
+			{
+				Close(true);
+				return;
+			}
+
 			if (stream_.Connected() == false)
 			{
 				AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
@@ -318,6 +325,12 @@ namespace snuffbox
 				val.c_str(),
 				val.size());
 
+			if (input_history_.size() == 0 || val != input_history_.at(input_history_.size() - 1).value)
+			{
+				input_history_.push_back({ val, idx });
+			}
+
+			input_history_index_ = input_history_.size();
 			input_box->SetValue("");
 		}
 
@@ -327,6 +340,33 @@ namespace snuffbox
             int current = input_type->GetCurrentSelection();
             input_type->SetSelection(current == 0 ? 1 : 0);
         }
+
+		//-----------------------------------------------------------------------------------------------
+		void Console::HistoryChange(const int& dir)
+		{
+			if (input_box->HasFocus() == false || input_history_.size() == 0)
+			{
+				return;
+			}
+
+			input_history_index_ += dir;
+
+			if (input_history_index_ >= static_cast<int>(input_history_.size()))
+			{
+				input_history_index_ = static_cast<int>(input_history_.size());
+				input_box->SetValue("");
+				return;
+			}
+			
+			if (input_history_index_ < 0)
+			{
+				input_history_index_ = 0;
+			}
+
+			InputHistory& h = input_history_.at(input_history_index_);
+			input_box->SetValue(h.value);
+			input_type->SetSelection(h.command);
+		}
 
 		//-----------------------------------------------------------------------------------------------
 		Console::~Console()

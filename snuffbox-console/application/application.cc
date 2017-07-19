@@ -57,6 +57,14 @@ namespace snuffbox
                     console_->ToggleMode();
                     return 1;
 
+				case wxKeyCode::WXK_UP:
+					console_->HistoryChange(-1);
+					return -1;
+
+				case wxKeyCode::WXK_DOWN:
+					console_->HistoryChange(1);
+					return -1;
+
                 default:
                     return -1;
                 }

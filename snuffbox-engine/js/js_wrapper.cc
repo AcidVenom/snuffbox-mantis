@@ -98,19 +98,20 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool JSWrapper::Check(const engine::String& format)
+		bool JSWrapper::Check(const char* format)
 		{
 #ifdef SNUFF_DEBUG
-			if (format.size() == 0)
+			size_t len = strlen(format);
+			if (len == 0)
 			{
 				return true;
 			}
 
 			char f = 'V';
 			Types expected, got;
-			for (int i = 0; i < format.size(); ++i)
+			for (unsigned int i = 0; i < static_cast<unsigned int>(len); ++i)
 			{
-				f = tolower(format.at(i));
+				f = tolower(format[i]);
 
 				switch (f)
 				{
