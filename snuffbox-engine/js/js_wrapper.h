@@ -34,6 +34,9 @@ namespace snuffbox
 				kUndefined,
 				kUnknown
 			};
+
+			typedef v8::Local<v8::Object> Object;
+
 		public:
 
 			/**
@@ -95,12 +98,6 @@ namespace snuffbox
             static v8::Local<v8::Object> CreateObject();
 
 			/**
-			* @brief Creates a JavaScript array handle and returns it
-            * @return (v8::Local<v8::Array>) The created array handle
-			*/
-            static v8::Local<v8::Array> CreateArray();
-
-			/**
 			* @brief Sets an object value
             * @param[in] obj (const v8::Local<v8::Object>&) The object to assign the value to
 			* @param[in] field (const snuffbox::engine::String&) The field to set
@@ -108,15 +105,6 @@ namespace snuffbox
 			*/
 			template<typename T>
             static void SetObjectValue(const v8::Local<v8::Object>& obj, const String& field, const T& val);
-
-			/**
-			* @brief Sets an array value
-            * @param[in] obj (const v8::Local<v8::Array>&) The array to assign the value to
-			* @param[in] idx (const int&) The index to set
-			* @param[in] val (const T&) The value to set
-			*/
-			template<typename T>
-            static void SetArrayValue(const v8::Local<v8::Array>& obj, const int& idx, const T& val);
 
 			/**
 			* @brief Returns the type of a local value
@@ -198,6 +186,13 @@ namespace snuffbox
         inline int JSWrapper::GetValue<int>(const int& arg, const int& def)
 		{
             return static_cast<int>(GetValue<double>(arg, def));
+		}
+
+		//-------------------------------------------------------------------------------------------
+		template<>
+		inline unsigned int JSWrapper::GetValue<unsigned int>(const int& arg, const unsigned int& def)
+		{
+			return static_cast<unsigned int>(GetValue<double>(arg, def));
 		}
 
 		//-------------------------------------------------------------------------------------------
@@ -297,16 +292,21 @@ namespace snuffbox
 		template<>
         inline v8::Local<v8::Value> JSWrapper::CastValue<int>(const int& val)
 		{
-			v8::Isolate* isolate = JSStateWrapper::Instance()->isolate();
-			return v8::Number::New(isolate, val);
+			return CastValue<int>(static_cast<double>(val));
+		}
+
+		//-------------------------------------------------------------------------------------------
+		template<>
+		inline v8::Local<v8::Value> JSWrapper::CastValue<unsigned int>(const unsigned int& val)
+		{
+			return CastValue<unsigned int>(static_cast<double>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
 		template<>
         inline v8::Local<v8::Value> JSWrapper::CastValue<float>(const float& val)
 		{
-			v8::Isolate* isolate = JSStateWrapper::Instance()->isolate();
-			return v8::Number::New(isolate, val);
+			return CastValue<float>(static_cast<double>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
@@ -343,14 +343,6 @@ namespace snuffbox
 
 		//-------------------------------------------------------------------------------------------
 		template<>
-        inline void JSWrapper::ReturnValue<v8::Local<v8::Array>>(const v8::Local<v8::Array>& val)
-		{
-			v8::Isolate* isolate = JSStateWrapper::Instance()->isolate();
-			args_.GetReturnValue().Set<v8::Array>(val);
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
         inline void JSWrapper::SetObjectValue<double>(const v8::Local<v8::Object>& obj, const String& field, const double& val)
 		{
             JSStateWrapper* wrapper = JSStateWrapper::Instance();
@@ -364,14 +356,21 @@ namespace snuffbox
 		template<>
         inline void JSWrapper::SetObjectValue<float>(const v8::Local<v8::Object>& obj, const String& field, const float& val)
 		{
-			JSWrapper::SetObjectValue<double>(obj, field, val);
+			JSWrapper::SetObjectValue<double>(obj, field, static_cast<double>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
 		template<>
         inline void JSWrapper::SetObjectValue<int>(const v8::Local<v8::Object>& obj, const String& field, const int& val)
 		{
-			JSWrapper::SetObjectValue<double>(obj, field, val);
+			JSWrapper::SetObjectValue<double>(obj, field, static_cast<double>(val));
+		}
+
+		//-------------------------------------------------------------------------------------------
+		template<>
+		inline void JSWrapper::SetObjectValue<unsigned int>(const v8::Local<v8::Object>& obj, const String& field, const unsigned int& val)
+		{
+			JSWrapper::SetObjectValue<double>(obj, field, static_cast<double>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
@@ -408,60 +407,6 @@ namespace snuffbox
             obj->Set(wrapper->Context(),
                      v8::String::NewFromUtf8(isolate, field.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
                      val);
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetArrayValue<double>(const v8::Local<v8::Array>& obj, const int& idx, const double& val)
-		{
-            JSStateWrapper* wrapper = JSStateWrapper::Instance();
-            v8::Isolate* isolate = wrapper->isolate();
-
-            obj->Set(wrapper->Context(), idx, v8::Number::New(isolate, val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetArrayValue<float>(const v8::Local<v8::Array>& obj, const int& idx, const float& val)
-		{
-            JSWrapper::SetArrayValue<double>(obj, idx, static_cast<double>(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetArrayValue<int>(const v8::Local<v8::Array>& obj, const int& idx, const int& val)
-		{
-            JSWrapper::SetArrayValue<double>(obj, idx, static_cast<double>(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetArrayValue<bool>(const v8::Local<v8::Array>& obj, const int& idx, const bool& val)
-		{
-            JSStateWrapper* wrapper = JSStateWrapper::Instance();
-            v8::Isolate* isolate = wrapper->isolate();
-
-            obj->Set(wrapper->Context(), idx, v8::Boolean::New(isolate, val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetArrayValue<String>(const v8::Local<v8::Array>& obj, const int& idx, const String& val)
-		{
-            JSStateWrapper* wrapper = JSStateWrapper::Instance();
-            v8::Isolate* isolate = wrapper->isolate();
-
-            obj->Set(wrapper->Context(), idx, v8::String::NewFromUtf8(isolate, val.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
-		}
-
-		//-------------------------------------------------------------------------------------------
-        template<typename T>
-        inline void JSWrapper::SetArrayValue(const v8::Local<v8::Array>& obj, const int& idx, const T& val)
-		{
-            JSStateWrapper* wrapper = JSStateWrapper::Instance();
-            v8::Isolate* isolate = wrapper->isolate();
-
-            obj->Set(wrapper->Context(), idx, val);
 		}
 	}
 }

@@ -19,6 +19,8 @@ namespace snuffbox
 		class JSStateWrapper;
 #endif
 
+		class Window;
+
 		/**
 		* @class snuffbox::engine::SnuffboxApp
 		* @brief An application class to use as main entry point for the engine
@@ -101,8 +103,6 @@ namespace snuffbox
 
 			bool running_; //!< Is the application still running?
 
-		protected:
-
 #ifdef SNUFF_JAVASCRIPT
 			UniquePtr<JSStateWrapper> js_state_wrapper_; //!< The JavaScript state wrapper
 #endif
@@ -110,6 +110,7 @@ namespace snuffbox
 			UniquePtr<Log> log_service_; //!< The logging service
 			UniquePtr<CVar> cvar_service_; //!< The CVar service
 			UniquePtr<ContentManager> content_service_; //!< The content service
+			UniquePtr<Window> window_service_; //!< The window to render to
 		};
 	}
 }

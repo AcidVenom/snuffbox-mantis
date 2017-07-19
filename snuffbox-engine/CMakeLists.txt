@@ -78,6 +78,7 @@ ENDIF ()
 ADD_LIBRARY(snuffbox-engine ${SNUFF_ENGINE_SOURCES})
 
 TARGET_LINK_LIBRARIES(snuffbox-engine EASTL)
+TARGET_LINK_LIBRARIES(snuffbox-engine glfw ${GLFW_LIBRARIES})
 TARGET_LINK_LIBRARIES(snuffbox-engine snuffbox-logging)
 
 IF (SNUFF_JAVASCRIPT)

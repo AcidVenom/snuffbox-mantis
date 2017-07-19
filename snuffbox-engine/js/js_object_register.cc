@@ -3,6 +3,7 @@
 #include "../logging/log.h"
 #include "../logging/cvar.h"
 #include "../io/content_manager.h"
+#include "../core/window.h"
 
 namespace snuffbox
 {
@@ -59,6 +60,7 @@ namespace snuffbox
 			JSObjectRegister<Log>::RegisterSingleton();
 			JSObjectRegister<CVar>::RegisterSingleton();
 			JSObjectRegister<ContentManager>::RegisterSingleton();
+			JSObjectRegister<Window>::RegisterSingleton();
 		}
 
 		//-----------------------------------------------------------------------------------------------

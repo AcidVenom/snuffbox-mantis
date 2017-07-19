@@ -155,7 +155,7 @@ namespace snuffbox
 		{
 			if (expr == false)
 			{
-				Fatal("[ASSERTION FAILED]\n\t\t\t" + message);
+                Fatal("Assertion failed: \n\t\t\t" + message);
 				SNUFF_ASSERT();
 			}
 		}

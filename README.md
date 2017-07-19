@@ -13,7 +13,7 @@
 | V8_ROOT_DIR         | Yes           | Points to the V8 root directory from 'fetch v8' (containing 'out.gn')            |
 | wxWidgets_ROOT_DIR  | No            | Windows only, as this should be found on Ubuntu, wxWidgets-3.1.0 root directory  |
 
-#### Note: in QtCreator the dialog for variables doesn't update until you set the EASTL_ROOT_DIR to a valid location
+#### Note: in QtCreator the dialog for variables doesn't update until you set the EASTL_ROOT_DIR to a valid location, the same applies to GLFW_ROOT_DIR. I'm not sure how to resolve this issue
 
 <dl><hr></hr></dl>
 
@@ -25,6 +25,21 @@ You can clone the repository like so:
 ```
 
 Place this in a folder and let **EASTL_ROOT_DIR** point to it
+
+<dl><hr></hr></dl>
+
+### Get GLFW from the official repo
+You can clone the repository and switch to the correct branch like so:
+
+```bash
+-  git clone https://github.com/glfw/glfw.git
+-  git checkout latest
+```
+
+It is however not necessary to switch to the 'latest' branch, 'master' should work as well.
+However, please note 'latest' is the latest stable *release* build, unlike master.
+
+Place this in a folder and let **GLFW_ROOT_DIR** point to it
 
 <dl><hr></hr></dl>
 

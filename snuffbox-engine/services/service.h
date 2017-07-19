@@ -14,6 +14,7 @@ namespace snuffbox
 			kLogService, //!< The ID for the log service
 			kCVarService, //!< The ID for the CVar service
 			kContentService, //!< The ID for the content service
+			kWindowService, //!< The ID for the window service
 			kCount //!< The total number of different services
 		};
 

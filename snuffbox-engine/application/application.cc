@@ -12,6 +12,8 @@
 #include "../io/script.h"
 #endif
 
+#include "../core/window.h"
+
 namespace snuffbox
 {
 	namespace engine
@@ -19,7 +21,12 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		SnuffboxApp::SnuffboxApp(const size_t& max_memory) :
 			running_(true),
-			log_service_(nullptr)
+#ifdef SNUFF_JAVASCRIPT
+			js_state_wrapper_(nullptr),
+#endif
+			log_service_(nullptr),
+			cvar_service_(nullptr),
+			window_service_(nullptr)
 		{
 			Memory::Initialise<MallocAllocator>(max_memory);
 		}
@@ -31,22 +38,12 @@ namespace snuffbox
 
 			OnStartup();
 
-            char input[8192];
-            while (input != "quit")
+			while (window_service_->ShouldClose() == false)
 			{
-                std::cin.getline(input, sizeof(input));
+				window_service_->Poll();
 				content_service_->Update();
-
-                if (strlen(input) == 0)
-                {
-                    OnUpdate();
-                }
-#ifdef SNUFF_JAVASCRIPT
-                else
-                {
-                    JSStateWrapper::Instance()->Run(input, "terminal", true);
-                }
-#endif
+				OnUpdate();
+				std::this_thread::sleep_for(std::chrono::milliseconds(16));
 			}
 
 			Shutdown();
@@ -66,6 +63,7 @@ namespace snuffbox
 			cvar_service_ = Memory::ConstructUnique<CVar>();
 			log_service_ = Memory::ConstructUnique<Log>();
 			content_service_ = Memory::ConstructUnique<ContentManager>();
+			window_service_ = Memory::ConstructUnique<Window>();
 
 			cvar_service_->ParseCommandLine(argc, argv);
 			log_service_->Initialise(cvar_service_.get());
@@ -77,14 +75,17 @@ namespace snuffbox
 
 			Services::Provide<ContentService>(content_service_.get());
 
+			cvar_service_->LogAll();
+
+			window_service_->Initialise("Snuffbox");
+			Services::Provide<WindowService>(window_service_.get());
+
 #ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
 			js_state_wrapper_->Initialise();
 
 			content_service_->Load<Script>("main.js");
 #endif
-
-			cvar_service_->LogAll();
 
 			OnInit();
 		}
@@ -102,6 +103,7 @@ namespace snuffbox
 			Services::Remove<CVarService>();
 			Services::Remove<LogService>();
 			Services::Remove<ContentService>();
+			Services::Remove<WindowService>();
 		}
 
 		//-----------------------------------------------------------------------------------------------

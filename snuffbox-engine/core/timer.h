@@ -2,13 +2,16 @@
 
 namespace snuffbox
 {
-	class Timer
-	{
+    namespace engine
+    {
+        class Timer
+        {
 
-	public:
+        public:
 
-		Timer(const char* name);
+            Timer(const char* name);
 
-		~Timer();
-	};
+            ~Timer();
+        };
+    }
 }

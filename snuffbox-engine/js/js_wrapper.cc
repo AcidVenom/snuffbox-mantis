@@ -19,15 +19,11 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
         Local<Object> JSWrapper::CreateObject()
 		{
-			Isolate* isolate = JSStateWrapper::Instance()->isolate();
-			return Object::New(isolate);
-		}
+			JSStateWrapper* wrapper = JSStateWrapper::Instance();
+			Isolate* isolate = wrapper->isolate();
 
-		//-----------------------------------------------------------------------------------------------
-        Local<Array> JSWrapper::CreateArray()
-		{
-			Isolate* isolate = JSStateWrapper::Instance()->isolate();
-			return Array::New(isolate);
+			Local<ObjectTemplate> t = ObjectTemplate::New(isolate);
+			return t->NewInstance(wrapper->Context()).ToLocalChecked();
 		}
 
 		//-----------------------------------------------------------------------------------------------
