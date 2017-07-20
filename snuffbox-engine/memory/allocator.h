@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <new>
 
+#include <mutex>
+
 namespace snuffbox
 {
 	namespace engine
@@ -94,12 +96,15 @@ namespace snuffbox
 			size_t max_memory_; //!< The maximum allocated memory
 			size_t allocated_; //!< The currently allocated memory
 			int32_t num_allocations_; //!< The current number of allocations
+			std::recursive_mutex allocator_mutex_; //!< The mutex for allocations
 		};
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T, typename ... Args>
 		inline T* Allocator::Construct(Args&&... args)
 		{
+			std::lock_guard<std::recursive_mutex> lock(allocator_mutex_);
+
 			assert(allocated_ + sizeof(T) <= max_memory_);
 
 			void* allocated = Allocate(sizeof(T), alignof(T));
@@ -117,6 +122,8 @@ namespace snuffbox
 		template <typename T>
 		inline void Allocator::Destruct(T* ptr)
 		{
+			std::lock_guard<std::recursive_mutex> lock(allocator_mutex_);
+
 			assert(ptr != nullptr);
 			assert(num_allocations_ > 0);
 			assert(allocated_ >= sizeof(T));

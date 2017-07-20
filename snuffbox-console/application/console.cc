@@ -342,11 +342,11 @@ namespace snuffbox
         }
 
 		//-----------------------------------------------------------------------------------------------
-		void Console::HistoryChange(const int& dir)
+		bool Console::HistoryChange(const int& dir)
 		{
 			if (input_box->HasFocus() == false || input_history_.size() == 0)
 			{
-				return;
+				return false;
 			}
 
 			input_history_index_ += dir;
@@ -355,7 +355,7 @@ namespace snuffbox
 			{
 				input_history_index_ = static_cast<int>(input_history_.size());
 				input_box->SetValue("");
-				return;
+				return true;
 			}
 			
 			if (input_history_index_ < 0)
@@ -366,6 +366,8 @@ namespace snuffbox
 			InputHistory& h = input_history_.at(input_history_index_);
 			input_box->SetValue(h.value);
 			input_type->SetSelection(h.command);
+
+			return true;
 		}
 
 		//-----------------------------------------------------------------------------------------------

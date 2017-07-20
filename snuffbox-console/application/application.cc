@@ -58,12 +58,10 @@ namespace snuffbox
                     return 1;
 
 				case wxKeyCode::WXK_UP:
-					console_->HistoryChange(-1);
-					return -1;
+					return console_->HistoryChange(-1) == true ? 1 : -1;
 
 				case wxKeyCode::WXK_DOWN:
-					console_->HistoryChange(1);
-					return -1;
+					return console_->HistoryChange(1) == true ? 1 : -1;
 
                 default:
                     return -1;

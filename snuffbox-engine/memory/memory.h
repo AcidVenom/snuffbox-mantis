@@ -24,7 +24,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::Memory
 		* @brief Provides an interface to access the global memory allocators
-		* @author Daniël Konings
+		* @author Dani?l Konings
 		*/
 		class Memory
 		{
@@ -39,11 +39,6 @@ namespace snuffbox
 			*/
 			template <typename T>
 			static void Initialise(const size_t& max_memory);
-
-			/**
-			* @brief Called at the end of the application to shutdown
-			*/
-			static void Shutdown();
 
 		public:
 
@@ -86,7 +81,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::EASTLDeleter<T>
 		* @brief Deletes pointers stored in EASTL smart pointers
-		* @author Daniël Konings
+		* @author Dani?l Konings
 		*/
 		template <typename T>
 		struct EASTLDeleter
@@ -139,7 +134,7 @@ namespace snuffbox
 			{
 				return;
 			}
-			
+
 			EASTL_ALLOCATOR.Destruct(ptr);
 		}
 	}

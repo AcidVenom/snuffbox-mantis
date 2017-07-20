@@ -30,6 +30,11 @@ namespace snuffbox
 			*/
 			CVar();
 
+			/**
+			* @brief Shutsdown the CVar system
+			*/
+			void Shutdown();
+
 		public:
 
 			/**

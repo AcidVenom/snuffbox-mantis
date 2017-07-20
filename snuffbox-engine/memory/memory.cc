@@ -13,12 +13,5 @@ namespace snuffbox
 			assert(default_allocator_ != nullptr);
 			return *default_allocator_;
 		}
-
-		//-----------------------------------------------------------------------------------------------
-		void Memory::Shutdown()
-		{
-			assert(default_allocator != nullptr);
-			default_allocator_->~Allocator();
-		}
 	}
 }

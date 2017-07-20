@@ -2,7 +2,11 @@
 
 int main(int argc, char** argv)
 {
-	snuffbox::test::App app;
+	int exit = 0;
+	{
+		snuffbox::test::App app;
+		exit = app.Exec(argc, argv);
+	}
 
-	return app.Exec(argc, argv);
+	return exit;
 }

@@ -19,13 +19,13 @@ IF (WIN32)
     SET (V8_LIBNAMES "v8_libplatform" "v8_base_0" "v8_base_1" ${V8_LIBNAMES})
 ELSE ()
     SET (V8_LIBNAMES "v8_libplatform" "v8_base" ${V8_LIBNAMES} "c++" "c++abi")
-
+    GET_FILENAME_COMPONENT(V8_ABSOLUTE_PATH ${V8_ROOT_DIR} ABSOLUTE)
     SET (V8_LIBS_DEBUG
-        "-L${V8_ROOT_DIR}/out.gn/x64.debug/obj -L${V8_ROOT_DIR}/out.gn/x64.debug/obj/third_party/icu"
+        "-L${V8_ABSOLUTE_PATH}/out.gn/x64.debug/obj -L${V8_ABSOLUTE_PATH}/out.gn/x64.debug/obj/third_party/icu"
     )
 
     SET (V8_LIBS_RELEASE
-        "-L${V8_ROOT_DIR}/out.gn/x64.release/obj -L${V8_ROOT_DIR}/out.gn/x64.release/obj/third_party/icu"
+        "-L${V8_ABSOLUTE_PATH}/out.gn/x64.release/obj -L${V8_ABSOLUTE_PATH}/out.gn/x64.release/obj/third_party/icu"
     )
 ENDIF ()
 
@@ -51,6 +51,8 @@ FOREACH(V8_LIB ${V8_LIBNAMES})
         MARK_AS_ADVANCED(V8_LIB_DEBUG_${V8_LIB})
 ENDFOREACH ()
 
+MESSAGE(STATUS "V8 Debug libraries: ${V8_LIBS_DEBUG}")
+
 FOREACH(V8_LIB ${V8_LIBNAMES})
         FIND_LIBRARY(V8_LIB_RELEASE_${V8_LIB}
                 NAMES "${V8_LIB}"
@@ -72,6 +74,8 @@ FOREACH(V8_LIB ${V8_LIBNAMES})
 
         MARK_AS_ADVANCED(V8_LIB_RELEASE_${V8_LIB})
 ENDFOREACH ()
+
+MESSAGE(STATUS "V8 Release libraries: ${V8_LIBS_DEBUG}")
 
 IF (V8_INCLUDE_DIR)
 	SET (V8_FOUND TRUE)

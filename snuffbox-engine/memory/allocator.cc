@@ -17,6 +17,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void* Allocator::Malloc(const size_t& size, const size_t& align)
 		{
+			std::lock_guard<std::recursive_mutex> lock(allocator_mutex_);
+
 			size_t s = size + sizeof(Header);
 
 			assert(allocated_ + size <= max_memory_);
@@ -40,6 +42,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Allocator::Free(void* ptr)
 		{
+			std::lock_guard<std::recursive_mutex> lock(allocator_mutex_);
+
 			assert(ptr != nullptr);
 			assert(num_allocations_ > 0);
 

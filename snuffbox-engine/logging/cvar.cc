@@ -13,6 +13,15 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void CVar::Shutdown()
+		{
+			for (int i = 0; i < CVarBase::CVarTypes::kCount; ++i)
+			{
+				cvars_[i].clear();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void CVar::LogAll()
 		{
 			LogService& log = Services::Get<LogService>();

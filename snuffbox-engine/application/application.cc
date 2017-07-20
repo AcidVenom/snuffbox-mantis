@@ -102,6 +102,7 @@ namespace snuffbox
 			js_state_wrapper_->Shutdown();
 #endif
 			log_service_->Shutdown();
+			cvar_service_->Shutdown();
 
 			Services::Remove<CVarService>();
 			Services::Remove<LogService>();

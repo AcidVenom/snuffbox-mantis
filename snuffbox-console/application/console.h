@@ -165,8 +165,9 @@ namespace snuffbox
 			/**
 			* @brief Changes the current history index
 			* @param[in] dir (const int&) The direction to move in
+			* @return (bool) Is the input box focussed?
 			*/
-			void HistoryChange(const int& dir);
+			bool HistoryChange(const int& dir);
 
 			/**
 			* @brief Default destructor, closes the stream
