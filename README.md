@@ -17,8 +17,8 @@
 
 <dl><hr></hr></dl>
 
-**Experimental:** Use gen_\<platform\> to fetch and compile all dependencies for snuffbox-mantis. 'depot_tools' for V8 still has to be downloaded and setup manually. Don't forget to still read
-the important notes under 'Important notes for building V8..' for each platform
+**Experimental:** Use **gen_\<platform\>** to fetch and compile all dependencies for snuffbox-mantis. **'depot_tools'** for V8 still has to be downloaded and setup manually. Don't forget to still read
+the important notes under **'Important notes for building V8..'** for each platform
 
 <dl><hr></hr></dl>
 
