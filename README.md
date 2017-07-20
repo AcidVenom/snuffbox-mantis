@@ -17,6 +17,11 @@
 
 <dl><hr></hr></dl>
 
+**Experimental:** Use gen_\<platform\> to fetch and compile all dependencies for snuffbox-mantis. 'depot_tools' for V8 still has to be downloaded and setup manually. Don't forget to still read
+the important notes under 'Important notes for building V8..' for each platform
+
+<dl><hr></hr></dl>
+
 ### Get EASTL from the official repo
 You can clone the repository like so:
 
@@ -79,7 +84,7 @@ You can check if we're using the python in depot_tools by running the command:
 -  where python
 ```
 
-Set the following user variables:
+Set the following user variables (these are set automatically in gen_win32.cmd):
 
 ```
 -  DEPOT_TOOLS_WIN_TOOLCHAIN = 0
