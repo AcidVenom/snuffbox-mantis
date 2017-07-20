@@ -1,4 +1,4 @@
-SET (V8_ROOT_DIR "" CACHE PATH "The root directory of Google's V8")
+SET (V8_ROOT_DIR "deps/v8" CACHE PATH "The root directory of Google's V8")
 
 FIND_PATH(V8_INCLUDE_DIR "v8.h"
 	 PATHS

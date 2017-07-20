@@ -1,4 +1,4 @@
-SET(GLFW_ROOT_DIR "" CACHE STRING "The root directory for the source of GLFW")
+SET(GLFW_ROOT_DIR "deps/glfw" CACHE STRING "The root directory for the source of GLFW")
 
 FIND_FILE(GLFW_INCLUDE
 	NAMES "GLFW"

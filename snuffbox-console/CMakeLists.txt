@@ -1,5 +1,3 @@
-FIND_PACKAGE(wxWidgets REQUIRED COMPONENTS core base richtext html qa xrc propgrid aui adv xml)
-
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
     EXECUTE_PROCESS(COMMAND wx-config --cxxflags OUTPUT_VARIABLE WX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WX_FLAGS}")
@@ -40,19 +38,6 @@ SET(SNUFF_CONSOLE_SOURCES
 ADD_EXECUTABLE(snuffbox-console ${SNUFF_CONSOLE_SOURCES})
 TARGET_LINK_LIBRARIES(snuffbox-console snuffbox-logging)
 TARGET_LINK_LIBRARIES(snuffbox-console ${wxWidgets_LIBRARIES})
-INCLUDE_DIRECTORIES("${wxWidgets_INCLUDE_DIRS}")
-
-IF (WIN32)
-	INCLUDE_DIRECTORIES(
-		$<$<CONFIG:Debug>:${WX_LIB_DIR_DEB}/mswud>
-		$<$<CONFIG:Release>:${WX_LIB_DIR_REL}/mswu>
-	)
-ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
-	INCLUDE_DIRECTORIES(
-		$<$<CONFIG:Debug>:${WX_LIB_DIR_DEB}/wx/include/gtk3-unicode-static-${WX_VERSION}>
-		$<$<CONFIG:Release>:${WX_LIB_DIR_REL}/wx/include/gtk3-unicode-static-${WX_VERSION}>
-	)
-ENDIF ()
 
 IF (WIN32)
 	SET_TARGET_PROPERTIES(snuffbox-console PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")

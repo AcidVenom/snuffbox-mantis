@@ -1,2 +1,5 @@
-#QtCreator creates user files for storing CMake variables
+# QtCreator creates user files for storing CMake variables
 *.txt.user
+
+# Generated dependencies
+deps

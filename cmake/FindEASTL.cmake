@@ -1,4 +1,4 @@
-SET (EASTL_ROOT_DIR "" CACHE PATH "The root directory of EASTL")
+SET (EASTL_ROOT_DIR "deps/eastl" CACHE PATH "The root directory of EASTL")
 
 FIND_PATH(EASTL_INCLUDE
 	NAMES "EASTL"
