@@ -22,7 +22,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void App::OnUpdate()
+		void App::OnUpdate(const float& dt)
 		{
 
 		}

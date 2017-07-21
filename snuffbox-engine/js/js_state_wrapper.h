@@ -20,6 +20,9 @@ namespace snuffbox
         template <typename T>
         struct JSObjectRegister;
 
+		template <typename ... Args>
+		class JSCallback;
+
         class Script;
 
         /**
@@ -36,8 +39,11 @@ namespace snuffbox
             friend class JSWrapper;
             friend struct JSFunctionRegister;
 
-            template<typename T>
+            template <typename T>
             friend struct JSObjectRegister;
+
+			template <typename ... Args>
+			friend class JSCallback;
 
             friend class Script;
 

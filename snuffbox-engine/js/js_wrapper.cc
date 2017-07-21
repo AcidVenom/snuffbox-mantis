@@ -98,6 +98,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		Local<v8::String> JSWrapper::CreateString(const engine::String& utf8)
+		{
+			Isolate* isolate = JSStateWrapper::Instance()->isolate();
+			return v8::String::NewFromUtf8(isolate, utf8.c_str(), NewStringType::kNormal).ToLocalChecked();
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		bool JSWrapper::Check(const char* format)
 		{
 #ifdef SNUFF_DEBUG

@@ -12,7 +12,7 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		ContentManager::ContentManager() :
-			watch_(FileWatch(this))
+			watch_(this)
 		{
 
 		}

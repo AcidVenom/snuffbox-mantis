@@ -3,6 +3,8 @@
 #include "../core/eastl.h"
 #include <time.h>
 
+#include "../memory/memory.h"
+
 namespace snuffbox
 {
 	namespace engine

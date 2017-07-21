@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "js_state_wrapper.h"
+#include "js_wrapper.h"
 #include "js_defines.h"
 #include "js_function_register.h"
 #include "js_object_register.h"
@@ -62,6 +63,8 @@ namespace snuffbox
 			instance_ = this;
 			RegisterCommon();
             JSRegister::Register();
+
+			RegisterGlobal("Application", JSWrapper::CreateObject());
 
 			log.Log(console::LogSeverity::kSuccess, "Successfully initialised V8");
 		}

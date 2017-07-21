@@ -9,6 +9,7 @@
 
 #ifdef SNUFF_JAVASCRIPT
 #include "../js/js_state_wrapper.h"
+#include "../js/js_callback.h"
 #include "../io/script.h"
 #endif
 
@@ -23,9 +24,14 @@ namespace snuffbox
 			running_(true),
 #ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_(nullptr),
+			js_on_startup_(nullptr),
+			js_on_update_(nullptr),
+			js_on_reload_(nullptr),
+			js_on_shutdown_(nullptr),
 #endif
 			log_service_(nullptr),
 			cvar_service_(nullptr),
+			content_service_(nullptr),
 			window_service_(nullptr)
 		{
 			Memory::Initialise<MallocAllocator>(max_memory);
@@ -38,11 +44,20 @@ namespace snuffbox
 
 			OnStartup();
 
+#ifdef SNUFF_JAVASCRIPT
+			js_on_startup_->Call();
+#endif
+
 			while (window_service_->Closed() == false)
 			{
 				window_service_->Poll();
 				content_service_->Update();
-				OnUpdate();
+				OnUpdate(16.0f);
+
+#ifdef SNUFF_JAVASCRIPT
+				js_on_update_->Call(16.0f);
+#endif
+				std::this_thread::sleep_for(std::chrono::milliseconds(16));
 			}
 
 			Shutdown();
@@ -85,6 +100,16 @@ namespace snuffbox
 
 			log_service_->Assert(content_service_->Load<Script>("main.js") != nullptr, 
 							     "'main.js' is required in the current src_directory");
+
+			js_on_startup_ = Memory::ConstructUnique<JSCallback<>>();
+			js_on_update_ = Memory::ConstructUnique<JSCallback<float>>();
+			js_on_reload_ = Memory::ConstructUnique<JSCallback<String>>();
+			js_on_shutdown_ = Memory::ConstructUnique<JSCallback<>>();
+
+			js_on_startup_->Set("Application", "onStartup");
+			js_on_update_->Set("Application", "onUpdate");
+			js_on_reload_->Set("Application", "onReload");
+			js_on_shutdown_->Set("Application", "onShutdown");
 #endif
 
 			log_service_->Log(console::LogSeverity::kSuccess, "Initialised the application");
@@ -97,9 +122,18 @@ namespace snuffbox
 		{
 			OnShutdown();
 
+#ifdef SNUFF_JAVASCRIPT
+			js_on_shutdown_->Call();
+#endif
+
 			log_service_->Log(console::LogSeverity::kInfo, "Shutting down..");
 
 #ifdef SNUFF_JAVASCRIPT
+			js_on_startup_->Clear();
+			js_on_update_->Clear();
+			js_on_reload_->Clear();
+			js_on_shutdown_->Clear();
+
 			js_state_wrapper_->Shutdown();
 #endif
 			log_service_->Shutdown();
@@ -124,7 +158,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void SnuffboxApp::OnUpdate()
+		void SnuffboxApp::OnUpdate(const float& dt)
 		{
 
 		}

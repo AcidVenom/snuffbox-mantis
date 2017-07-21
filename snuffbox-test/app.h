@@ -31,7 +31,7 @@ namespace snuffbox
 			/**
 			* @see snuffbox::engine::Application::OnUpdate
 			*/
-			void OnUpdate() override;
+			void OnUpdate(const float& dt) override;
 
 			/**
 			* @see snuffbox::engine::Application::OnShutdown

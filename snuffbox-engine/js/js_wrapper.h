@@ -118,7 +118,14 @@ namespace snuffbox
 			* @param[in] type (const snuffbox::engine::JSWrapper::Types&) The type to convert
 			* @return (snuffbox::engine::String) The converted string value
 			*/
-			static String TypeToString(const Types& type);
+			static engine::String TypeToString(const Types& type);
+
+			/**
+			* @brief Creates a string from an UTF-8 value
+			* @param[in] utf8 (const snuffbox::engine::String&) The string value to convert
+			* @return (v8::Local<v8::String>) The converted V8 string
+			*/
+			static v8::Local<v8::String> CreateString(const engine::String& utf8);
 
 			/**
 			* @brief Constructs an argument error and logs it
@@ -323,7 +330,7 @@ namespace snuffbox
         inline v8::Local<v8::Value> JSWrapper::CastValue<String>(const String& val)
 		{
 			v8::Isolate* isolate = JSStateWrapper::Instance()->isolate();
-            v8::MaybeLocal<v8::String> str = v8::String::NewFromUtf8(isolate, val.c_str(), v8::NewStringType::kNormal);
+            v8::MaybeLocal<v8::String> str = CreateString(val);
             return str.ToLocalChecked();
 		}
 
@@ -349,7 +356,7 @@ namespace snuffbox
             JSStateWrapper* wrapper = JSStateWrapper::Instance();
             v8::Isolate* isolate = wrapper->isolate();
 
-            obj->Set(wrapper->Context(), v8::String::NewFromUtf8(isolate, field.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+            obj->Set(wrapper->Context(), CreateString(field),
                      v8::Number::New(isolate, val));
 		}
 
@@ -381,9 +388,7 @@ namespace snuffbox
             JSStateWrapper* wrapper = JSStateWrapper::Instance();
             v8::Isolate* isolate = wrapper->isolate();
 
-            obj->Set(wrapper->Context(),
-                     v8::String::NewFromUtf8(isolate, field.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
-                     v8::Boolean::New(isolate, val));
+            obj->Set(wrapper->Context(), CreateString(field), v8::Boolean::New(isolate, val));
 		}
 
 		//-------------------------------------------------------------------------------------------
@@ -393,9 +398,7 @@ namespace snuffbox
             JSStateWrapper* wrapper = JSStateWrapper::Instance();
             v8::Isolate* isolate = wrapper->isolate();
 
-            obj->Set(wrapper->Context(),
-                     v8::String::NewFromUtf8(isolate, field.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
-                     v8::String::NewFromUtf8(isolate, val.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+            obj->Set(wrapper->Context(), CreateString(field), CreateString(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
@@ -405,9 +408,7 @@ namespace snuffbox
             JSStateWrapper* wrapper = JSStateWrapper::Instance();
             v8::Isolate* isolate = wrapper->isolate();
 
-            obj->Set(wrapper->Context(),
-                     v8::String::NewFromUtf8(isolate, field.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
-                     val);
+            obj->Set(wrapper->Context(), CreateString(field), val);
 		}
 	}
 }

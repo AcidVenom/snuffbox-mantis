@@ -17,6 +17,9 @@ namespace snuffbox
 
 #ifdef SNUFF_JAVASCRIPT
 		class JSStateWrapper;
+		
+		template <typename ... Args>
+		class JSCallback;
 #endif
 
 		class Window;
@@ -87,7 +90,7 @@ namespace snuffbox
 			/**
 			* @brief Called each frame when the application updates
 			*/
-			virtual void OnUpdate();
+			virtual void OnUpdate(const float& dt);
 
 			/**
 			* @brief Called when the application is shutdown, before destruction
@@ -105,6 +108,11 @@ namespace snuffbox
 
 #ifdef SNUFF_JAVASCRIPT
 			UniquePtr<JSStateWrapper> js_state_wrapper_; //!< The JavaScript state wrapper
+
+			UniquePtr<JSCallback<>> js_on_startup_; //!< The JavaScript 'Application.onStartup(void)' callback
+			UniquePtr<JSCallback<float>> js_on_update_; //!< The JavaScript 'Application.onUpdate(number)' callback
+			UniquePtr<JSCallback<String>> js_on_reload_; //!< The JavaScript 'Application.onReload(string)' callback
+			UniquePtr<JSCallback<>> js_on_shutdown_; //!< The JavaScript 'Application.onShutdown(void)' callback
 #endif
 
 			UniquePtr<Logger> log_service_; //!< The logging service

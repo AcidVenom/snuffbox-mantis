@@ -6,10 +6,10 @@
 #include "../services/cvar_service.h"
 
 #ifdef SNUFF_WIN32
-#define localtime(out, time) { localtime_s(&out, time); }
+	#define localtime(out, time) { localtime_s(&out, time); }
 #else
-#include <sys/stat.h>
-#define localtime(out, time) { out = *localtime(time); }
+	#include <sys/stat.h>
+	#define localtime(out, time) { out = *localtime(time); }
 #endif
 
 namespace snuffbox
