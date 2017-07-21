@@ -106,9 +106,57 @@ IF (SNUFF_JAVASCRIPT)
 	SET_TARGET_PROPERTIES(snuffbox-javascript PROPERTIES FOLDER "snuffbox-mantis")
 ENDIF ()
 
+SET (GLFWTests
+	"clipboard"
+	"cursor"
+	"empty"
+	"events"
+	"gamma"
+	"glfwinfo"
+	"icon"
+	"iconify"
+	"joysticks"
+	"monitors"
+	"msaa"
+	"reopen"
+	"sharing"
+	"tearing"
+	"threads"
+	"timeout"
+	"title"
+	"windows"
+)
+
+SET (GLFWExamples
+	"boing"
+	"gears"
+	"heightmap"
+	"particles"
+	"simple"
+	"splitview"
+	"wave"
+)
+
+SET_TARGET_PROPERTIES(glfw PROPERTIES FOLDER "deps/glfw3")
+
+IF (GLFW_INSTALL)
+	SET_TARGET_PROPERTIES(uninstall PROPERTIES FOLDER "deps/glfw3")
+ENDIF ()
+
+IF (GLFW_BUILD_EXAMPLES)
+	FOREACH (GLFWName ${GLFWExamples})
+		SET_TARGET_PROPERTIES(${GLFWName} PROPERTIES FOLDER "deps/glfw3/examples")
+	ENDFOREACH ()
+ENDIF ()
+
+IF (GLFW_BUILD_TESTS)
+	FOREACH (GLFWName ${GLFWTests})
+		SET_TARGET_PROPERTIES(${GLFWName} PROPERTIES FOLDER "deps/glfw3/tests")
+	ENDFOREACH ()
+ENDIF ()
+
 SET_TARGET_PROPERTIES(EASTL PROPERTIES FOLDER "deps/eastl")
 SET_TARGET_PROPERTIES(EABase_ide PROPERTIES FOLDER "deps/eastl")
-SET_TARGET_PROPERTIES(glfw PROPERTIES FOLDER "deps/glfw3")
 SET_TARGET_PROPERTIES(snuffbox-logging PROPERTIES FOLDER "snuffbox-mantis")
 SET_TARGET_PROPERTIES(snuffbox-console PROPERTIES FOLDER "snuffbox-mantis")
 SET_TARGET_PROPERTIES(snuffbox-engine PROPERTIES FOLDER "snuffbox-mantis")
