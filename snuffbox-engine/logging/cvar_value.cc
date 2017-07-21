@@ -1,6 +1,5 @@
 #include "cvar_value.h"
 
-#include "../logging/log.h"
 namespace snuffbox
 {
 	namespace engine

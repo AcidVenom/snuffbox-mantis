@@ -1,7 +1,7 @@
 #include "application.h"
 #include "../memory/allocators.h"
 
-#include "../logging/log.h"
+#include "../logging/logger.h"
 #include "../logging/cvar.h"
 #include "../io/content_manager.h"
 
@@ -60,7 +60,7 @@ namespace snuffbox
 		void SnuffboxApp::Initialise(const int& argc, char** argv)
 		{
 			cvar_service_ = Memory::ConstructUnique<CVar>();
-			log_service_ = Memory::ConstructUnique<Log>();
+			log_service_ = Memory::ConstructUnique<Logger>();
 			content_service_ = Memory::ConstructUnique<ContentManager>();
 			window_service_ = Memory::ConstructUnique<Window>();
 
@@ -83,10 +83,11 @@ namespace snuffbox
 			js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
 			js_state_wrapper_->Initialise();
 
-			content_service_->Load<Script>("main.js");
+			log_service_->Assert(content_service_->Load<Script>("main.js") != nullptr, 
+							     "'main.js' is required in the current src_directory");
 #endif
 
-			engine::Services::Get<engine::LogService>().Log(console::LogSeverity::kSuccess, "Initialised the application");
+			log_service_->Log(console::LogSeverity::kSuccess, "Initialised the application");
 
 			OnInit();
 		}
@@ -96,7 +97,7 @@ namespace snuffbox
 		{
 			OnShutdown();
 
-			engine::Services::Get<engine::LogService>().Log(console::LogSeverity::kInfo, "Shutting down..");
+			log_service_->Log(console::LogSeverity::kInfo, "Shutting down..");
 
 #ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_->Shutdown();

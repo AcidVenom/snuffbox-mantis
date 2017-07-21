@@ -16,9 +16,9 @@ namespace snuffbox
 	namespace logging
 	{
 		//-----------------------------------------------------------------------------------------------
-		const unsigned int LoggingStream::STARTUP_SLEEP_ = 1500;
+		const unsigned int LoggingStream::STARTUP_SLEEP_ = 1000;
 		const unsigned int LoggingStream::WAIT_SLEEP_ = 8;
-		const unsigned int LoggingStream::SHUTDOWN_SLEEP_ = 500;
+		const unsigned int LoggingStream::SHUTDOWN_SLEEP_ = 1000;
 
 		//-----------------------------------------------------------------------------------------------
 		LoggingStream::LoggingStream() :
@@ -184,8 +184,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LoggingStream::Close()
 		{
-			should_quit_ = true;
 			std::this_thread::sleep_for(std::chrono::milliseconds(SHUTDOWN_SLEEP_));
+			should_quit_ = true;
 
 			if (connection_thread_.joinable() == true)
 			{

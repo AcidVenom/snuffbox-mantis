@@ -1,6 +1,6 @@
 #include "js_object_register.h"
 
-#include "../logging/log.h"
+#include "../logging/logger.h"
 #include "../logging/cvar.h"
 #include "../io/content_manager.h"
 #include "../core/window.h"
@@ -57,7 +57,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void JSRegister::RegisterSingletons()
 		{
-			JSObjectRegister<Log>::RegisterSingleton();
+			JSObjectRegister<Logger>::RegisterSingleton();
 			JSObjectRegister<CVar>::RegisterSingleton();
 			JSObjectRegister<ContentManager>::RegisterSingleton();
 			JSObjectRegister<Window>::RegisterSingleton();

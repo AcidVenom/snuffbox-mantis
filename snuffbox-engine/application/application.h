@@ -11,7 +11,7 @@ namespace snuffbox
 {
 	namespace engine
 	{
-		class Log;
+		class Logger;
 		class CVar;
 		class ContentManager;
 
@@ -107,7 +107,7 @@ namespace snuffbox
 			UniquePtr<JSStateWrapper> js_state_wrapper_; //!< The JavaScript state wrapper
 #endif
 
-			UniquePtr<Log> log_service_; //!< The logging service
+			UniquePtr<Logger> log_service_; //!< The logging service
 			UniquePtr<CVar> cvar_service_; //!< The CVar service
 			UniquePtr<ContentManager> content_service_; //!< The content service
 			UniquePtr<Window> window_service_; //!< The window to render to

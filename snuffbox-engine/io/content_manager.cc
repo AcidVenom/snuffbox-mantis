@@ -122,8 +122,13 @@ namespace snuffbox
 			log.Assert(content != nullptr, "Content to be loaded from path '{0}' with type '{1}' was null after file reading", path, type);
 
 			File* f = File::Open(full_path, File::AccessFlags::kRead | File::AccessFlags::kBinary);
-			content->Load(f);
+			bool success = content->Load(f);
 			File::Close(f);
+
+			if (success == false)
+			{
+				return nullptr;
+			}
 
 			SharedPtr<ContentBase> shared = Memory::MakeShared<ContentBase>(content);
 			map.emplace(full_path, shared);

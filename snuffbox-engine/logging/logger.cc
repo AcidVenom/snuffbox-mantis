@@ -1,4 +1,4 @@
-#include "log.h" 
+#include "logger.h" 
 #include "cvar.h"
 
 #ifndef SNUFF_DEBUG
@@ -25,14 +25,14 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		Log::Log() :
+		Logger::Logger() :
 			enabled_(true)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Initialise(CVar* cvar)
+		void Logger::Initialise(CVar* cvar)
 		{
 			CVarBoolean* cvconsole = cvar->Get<CVarBoolean>("console");
 
@@ -63,7 +63,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Shutdown()
+		void Logger::Shutdown()
 		{
 			if (enabled_ == false)
 			{
@@ -74,7 +74,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Debug(const String& message)
+		void Logger::Debug(const String& message)
 		{
 			if (enabled_ == false)
 			{
@@ -85,7 +85,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Info(const String& message)
+		void Logger::Info(const String& message)
 		{
 			if (enabled_ == false)
 			{
@@ -96,7 +96,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Success(const String& message)
+		void Logger::Success(const String& message)
 		{
 			if (enabled_ == false)
 			{
@@ -107,7 +107,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Warning(const String& message)
+		void Logger::Warning(const String& message)
 		{
 			if (enabled_ == false)
 			{
@@ -118,7 +118,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Error(const String& message)
+		void Logger::Error(const String& message)
 		{
 			if (enabled_ == false)
 			{
@@ -129,7 +129,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::Fatal(const String& message)
+		void Logger::Fatal(const String& message)
 		{
 			if (enabled_ == false)
 			{
@@ -140,7 +140,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::RGB(const String& message, const console::LogColour& colour)
+		void Logger::RGB(const String& message, const console::LogColour& colour)
 		{
 			if (enabled_ == false)
 			{
@@ -151,7 +151,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Log::DoAssert(const bool& expr, const String& message)
+		void Logger::DoAssert(const bool& expr, const String& message)
 		{
 			if (expr == false)
 			{
@@ -161,7 +161,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		JS_REGISTER_IMPL_SINGLE(Log, JS_BODY({
+		JS_REGISTER_IMPL_SINGLE(Logger, JS_BODY({
 			
 			JSFunctionRegister funcs[] =
 			{
@@ -179,7 +179,7 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Log, debug, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, debug, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -188,7 +188,7 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Log, info, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, info, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -197,7 +197,7 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Log, success, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, success, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -206,7 +206,7 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Log, warning, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, warning, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -215,7 +215,7 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Log, error, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, error, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -224,7 +224,7 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Log, fatal, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, fatal, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -233,7 +233,7 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Log, rgb, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, rgb, JS_BODY({
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{

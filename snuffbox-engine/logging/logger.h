@@ -16,11 +16,11 @@ namespace snuffbox
 		class CVar;
 
 		/**
-		* @class snuffbox::engine::Log : [JSObject] public snuffbox::engine::LogService
+		* @class snuffbox::engine::Logger : [JSObject] public snuffbox::engine::LogService
 		* @brief The logging system to log all types of different messages and throw assertions with
 		* @author Daniel Konings
 		*/
-		class Log : JS_OBJECT_MULTI public LogService
+		class Logger : JS_OBJECT_MULTI public LogService
 		{
 
 			friend class SnuffboxApp;
@@ -31,7 +31,7 @@ namespace snuffbox
 			/**
 			* @brief Default constructor
 			*/
-			Log();
+			Logger();
 
 			/**
 			* @brief Initialises the log system
@@ -92,7 +92,7 @@ namespace snuffbox
 
 		public:
 
-			JS_NAME_SINGLE(Log);
+			JS_NAME_SINGLE(Logger);
 
 			JS_FUNCTION_DECL(debug);
 			JS_FUNCTION_DECL(info);

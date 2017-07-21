@@ -16,7 +16,7 @@ namespace snuffbox
 		class LogClient : public logging::LoggingClient
 		{
 
-			friend class Log;
+			friend class Logger;
 
 		protected:
 
