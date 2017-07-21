@@ -61,11 +61,16 @@ FIND_PACKAGE(EASTL REQUIRED)
 ADD_SUBDIRECTORY("${EASTL_ROOT_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/deps/eastl")
 INCLUDE_DIRECTORIES("${EASTL_DIR}/include")
 
+SET(GLFW_BUILD_DOCS OFF CACHE BOOL "Build GLFW docs")
+SET(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build GLFW examples")
+SET(GLFW_BUILD_TESTS OFF CACHE BOOL "Build GLFW tests")
+SET(GLFW_INSTALL OFF CACHE BOOL "Install GLFW")
+
 FIND_PACKAGE(GLFWSource REQUIRED)
 ADD_SUBDIRECTORY("${GLFW_ROOT_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/deps/glfw")
 
 IF (WIN32)
-	SET (wxWidgets_ROOT_DIR "deps/eastl" CACHE PATH "The root directory of wxWidgets")
+	SET (wxWidgets_ROOT_DIR "deps/wxWidgets" CACHE PATH "The root directory of wxWidgets")
 ENDIF ()
 
 FIND_PACKAGE(wxWidgets REQUIRED COMPONENTS core base richtext html qa xrc propgrid aui adv xml)
