@@ -116,7 +116,7 @@ if /I "%getwx%" neq "y" goto skipwx
 
 echo.
 echo Start at:
-echo 1. Clone wxWidgets
+echo 1. Download wxWidgets with wget
 echo 2. Build wxWidgets & echo.
  
 choice /c 12 /m "Enter your choice:"
@@ -127,25 +127,43 @@ if errorlevel 1 (goto clonewx)
 :clonewx
 if exist .\wxWidgets (
 	rmdir .\wxWidgets /s /q
+	del /q /f wxWidgets.zip
 	echo Removing old 'wxWidgets' folder as we're regenerating & echo.
 )
 
-mkdir .\wxWidgets
-echo [32mMade the 'wxWidgets' folder[0m
-echo [32mCloning wxWidgets from git[0m & echo.
+echo [32mDownloading wxWidgets with wget[0m & echo.
 
-call git clone https://github.com/wxWidgets/wxWidgets wxWidgets
+call "../wget.exe" -O wxWidgets.zip https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.3/wxWidgets-3.0.3.zip
 
+echo.
+echo [32mExtracting 'wxWidgets.zip' into 'wxWidgets'[0m
+
+call powershell.exe -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('wxWidgets.zip', 'wxWidgets'); }"
+del /q /f wxWidgets.zip
+
+echo.
 set /P compilewx="Compile wxWidgets? (y/n)"
 if /I "%compilewx%" neq "y" goto skipwx
 
 :buildwx
 
-echo [91mBefore compiling wxWidgets, please set all projects under 'Debug - x64' and 'Release - x64' to /MTd and /MT respectively[0m & echo.
-"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe" "wxWidgets\build\msw\wx_vc14.sln"
+if "%VS_ROOT%"=="" (
+	set "vsRoot=C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE"
+	echo Set Visual Studio root directory to: '!vsRoot!', add 'VS_ROOT' to your environment variables to override
+) else (
+	set "vsRoot=%VS_ROOT%"
+)
 
-"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com" "wxWidgets\build\msw\wx_vc14.sln" /build "Debug|x64"
-"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com" "wxWidgets\build\msw\wx_vc14.sln" /build "Release|x64"
+set "vsOpen=!vsRoot!\devenv.exe"
+set "vsBuild=!vsRoot!\devenv.com"
+set "wxPath=wxWidgets\build\msw\wx_vc12.sln"
+
+echo [91mBefore compiling wxWidgets, please set all projects under 'Debug - x64' and 'Release - x64' to /MTd and /MT respectively[0m & echo.
+
+call "!vsOpen!" "!wxPath!"
+
+call "!vsBuild!" "!wxPath!" /build "Debug|x64"
+call "!vsBuild!" "!wxPath!" /build "Release|x64"
 
 :skipwx
 

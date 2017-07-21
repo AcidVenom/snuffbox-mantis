@@ -12,19 +12,19 @@ namespace snuffbox
 
             for (int i = 1; i < argc; ++i)
             {
-                if (strcmp(argv[i], "port") == 0)
+                if (strcmp(argv[i].c_str(), "port") == 0)
                 {
                     if (i + 1 < argc)
                     {
-                        port = atoi(argv[i + 1]);
+                        port = atoi(argv[i + 1].c_str());
                         break;
                     }
                 }
             }
-
+			
             console_ = new Console(nullptr, port);
 
-			console_->Show(true);
+			console_->Show();
             if (port != SNUFF_DEFAULT_PORT)
             {
                 console_->AddMessage(LogSeverity::kInfo, "Set custom port: " + std::to_string(port));
