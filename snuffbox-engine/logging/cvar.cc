@@ -39,7 +39,7 @@ namespace snuffbox
 					switch (i)
 					{
 					case CVarBase::CVarTypes::kString:
-						log.Log(console::LogSeverity::kInfo, "\t{0} -> {1}", name, static_cast<CVarString*>(it->second.get())->value().c_str());
+						log.Log(console::LogSeverity::kInfo, "\t{0} -> {1}", name, static_cast<CVarString*>(it->second.get())->value());
 						break;
 
 					case CVarBase::CVarTypes::kBoolean:

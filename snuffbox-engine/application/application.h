@@ -24,7 +24,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::SnuffboxApp
 		* @brief An application class to use as main entry point for the engine
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class SnuffboxApp
 		{

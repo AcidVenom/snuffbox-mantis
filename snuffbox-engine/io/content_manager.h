@@ -17,7 +17,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::ContentManager : [JSObject] public snuffbox::engine::ContentService
 		* @brief The content manager to load, unload and reload all content with
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class ContentManager : JS_OBJECT_MULTI public ContentService
 		{

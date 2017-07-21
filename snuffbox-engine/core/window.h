@@ -17,7 +17,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::Window : [JSObject]
 		* @brief Used as a wrapper around GLFW to create a window
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class Window : JS_OBJECT_MULTI WindowService
 		{

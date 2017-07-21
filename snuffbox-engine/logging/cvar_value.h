@@ -16,7 +16,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::CVarBase
 		* @brief The base class of every CVar value
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class CVarBase
 		{
@@ -42,7 +42,7 @@ namespace snuffbox
 			/**
 			* @struct snuffbox::engine::CVarBase::value_type<T>
 			* @brief Used to determine the value type of a CVar
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			template <typename T>
 			struct value_type
@@ -54,7 +54,7 @@ namespace snuffbox
         /**
         * @struct snuffbox::engine::CVarBase::value_type<CVarString>
         * @brief A CVarString's value type
-        * @author Daniël Konings
+        * @author Daniel Konings
         */
         template <>
         struct CVarBase::value_type<CVarString>
@@ -65,7 +65,7 @@ namespace snuffbox
         /**
         * @struct snuffbox::engine::CVarBase::value_type<CVarBoolean>
         * @brief A CVarBoolean's value type
-        * @author Daniël Konings
+        * @author Daniel Konings
         */
         template <>
         struct CVarBase::value_type<CVarBoolean>
@@ -76,7 +76,7 @@ namespace snuffbox
         /**
         * @struct snuffbox::engine::CVarBase::value_type<CVarNumber>
         * @brief A CVarNumber's value type
-        * @author Daniël Konings
+        * @author Daniel Konings
         */
         template <>
         struct CVarBase::value_type<CVarNumber>
@@ -87,7 +87,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::CVarValue<T, Y> : public snuffbox::engine::CVarBase
 		* @brief A CVarValue containing the actual typed value provided by T
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		template <typename T, int Y>
 		class CVarValue : public CVarBase
@@ -128,7 +128,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::CVarString : public snuffbox::engine::CVarValue<snuffbox::engine::String, snuffbox::engine::CVarBase::CVarTypes::kNumber>
 		* @brief A CVar to store a string value
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class CVarString : public CVarValue<String, CVarBase::CVarTypes::kString>
 		{
@@ -148,7 +148,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::CVarString : public snuffbox::engine::CVarValue<bool, snuffbox::engine::CVarBase::CVarTypes::kBoolean>
 		* @brief A CVar to store a boolean value
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class CVarBoolean : public CVarValue<bool, CVarBase::CVarTypes::kBoolean>
 		{
@@ -168,7 +168,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::CVarNumber : public snuffbox::engine::CVarValue<float, snuffbox::engine::CVarBase::CVarTypes::kNumber>
 		* @brief A CVar to store a numerical value represented as a float
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class CVarNumber : public CVarValue<float, CVarBase::CVarTypes::kNumber>
 		{

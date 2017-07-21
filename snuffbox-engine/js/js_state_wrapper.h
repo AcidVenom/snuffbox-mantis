@@ -25,7 +25,7 @@ namespace snuffbox
         /**
         * @class snuffbox::engine::JSStateWrapper
         * @brief The state wrapper for the JavaScript state
-        * @author Dani?l Konings
+        * @author Daniel Konings
         */
         class JSStateWrapper
         {

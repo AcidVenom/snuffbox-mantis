@@ -261,7 +261,7 @@ namespace snuffbox
 
                 if (has_error == true)
                 {
-                    log.Log(console::LogSeverity::kError, "{0}", error.c_str());
+                    log.Log(console::LogSeverity::kError, "{0}", error);
                 }
 
                 isolate_->Exit();

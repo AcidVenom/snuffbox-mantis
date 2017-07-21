@@ -13,7 +13,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::ContentService : public snuffbox::engine::Service<snuffbox::engine::ServiceIDs::kContentService>
 		* @brief The content service to load, reload and unload content with
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class ContentService : public Service<ServiceIDs::kContentService>
 		{

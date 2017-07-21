@@ -35,7 +35,7 @@ namespace snuffbox
 
 			if (size == 0)
 			{
-				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "File '{0}' was empty", path_.c_str());
+				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "File '{0}' was empty", path_);
 				return;
 			}
 
@@ -61,7 +61,7 @@ namespace snuffbox
 
 			if (file->file_ == nullptr)
 			{
-				Services::Get<LogService>().Log(console::LogSeverity::kError, "Could not open file '{0}' or the access flags don't allow it to be opened", path.c_str());
+				Services::Get<LogService>().Log(console::LogSeverity::kError, "Could not open file '{0}' or the access flags don't allow it to be opened", path);
 			}
 
 			file->path_ = path;

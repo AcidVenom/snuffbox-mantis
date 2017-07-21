@@ -11,7 +11,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::console::ConsoleApp : public wxApp
 		* @brief The wxWidgets application that will contain all the wx windows
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class ConsoleApp : public wxApp
 		{

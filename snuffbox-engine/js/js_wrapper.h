@@ -16,7 +16,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::JSWrapper
 		* @brief A wrapper around v8::FunctionCallbackInfo, for easier data retrieval
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class JSWrapper
 		{

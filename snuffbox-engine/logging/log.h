@@ -18,7 +18,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::Log : [JSObject] public snuffbox::engine::LogService
 		* @brief The logging system to log all types of different messages and throw assertions with
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class Log : JS_OBJECT_MULTI public LogService
 		{

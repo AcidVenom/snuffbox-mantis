@@ -11,7 +11,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::Services
 		* @brief Used to locate the different services that have been initialised
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class Services
 		{

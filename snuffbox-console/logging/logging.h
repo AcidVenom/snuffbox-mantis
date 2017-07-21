@@ -22,14 +22,14 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::console::LogColour
 		* @brief A structure to define a logging colour
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		struct LogColour
 		{
 			/**
 			* @struct snuffbox::LogColour::Colour
 			* @brief A structure to define an RGB colour
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			struct Colour
 			{

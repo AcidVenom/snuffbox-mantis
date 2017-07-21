@@ -13,7 +13,7 @@ namespace snuffbox
         /**
         * @class snuffbox::engine::JSAllocator : public v8::ArrayBuffer::Allocator
         * @brief Used with V8 to handle thread safe memory allocation
-        * @author Dani?l Konings
+        * @author Daniel Konings
         */
         class JSAllocator : public v8::ArrayBuffer::Allocator
         {
@@ -25,7 +25,7 @@ namespace snuffbox
             /**
             * @struct snuffbox::engine::JSAllocator::Header
             * @brief A header necessary for V8 memory allocations
-            * @author Dani?l Konings
+            * @author Daniel Konings
             */
             struct Header
             {

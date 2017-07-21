@@ -52,7 +52,7 @@ namespace snuffbox
 			glfwSetWindowTitle(window_, title.c_str());
 			title_ = title;
 
-			log.Log(console::LogSeverity::kInfo, "Renamed the window title to: {0}", title_.c_str());
+			log.Log(console::LogSeverity::kInfo, "Renamed the window title to: {0}", title_);
 		}
 
 		//-----------------------------------------------------------------------------------------------

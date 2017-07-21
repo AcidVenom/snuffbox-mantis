@@ -9,7 +9,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::JSFunctionRegister
 		* @brief A description to expose different C++ functions to JavaScript
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		struct JSFunctionRegister
 		{

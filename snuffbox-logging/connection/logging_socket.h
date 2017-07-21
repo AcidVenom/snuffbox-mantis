@@ -13,7 +13,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::logging::LoggingSocket
 		* @brief The base class for the client- and server sided logging sockets
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class LoggingSocket
 		{

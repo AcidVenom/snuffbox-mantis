@@ -10,7 +10,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::logging::LoggingServer : public snuffbox::logging::LoggingSocket
 		* @brief The server sided socket to setup a logging stream
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class LoggingServer : public LoggingSocket
 		{

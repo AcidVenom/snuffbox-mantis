@@ -12,7 +12,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::FileWatch
 		* @brief A file watcher that watches for files that have been modified and reloads them through the content manager
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class FileWatch
 		{

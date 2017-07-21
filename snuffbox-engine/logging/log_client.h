@@ -11,7 +11,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::LogClient : public snuffbox::logging::LoggingClient
 		* @brief The logging client that will handle received commands from the server
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class LogClient : public logging::LoggingClient
 		{

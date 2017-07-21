@@ -24,7 +24,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::Memory
 		* @brief Provides an interface to access the global memory allocators
-		* @author Dani?l Konings
+		* @author Daniel Konings
 		*/
 		class Memory
 		{
@@ -81,7 +81,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::EASTLDeleter<T>
 		* @brief Deletes pointers stored in EASTL smart pointers
-		* @author Dani?l Konings
+		* @author Daniel Konings
 		*/
 		template <typename T>
 		struct EASTLDeleter

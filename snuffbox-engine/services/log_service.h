@@ -19,7 +19,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::LogService : public snuffbox::engine::Service<snuffbox::engine::ServiceIDs::kLogService>
 		* @brief The logging service interface for all log services to use
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class LogService : public Service<ServiceIDs::kLogService>
 		{
@@ -187,6 +187,13 @@ namespace snuffbox
 		inline String LogService::ToString<bool>(const bool& value)
 		{
 			return value == true ? "true" : "false";
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		template<>
+		inline String LogService::ToString<String>(const String& value)
+		{
+			return ToString<const char*>(value.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------

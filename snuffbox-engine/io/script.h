@@ -9,7 +9,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::Script
 		* @brief The content type that wraps a JavaScript file
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class Script : public Content<ContentBase::Types::kScript>
 		{

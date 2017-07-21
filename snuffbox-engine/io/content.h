@@ -11,7 +11,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::ContentBase
 		* @brief The base class for every type of content to use
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class ContentBase
 		{
@@ -45,7 +45,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::Content<int> : public snuffbox::engine::ContentBase
 		* @brief The typed base class for every piece of content to use
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		template <int T>
 		class Content : public ContentBase
@@ -61,7 +61,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::is_content<T>
 		* @brief Used to check if a class is actually a piece of content
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		template <typename T>
 		struct is_content

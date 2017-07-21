@@ -10,7 +10,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::test::App : public snuffbox::engine::SnuffboxApp
 		* @brief The test application environment
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class App : public engine::SnuffboxApp
 		{

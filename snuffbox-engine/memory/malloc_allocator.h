@@ -10,7 +10,7 @@ namespace snuffbox
 		* @class snuffbox::engine::MallocAllocator
 		* @brief A default malloc allocator, that uses malloc and free to do its allocations
 		* @remarks This allocator however also adds a header to be in-sync with the allocator base
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class MallocAllocator : public Allocator
 		{

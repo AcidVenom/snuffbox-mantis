@@ -11,7 +11,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::JSRegister
 		* @brief This class will register all Snuffbox classes that need to be exposed to JavaScript
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		struct JSRegister
 		{
@@ -39,7 +39,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::JSObjectRegister<T>
 		* @brief Used to register a JavaScript exposed object to the JavaScript state
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		template<typename T>
 		struct JSObjectRegister

@@ -27,7 +27,7 @@ namespace snuffbox
 			{
 				src_directory_ = src->value();
 
-				log.Log(console::LogSeverity::kInfo, "Set the source directory of the project to '{0}'", src_directory_.c_str());
+				log.Log(console::LogSeverity::kInfo, "Set the source directory of the project to '{0}'", src_directory_);
 
 				return;
 			}
@@ -58,7 +58,7 @@ namespace snuffbox
 				}
 			}
 
-			Services::Get<LogService>().Log(console::LogSeverity::kInfo, "Reloaded file: '{0}'", path.c_str());
+			Services::Get<LogService>().Log(console::LogSeverity::kInfo, "Reloaded file: '{0}'", path);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ namespace snuffbox
 				return it->second.get();
 			}
 
-			log.Log(console::LogSeverity::kError, "Content with path '{0}' could not be found\nAre you sure it has been loaded correctly and the type is correct?", path.c_str());
+			log.Log(console::LogSeverity::kError, "Content with path '{0}' could not be found\nAre you sure it has been loaded correctly and the type is correct?", path);
 			return nullptr;
 		}
 
@@ -101,7 +101,7 @@ namespace snuffbox
 
 			if (it != map.end())
 			{
-				log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was already loaded, skipping load", path.c_str());
+				log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was already loaded, skipping load", path);
 				return it->second.get();
 			}
 
@@ -119,7 +119,7 @@ namespace snuffbox
 				break;
 			}
 
-			log.Assert(content != nullptr, "Content to be loaded from path '{0}' with type '{1}' was null after file reading", path.c_str(), type);
+			log.Assert(content != nullptr, "Content to be loaded from path '{0}' with type '{1}' was null after file reading", path, type);
 
 			File* f = File::Open(full_path, File::AccessFlags::kRead | File::AccessFlags::kBinary);
 			content->Load(f);
@@ -151,7 +151,7 @@ namespace snuffbox
 				return;
 			}
 
-			log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was never loaded, skipping unload", path.c_str());
+			log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was never loaded, skipping unload", path);
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::CVarService : public snuffbox::engine::Service<snuffbox::engine::ServiceIDs::kCVarService>
 		* @brief The CVar service interface for every CVar service to use
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class CVarService : public Service<ServiceIDs::kCVarService>
 		{
@@ -128,7 +128,7 @@ namespace snuffbox
 		{
 			if (name.find(' ') != -1)
 			{
-				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name.c_str());
+				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name);
 				return;
 			}
 			SetString(name, value);
@@ -140,7 +140,7 @@ namespace snuffbox
 		{
 			if (name.find(' ') != -1)
 			{
-				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name.c_str());
+				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name);
 				return;
 			}
 			SetBoolean(name, value);
@@ -152,7 +152,7 @@ namespace snuffbox
 		{
 			if (name.find(' ') != -1)
 			{
-				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name.c_str());
+				Services::Get<LogService>().Log(console::LogSeverity::kWarning, "CVar '{0}' could not be set, CVars cannot contain spaces", name);
 				return;
 			}
 			SetNumber(name, value);

@@ -22,7 +22,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::logging::LoggingStream
 		* @brief A stream to send log messages between the engine and the console
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class LoggingStream
 		{
@@ -44,7 +44,7 @@ namespace snuffbox
 			/**
 			* @struct snuffbox::logging::Packet
 			* @brief A packet structure to send over the logging connection
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			struct Packet
 			{

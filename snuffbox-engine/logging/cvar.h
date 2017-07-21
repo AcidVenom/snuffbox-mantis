@@ -15,7 +15,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::CVar : [JSObject] public snuffbox::engine::CVarService
 		* @brief A CVar service to store and retrieve CVars set via the command line or console
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class CVar : JS_OBJECT_MULTI public CVarService
 		{

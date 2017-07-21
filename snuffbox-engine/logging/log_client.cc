@@ -22,7 +22,7 @@ namespace snuffbox
 			colour.foreground = { 200, 0, 200 };
 			colour.background = { 0, 0, 0 };
 
-			Services::Get<LogService>().Log(console::LogSeverity::kRGB, "{0}", msg.c_str(), colour);
+			Services::Get<LogService>().Log(console::LogSeverity::kRGB, "{0}", msg, colour);
 
 			switch (cmd)
 			{
@@ -197,7 +197,7 @@ namespace snuffbox
 
 				cvar.ParseCommandLine(3, argv);
 
-				log.Log(console::LogSeverity::kDebug, "Set CVar '{0}' to '{1}'", key.c_str(), value.c_str());
+				log.Log(console::LogSeverity::kDebug, "Set CVar '{0}' to '{1}'", key, value);
 			}
 			else if (command == "get")
 			{
@@ -222,7 +222,7 @@ namespace snuffbox
 				CVarString* str = cvar.Get<CVarString>(key);
 				if (str != nullptr)
 				{
-					log.Log(console::LogSeverity::kDebug, "String -> {0}", str->value().c_str());
+					log.Log(console::LogSeverity::kDebug, "String -> {0}", str->value());
 					found = true;
 				}
 

@@ -21,7 +21,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::ServiceBase
 		* @brief The service base for every service to use, this is used in conjuction with the type checking
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		struct ServiceBase
 		{
@@ -31,7 +31,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::Service<int> : public snuffbox::engine::ServiceBase
 		* @brief Used to inherit typing information to the different services
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		template <int T>
 		struct Service : public ServiceBase
@@ -42,7 +42,7 @@ namespace snuffbox
 		/**
 		* @struct snuffbox::engine::is_service<T>
 		* @brief Used to check if a class is actually a service
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		template <typename T>
 		struct is_service

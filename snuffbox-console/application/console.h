@@ -23,7 +23,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::console::ConsoleServer : public snuffbox::LoggingServer
 		* @brief The console server that we can log message from the logging stream with
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class ConsoleServer : public logging::LoggingServer
 		{
@@ -59,7 +59,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::console::Console : public MainWindow
 		* @brief The main console window that you can send messages to
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class Console : public MainWindow
 		{
@@ -71,7 +71,7 @@ namespace snuffbox
 			/**
 			* @struct snuffbox::console::Console::LogMessage
 			* @brief Used to send messages from the networking thread to the main thread
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			struct LogMessage
 			{
@@ -88,7 +88,7 @@ namespace snuffbox
 			/**
 			* @class snuffbox::console::Console::Event : public wxCommandEvent
 			* @brief The derived wxCommandEvent to handle all console events
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			class Event : public wxCommandEvent
 			{
@@ -204,7 +204,7 @@ namespace snuffbox
 			/**
 			* @struct snuffbox::console::Console::InputHistory
 			* @brief A struct to store information about an input provided by the user
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			struct InputHistory
 			{

@@ -175,7 +175,7 @@ namespace snuffbox
 
 			error += "Expected '" + TypeToString(expected) + "', but got '" + TypeToString(got) + "' for argument " + std::to_string(arg + 1).c_str() + "\n\t";
 
-			Services::Get<LogService>().Log(console::LogSeverity::kError, "{0}", error.c_str());
+			Services::Get<LogService>().Log(console::LogSeverity::kError, "{0}", error);
 		}
 
 		//-----------------------------------------------------------------------------------------------

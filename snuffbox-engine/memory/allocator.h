@@ -15,7 +15,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::Allocator
 		* @brief The base class for every memory allocator to use. Keeps track of the current allocations and asserts if there are any leaks
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class Allocator
 		{
@@ -70,7 +70,7 @@ namespace snuffbox
 			/**
 			* @struct snuffbox::engine::Allocator::Header
 			* @brief Contains information about the allocated memory
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			struct Header
 			{

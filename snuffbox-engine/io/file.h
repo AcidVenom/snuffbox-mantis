@@ -22,7 +22,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::File
 		* @brief A helper class for cross-platform file reading/writing
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class File
 		{

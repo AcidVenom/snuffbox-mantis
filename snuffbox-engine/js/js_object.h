@@ -9,7 +9,7 @@ namespace snuffbox
 		/**
 		* @class snuffbox::engine::JSObject
 		* @brief The base class of every class that needs to be exposed to JavaScript
-		* @author Daniël Konings
+		* @author Daniel Konings
 		*/
 		class JSObject
 		{
