@@ -1,4 +1,4 @@
-#include "log_client.h"
+#include "logger_client.h"
 #include "logger.h" 
 #include "cvar.h"
 
@@ -15,7 +15,7 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		void LogClient::OnCommand(const logging::LoggingClient::CommandTypes& cmd, const char* message)
+		void LoggerClient::OnCommand(const logging::LoggingClient::CommandTypes& cmd, const char* message)
 		{
 			String msg = message;
 			console::LogColour colour;
@@ -40,7 +40,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LogClient::OnConsoleCommand(const char* message)
+		void LoggerClient::OnConsoleCommand(const char* message)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -51,6 +51,7 @@ namespace snuffbox
 					"get <name> - Outputs a CVar by name",
 					"show_all - Outputs all currently registered CVars",
 					"quit - Closes the window and shuts down the application",
+					"exit - Closes the console",
 					"help - Shows this dialog"
 				};
 
@@ -87,7 +88,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LogClient::OnJSCommand(const char* message)
+		void LoggerClient::OnJSCommand(const char* message)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -100,7 +101,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool LogClient::ParseCommand(const char* command)
+		bool LoggerClient::ParseCommand(const char* command)
 		{
 			String commands[] = {
 				"set",
@@ -134,7 +135,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool LogClient::HandleCommand(const String& command, const char* args)
+		bool LoggerClient::HandleCommand(const String& command, const char* args)
 		{
 			LogService& log = Services::Get<LogService>();
 			CVarService& cvar = Services::Get<CVarService>();

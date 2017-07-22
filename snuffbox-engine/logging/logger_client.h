@@ -9,11 +9,11 @@ namespace snuffbox
 	namespace engine
 	{
 		/**
-		* @class snuffbox::engine::LogClient : public snuffbox::logging::LoggingClient
+		* @class snuffbox::engine::LoggerClient : public snuffbox::logging::LoggingClient
 		* @brief The logging client that will handle received commands from the server
 		* @author Daniel Konings
 		*/
-		class LogClient : public logging::LoggingClient
+		class LoggerClient : public logging::LoggingClient
 		{
 
 			friend class Logger;

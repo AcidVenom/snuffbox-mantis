@@ -159,7 +159,7 @@ namespace snuffbox
 			v8::Local<v8::Object> global = wrapper->Global();
 			v8::Local<v8::Context> ctx = wrapper->Context();
 			v8::Local<v8::Value> object;
-			global->Get(ctx, JSWrapper::CreateString(obj)).ToLocal(&object);
+			bool maybe = global->Get(ctx, JSWrapper::CreateString(obj)).ToLocal(&object);
 
 			if (object.IsEmpty() == true || object->IsUndefined())
 			{
@@ -200,10 +200,12 @@ namespace snuffbox
 		template<typename ... Args>
 		inline void JSCallback<Args...>::Set(const v8::Local<v8::Value>& cb)
 		{
+			JSStateWrapper* wrapper = JSStateWrapper::Instance();
+			v8::Isolate* isolate = wrapper->isolate();
 			JSStateWrapper::IsolateLock lock(isolate);
 
 			v8::Local<v8::Value> value = cb;
-			callback_.Reset(JSStateWrapper::Instance()->isolate(), value.As<v8::Function>());
+			callback_.Reset(isolate, value.As<v8::Function>());
 			callback_.SetWeak(static_cast<JSCallback<Args...>*>(this), JSWeakCallback, v8::WeakCallbackType::kParameter);
 			valid_ = true;
 		}
@@ -256,7 +258,7 @@ namespace snuffbox
 
 			v8::Local<v8::Function> func = v8::Local<v8::Function>::New(isolate, callback_);
 			v8::Local<v8::Value> fctx;
-			func->Get(ctx, JSWrapper::CreateString("ctx")).ToLocal(&fctx);
+			bool maybe = func->Get(ctx, JSWrapper::CreateString("ctx")).ToLocal(&fctx);
 
 			v8::TryCatch try_catch;
 
@@ -265,13 +267,13 @@ namespace snuffbox
 
 			nargs != 0 ? func->Call(ctx,
 				fctx->IsUndefined() == false && fctx->IsObject() == true ?
-				fctx->ToObject() : wrapper->Global(), nargs, &values_[0])
+				fctx->ToObject(ctx).ToLocalChecked() : wrapper->Global(), nargs, &values_[0])
 
 				:
 
 				func->Call(ctx,
 					fctx->IsUndefined() == false && fctx->IsObject() == true ?
-					fctx->ToObject() : wrapper->Global(), 0, 0);
+					fctx->ToObject(ctx).ToLocalChecked() : wrapper->Global(), 0, 0);
 
 			engine::String exception;
 			bool failed = wrapper->GetException(&try_catch, &exception);

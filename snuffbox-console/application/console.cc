@@ -356,13 +356,13 @@ namespace snuffbox
 					send_thread_.join();
 				}
 
-				send_thread_.swap(std::thread([=]()
+				send_thread_ = std::thread([=]()
 				{
 					stream_.SendCommand(
 						idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
 						dupe.c_str(),
 						dupe.size());
-				}));
+				});
 			}
 
 			if (input_history_.size() == 0 || val != input_history_.at(input_history_.size() - 1).value)

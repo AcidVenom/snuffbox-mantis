@@ -3,7 +3,7 @@
 #include "../services/log_service.h"
 #include <snuffbox-logging/logging_stream.h>
 
-#include "log_client.h"
+#include "logger_client.h"
 
 #include "../js/js_defines.h" 
 
@@ -87,7 +87,7 @@ namespace snuffbox
 		private:
 
 			bool enabled_; //!< Has the console been enabled?
-			LogClient client_; //!< The logging client
+			LoggerClient client_; //!< The logging client
 			logging::LoggingStream stream_; //!< The logging stream
 
 		public:
