@@ -252,16 +252,14 @@ namespace snuffbox
 
 			v8::Local<v8::Context> ctx = wrapper->Context();
 
-			v8::TryCatch try_catch;
-
-			values_.clear();
-			int nargs = PushArg(args...);
-
 			v8::Local<v8::Function> func = v8::Local<v8::Function>::New(isolate, callback_);
 			v8::Local<v8::Value> fctx;
 			func->Get(ctx, JSWrapper::CreateString("ctx")).ToLocal(&fctx);
 
-			wrapper->Exit();
+			v8::TryCatch try_catch;
+
+			values_.clear();
+			int nargs = PushArg(args...);
 
 			nargs != 0 ? func->Call(ctx,
 				fctx->IsUndefined() == false && fctx->IsObject() == true ?
@@ -280,6 +278,8 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Log(console::LogSeverity::kError, exception);
 			}
+
+			wrapper->Exit();
 		}
 
 		//-------------------------------------------------------------------------------------------

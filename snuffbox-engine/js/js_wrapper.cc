@@ -13,7 +13,7 @@ namespace snuffbox
 			args_(args),
 			error_checks_(true)
 		{
-			JSStateWrapper::Instance()->Enter();
+			
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -194,7 +194,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		JSWrapper::~JSWrapper()
 		{
-			JSStateWrapper::Instance()->Exit();
+			
 		}
 	}
 }

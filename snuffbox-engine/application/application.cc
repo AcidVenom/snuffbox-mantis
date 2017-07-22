@@ -52,6 +52,7 @@ namespace snuffbox
 			{
 				window_service_->Poll();
 				content_service_->Update();
+
 				OnUpdate(16.0f);
 
 #ifdef SNUFF_JAVASCRIPT

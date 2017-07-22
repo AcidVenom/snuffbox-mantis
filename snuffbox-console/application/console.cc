@@ -329,41 +329,45 @@ namespace snuffbox
         void Console::SendInput()
 		{
 			wxString val = input_box->GetValue();
-			wxString dupe = val;
 			int idx = input_type->GetSelection();
 
-			if (send_thread_.joinable() == true)
+			if (val.size() == 0)
 			{
-				send_thread_.join();
+				return;
 			}
 
-			send_thread_.swap(std::thread([=]()
+			if (val == "exit")
 			{
-				if (val.size() == 0)
-				{
-					return;
-				}
+				CloseWindow();
+				return;
+			}
 
-				if (val == "exit")
-				{
-					CloseWindow();
-					return;
-				}
-
-				if (stream_.Connected() == false)
-				{
-					AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
-				}
-
-				stream_.SendCommand(
-					idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
-					val.c_str(),
-					val.size());
-			}));
-
-			if (input_history_.size() == 0 || dupe != input_history_.at(input_history_.size() - 1).value)
+			if (stream_.Connected() == false)
 			{
-				input_history_.push_back({ dupe, idx });
+				AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
+				return;
+			}
+			else
+			{
+				wxString dupe = val;
+
+				if (send_thread_.joinable() == true)
+				{
+					send_thread_.join();
+				}
+
+				send_thread_.swap(std::thread([=]()
+				{
+					stream_.SendCommand(
+						idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
+						dupe.c_str(),
+						dupe.size());
+				}));
+			}
+
+			if (input_history_.size() == 0 || val != input_history_.at(input_history_.size() - 1).value)
+			{
+				input_history_.push_back({ val, idx });
 			}
 
 			input_history_index_ = input_history_.size();
