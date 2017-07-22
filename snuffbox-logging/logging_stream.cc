@@ -17,7 +17,7 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		const unsigned int LoggingStream::STARTUP_SLEEP_ = 1000;
-		const unsigned int LoggingStream::WAIT_SLEEP_ = 8;
+		const unsigned int LoggingStream::WAIT_SLEEP_ = 4;
 		const unsigned int LoggingStream::SHUTDOWN_SLEEP_ = 1000;
 
 		//-----------------------------------------------------------------------------------------------
@@ -91,6 +91,8 @@ namespace snuffbox
 						socket->CloseSocket(should_quit_);
 						socket->OpenSocket(port);
 						disconnect = false;
+
+						connection_cv_.notify_all();
 					}
 
 					if (socket->Connect(port, ip, should_quit_) == 0)
@@ -112,6 +114,7 @@ namespace snuffbox
 								connection_cv_.notify_one();
 							}
 							break;
+
 						case LoggingSocket::ConnectionStatus::kDisconnected:
 							disconnect = true;
 							break;
@@ -130,6 +133,7 @@ namespace snuffbox
 		void LoggingStream::Log(const console::LogSeverity& severity, const char* message, const int& size, const unsigned char* col_bg, const unsigned char* col_fg)
 		{
 			assert(is_server_ == false);
+			assert(size + sizeof(char) + sizeof(console::LogColour) <= SNUFF_LOG_BUFFERSIZE);
 
 			if (socket_->connected_ == false)
 			{
@@ -247,7 +251,7 @@ namespace snuffbox
 			Packet packet;
 			packet.command = cmd;
 			memcpy(packet.buffer, buffer, sizeof(Packet) - sizeof(Commands));
-
+			
 			bool connected = socket_->SendPacket(other, reinterpret_cast<char*>(&packet), sizeof(Packet), should_quit_);
 		}
 	}

@@ -244,6 +244,8 @@ namespace snuffbox
 			}
 
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
+			wrapper->Enter();
+
 			v8::Isolate* isolate = wrapper->isolate();
 
 			v8::HandleScope scope(isolate);
@@ -258,6 +260,8 @@ namespace snuffbox
 			v8::Local<v8::Function> func = v8::Local<v8::Function>::New(isolate, callback_);
 			v8::Local<v8::Value> fctx;
 			func->Get(ctx, JSWrapper::CreateString("ctx")).ToLocal(&fctx);
+
+			wrapper->Exit();
 
 			nargs != 0 ? func->Call(ctx,
 				fctx->IsUndefined() == false && fctx->IsObject() == true ?

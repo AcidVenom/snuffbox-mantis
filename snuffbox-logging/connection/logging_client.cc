@@ -138,13 +138,8 @@ namespace snuffbox
 					break;
 				}
 
-				auto to_execute = [=]()
-				{
-					OnCommand(type, packet->buffer + 1);
-				};
-
-				std::function<void()> func = to_execute;
-				Execute(func);
+				std::function<void()> to_execute = [=]() { OnCommand(type, packet->buffer + 1); };
+				Execute(to_execute);
 			}
 			
 			skip_ = false;

@@ -67,6 +67,11 @@ namespace snuffbox
                     return -1;
                 }
             }
+			else if (evt.GetEventType() == wxEVT_CLOSE_WINDOW)
+			{
+				console_->CloseWindow();
+				return -1;
+			}
 
             return -1;
         }

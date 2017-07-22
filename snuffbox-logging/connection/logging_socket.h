@@ -98,7 +98,7 @@ namespace snuffbox
 			* @remarks This is useful for when server/client commands are recursively called, the logging stream is still updated so our conditional variable still runs
 			* @param[in] func (const std::function<void()>&) The function pointer to the function to run
 			*/
-			void Execute(const std::function<void()>& func);
+			std::thread& Execute(const std::function<void()>& func);
 
 			/**
 			* @brief Called when the server is connected to a client

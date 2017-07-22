@@ -95,6 +95,16 @@ namespace snuffbox
             */
             void RegisterGlobal(const char* name, const v8::Local<v8::Value>& value);
 
+			/**
+			* @brief Enter the JavaScript isolate
+			*/
+			void Enter();
+
+			/**
+			* @brief Exit the JavaScript isolate
+			*/
+			void Exit();
+
             /**
             * @brief Collects all garbage
             */
@@ -167,7 +177,7 @@ namespace snuffbox
             v8::Persistent<v8::ObjectTemplate> global_; //!< The global scope for use with the JavaScript state
             v8::Platform* platform_; //!< The V8 platform
 
-            std::mutex run_mutex_; //!< The mutex to run JavaScript code from multiple threads
+            std::mutex isolate_mutex_; //!< The mutex to run JavaScript code from multiple threads
 
             static JSStateWrapper* instance_; //!< The current instance
 			static const unsigned int STACK_LIMIT_; //!< The stack limit for each isolate

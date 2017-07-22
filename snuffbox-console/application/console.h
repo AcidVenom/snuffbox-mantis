@@ -133,9 +133,9 @@ namespace snuffbox
 			* @brief Default constructor, requires a parent window to construct the underlying MainWindow form
 			* @param[in] parent (wxWindow*) The parent window to assign to the MainWindow
             * @param[in] port (const int&) The port to open the connection on
-			* @param[in] max_lines (const int&) The maximum number of lines in the console, default = 200
+			* @param[in] max_lines (const int&) The maximum number of lines in the console, default = 10000
 			*/
-            Console(wxWindow* parent, const int& port, const int& max_lines = 200);
+            Console(wxWindow* parent, const int& port, const int& max_lines = 10000);
 
 			/**
 			* @brief Adds a message with a severity and a timestamp to the console
@@ -168,6 +168,11 @@ namespace snuffbox
 			* @return (bool) Is the input box focussed?
 			*/
 			bool HistoryChange(const int& dir);
+
+			/**
+			* @brief Closes the console window
+			*/
+			void CloseWindow();
 
 			/**
 			* @brief Default destructor, closes the stream
@@ -214,6 +219,12 @@ namespace snuffbox
 
 			wxVector<InputHistory> input_history_; //!< The console input history
 			int input_history_index_; //!< The current history index
+
+			bool can_receive_; //!< Can the console receive messages?
+			std::mutex receive_mutex_; //!< The mutex for receiving messages
+			std::condition_variable receive_cv_; //!< The receive conditional variable
+			std::thread send_thread_; //!< The thread to send commands with, without interfering with the log thread
+			bool quit_; //!< Has the console quit?
 		};
 
 		wxDECLARE_EVENT(CONSOLE_MSG_EVT, Console::Event);

@@ -98,7 +98,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingSocket::Execute(const std::function<void()>& func)
+		std::thread& LoggingSocket::Execute(const std::function<void()>& func)
 		{
 			if (execution_thread_.joinable() == true)
 			{
@@ -106,6 +106,8 @@ namespace snuffbox
 			}
 
 			execution_thread_ = std::thread(func);
+
+			return execution_thread_;
 		}
 
 		//-----------------------------------------------------------------------------------------------

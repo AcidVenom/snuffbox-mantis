@@ -48,7 +48,8 @@ namespace snuffbox
 			Isolate::CreateParams params;
             params.array_buffer_allocator = &allocator_;
 			isolate_ = Isolate::New(params);
-			isolate_->Enter();
+			
+			Enter();
 
 			HandleScope scope(isolate_);
 
@@ -67,6 +68,8 @@ namespace snuffbox
 			RegisterGlobal("Application", JSWrapper::CreateObject());
 
 			log.Log(console::LogSeverity::kSuccess, "Successfully initialised V8");
+
+			Exit();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -173,6 +176,20 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void JSStateWrapper::Enter()
+		{
+			isolate_mutex_.lock();
+			isolate_->Enter();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void JSStateWrapper::Exit()
+		{
+			isolate_->Exit();
+			isolate_mutex_.unlock();
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void JSStateWrapper::CollectGarbage()
 		{
 			LogService& log = Services::Get<LogService>();
@@ -197,7 +214,6 @@ namespace snuffbox
 			LogService& log = Services::Get<LogService>();
 
 			isolate_->LowMemoryNotification();
-			isolate_->Exit();
 			isolate_->Dispose();
 
 			V8::Dispose();
@@ -236,9 +252,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, const bool& echo)
         {
-            std::lock_guard<std::mutex> lock(run_mutex_);
-
-            isolate_->Enter();
+			Enter();
             isolate_->SetStackLimit(STACK_LIMIT_);
             HandleScope scope(isolate_);
 
@@ -276,7 +290,7 @@ namespace snuffbox
                 log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString(ctx).ToLocalChecked()));
 			}
 
-            isolate_->Exit();
+			Exit();
 			return true;
 		}
 

@@ -38,6 +38,20 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void ConsoleServer::OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg)
 		{
+			std::unique_lock<std::mutex> lock(console_->receive_mutex_);
+			
+			console_->receive_cv_.wait(lock, [=]() 
+			{ 
+				return console_->can_receive_ == true || console_->quit_ == true;
+			});
+
+			if (console_->quit_ == true)
+			{
+				return;
+			}
+
+			console_->can_receive_ = false;
+			
 			if (severity == LogSeverity::kRGB && col_fg != nullptr && col_bg != nullptr)
 			{
 				LogColour col;
@@ -139,7 +153,9 @@ namespace snuffbox
 			last_message_(""),
 			last_severity_(LogSeverity::kCount),
 			repeat_count_(1),
-			input_history_index_(0)
+			input_history_index_(0),
+			can_receive_(true),
+			quit_(false)
 		{
 			font_ = wxFont(10, wxFontFamily::wxFONTFAMILY_DEFAULT, wxFontStyle::wxFONTSTYLE_NORMAL, wxFontWeight::wxFONTWEIGHT_NORMAL);
 #ifdef SNUFF_WIN32
@@ -201,6 +217,13 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Console::AddLine(const Event& evt)
 		{
+			if (quit_ == true)
+			{
+				return;
+			}
+
+			std::unique_lock<std::mutex> lock(receive_mutex_);
+
 			const LogMessage& msg = evt.message();
 
 			output_console->BeginSuppressUndo();
@@ -234,6 +257,8 @@ namespace snuffbox
 				output_console->EndStyle();
 
 				output_console->EndSuppressUndo();
+				can_receive_ = true;
+				receive_cv_.notify_one();
 				return;
 			}
 
@@ -296,38 +321,49 @@ namespace snuffbox
 			++messages_;
 
 			output_console->EndSuppressUndo();
+			can_receive_ = true;
+			receive_cv_.notify_one();
 		}
 
 		//-----------------------------------------------------------------------------------------------
         void Console::SendInput()
 		{
 			wxString val = input_box->GetValue();
-
-			if (val.size() == 0)
-			{
-				return;
-			}
-
-			if (val == "exit")
-			{
-				Close(true);
-				return;
-			}
-
-			if (stream_.Connected() == false)
-			{
-				AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
-			}
-
+			wxString dupe = val;
 			int idx = input_type->GetSelection();
-			stream_.SendCommand(
-				idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
-				val.c_str(),
-				val.size());
 
-			if (input_history_.size() == 0 || val != input_history_.at(input_history_.size() - 1).value)
+			if (send_thread_.joinable() == true)
 			{
-				input_history_.push_back({ val, idx });
+				send_thread_.join();
+			}
+
+			send_thread_.swap(std::thread([=]()
+			{
+				if (val.size() == 0)
+				{
+					return;
+				}
+
+				if (val == "exit")
+				{
+					CloseWindow();
+					return;
+				}
+
+				if (stream_.Connected() == false)
+				{
+					AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
+				}
+
+				stream_.SendCommand(
+					idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
+					val.c_str(),
+					val.size());
+			}));
+
+			if (input_history_.size() == 0 || dupe != input_history_.at(input_history_.size() - 1).value)
+			{
+				input_history_.push_back({ dupe, idx });
 			}
 
 			input_history_index_ = input_history_.size();
@@ -371,8 +407,27 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void Console::CloseWindow()
+		{
+			if (quit_ == true)
+			{
+				return;
+			}
+
+			quit_ = true;
+			Close(true);
+
+			receive_cv_.notify_all();
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		Console::~Console()
 		{
+			if (send_thread_.joinable() == true)
+			{
+				send_thread_.join();
+			}
+
 			stream_.Close();
 		}
 

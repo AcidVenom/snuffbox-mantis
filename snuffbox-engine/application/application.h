@@ -32,6 +32,8 @@ namespace snuffbox
 		class SnuffboxApp
 		{
 
+			friend class ContentManager;
+
 		public:
 
 			/**
@@ -72,9 +74,22 @@ namespace snuffbox
 			void Initialise(const int& argc, char** argv);
 
 			/**
+			* @brief Called when a file is reloaded from the content manager
+			* @param[in] path (const snuffbox::engine::String&) The relative path of the reloaded file
+			*/
+			void Reload(const String& path);
+
+			/**
 			* @brief Shuts the application down
 			*/
 			void Shutdown();
+
+#ifdef SNUFF_JAVASCRIPT
+			/**
+			* @brief Binds the JavaScript callbacks to the current JavaScript context
+			*/
+			void BindJSCallbacks();
+#endif
 
 			/**
 			* @brief Called after initialisation of the base application
@@ -89,8 +104,15 @@ namespace snuffbox
 
 			/**
 			* @brief Called each frame when the application updates
+			* @param[in] dt (const float&) The current delta time of the application
 			*/
 			virtual void OnUpdate(const float& dt);
+
+			/**
+			* @brief Called when a file has been reloaded
+			* @param[in] path (const snuffbox::engine::String&) The relative path to the reloaded file
+			*/
+			virtual void OnReload(const String& path);
 
 			/**
 			* @brief Called when the application is shutdown, before destruction

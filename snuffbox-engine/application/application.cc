@@ -57,7 +57,6 @@ namespace snuffbox
 #ifdef SNUFF_JAVASCRIPT
 				js_on_update_->Call(16.0f);
 #endif
-				std::this_thread::sleep_for(std::chrono::milliseconds(16));
 			}
 
 			Shutdown();
@@ -85,7 +84,7 @@ namespace snuffbox
 			Services::Provide<CVarService>(cvar_service_.get());
 			Services::Provide<LogService>(log_service_.get());
 
-			content_service_->Initialise(cvar_service_.get());
+			content_service_->Initialise(cvar_service_.get(), this);
 
 			Services::Provide<ContentService>(content_service_.get());
 
@@ -106,15 +105,23 @@ namespace snuffbox
 			js_on_reload_ = Memory::ConstructUnique<JSCallback<String>>();
 			js_on_shutdown_ = Memory::ConstructUnique<JSCallback<>>();
 
-			js_on_startup_->Set("Application", "onStartup");
-			js_on_update_->Set("Application", "onUpdate");
-			js_on_reload_->Set("Application", "onReload");
-			js_on_shutdown_->Set("Application", "onShutdown");
+			BindJSCallbacks();
 #endif
 
 			log_service_->Log(console::LogSeverity::kSuccess, "Initialised the application");
 
 			OnInit();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void SnuffboxApp::Reload(const String& path)
+		{
+#ifdef SNUFF_JAVASCRIPT
+			BindJSCallbacks();
+
+			js_on_reload_->Call(path);
+#endif
+			OnReload(path);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -145,6 +152,17 @@ namespace snuffbox
 			Services::Remove<WindowService>();
 		}
 
+#ifdef SNUFF_JAVASCRIPT
+		//-----------------------------------------------------------------------------------------------
+		void SnuffboxApp::BindJSCallbacks()
+		{
+			js_on_startup_->Set("Application", "onStartup");
+			js_on_update_->Set("Application", "onUpdate");
+			js_on_reload_->Set("Application", "onReload");
+			js_on_shutdown_->Set("Application", "onShutdown");
+		}
+#endif
+
 		//-----------------------------------------------------------------------------------------------
 		void SnuffboxApp::OnInit()
 		{
@@ -159,6 +177,12 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		void SnuffboxApp::OnUpdate(const float& dt)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void SnuffboxApp::OnReload(const String& path)
 		{
 
 		}

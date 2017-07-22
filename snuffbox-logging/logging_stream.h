@@ -155,7 +155,7 @@ namespace snuffbox
 			bool is_server_; //!< Is this stream server-sided?
 			LoggingSocket* socket_; //!< The socket that started this stream
 			std::thread connection_thread_; //!< The connection thread
-			std::condition_variable connection_cv_; //!< The conditional variable for messaging when a socket is ready to send
+			std::condition_variable_any connection_cv_; //!< The conditional variable for messaging when a socket is ready to send
 			std::mutex connection_mutex_; //!< The connection mutex
 			void(*error_handler_)(const char*); //!< The error handler to stream error messages to
 		};

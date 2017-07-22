@@ -36,8 +36,9 @@ namespace snuffbox
 			/**
 			* @brief Initialises the content manager
 			* @param[in] cvar (snuffbox::engine::CVar*) The CVar system
+			* @param[in] app (snuffbox::engine::SnuffboxApp*) The current application
 			*/
-			void Initialise(CVar* cvar);
+			void Initialise(CVar* cvar, SnuffboxApp* app);
 
 			/**
 			* @brief Reloads a loaded file in the content manager
@@ -79,6 +80,8 @@ namespace snuffbox
 
 			String src_directory_; //!< The working directory
 			FileWatch watch_; //!< The file watch
+
+			SnuffboxApp* application_; //!< The current application
 
 		public:
 

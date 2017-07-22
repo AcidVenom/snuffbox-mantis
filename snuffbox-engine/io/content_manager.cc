@@ -4,6 +4,8 @@
 #include "../services/log_service.h"
 #include "../logging/cvar.h"
 
+#include "../application/application.h"
+
 #include "script.h"
 
 namespace snuffbox
@@ -12,14 +14,17 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		ContentManager::ContentManager() :
-			watch_(this)
+			watch_(this),
+			application_(nullptr)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ContentManager::Initialise(CVar* cvar)
+		void ContentManager::Initialise(CVar* cvar, SnuffboxApp* app)
 		{
+			application_ = app;
+
 			LogService& log = Services::Get<LogService>();
 			CVarString* src = cvar->Get<CVarString>("src_directory");
 
@@ -57,6 +62,8 @@ namespace snuffbox
 					break;
 				}
 			}
+
+			application_->Reload(path.c_str() + FullPath("").size());
 
 			Services::Get<LogService>().Log(console::LogSeverity::kInfo, "Reloaded file: '{0}'", path);
 		}
