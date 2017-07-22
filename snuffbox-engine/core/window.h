@@ -28,6 +28,28 @@ namespace snuffbox
 		protected:
 
 			/**
+			* @struct snuffbox::engine::WindowCommand
+			* @brief Used to execute commands on the main thread only
+			* @remarks This is especially useful on Win32, as the Win32 API doesn't allow for function calls from another thread
+			* @author Daniël Konings
+			*/
+			struct WindowCommand
+			{
+				/**
+				* @brief The different commands
+				*/
+				enum Flags
+				{
+					kSetTitle, //!< Set the title of the window
+					kSetSize //!< Set the size of the window
+				};
+
+				Flags flag; //!< Which command are we running?
+				String title; //!< If we have a kSetTitle flag, this is the value to set
+				unsigned int size[2]; //!< If we have a kSetSize flag, this is the value to set
+			};
+
+			/**
 			* @brief Default constructor
 			*/
 			Window();
@@ -103,7 +125,7 @@ namespace snuffbox
 			bool should_close_; //!< Should the window be closed?
 
 			GLFWwindow* window_; //!< The actual GLFW window
-
+			Queue<WindowCommand> command_queue_; //!< The command queue to use with the window, to execute commands on the main thread
 		public:
 
 			JS_NAME_SINGLE(Window);

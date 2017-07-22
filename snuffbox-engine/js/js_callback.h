@@ -117,7 +117,8 @@ namespace snuffbox
 
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
 			v8::Isolate* isolate = wrapper->isolate();
-			v8::HandleScope scope(isolate);
+
+			JSStateWrapper::IsolateLock lock(isolate);
 
 			v8::Local<v8::Object> global = wrapper->Global();
 			v8::Local<v8::Value> value;
@@ -148,11 +149,12 @@ namespace snuffbox
 		{
 			LogService& log = Services::Get<LogService>();
 
-			callback_.Reset();
-
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
 			v8::Isolate* isolate = wrapper->isolate();
-			v8::HandleScope scope(isolate);
+
+			JSStateWrapper::IsolateLock lock(isolate);
+
+			callback_.Reset();
 
 			v8::Local<v8::Object> global = wrapper->Global();
 			v8::Local<v8::Context> ctx = wrapper->Context();
@@ -198,6 +200,8 @@ namespace snuffbox
 		template<typename ... Args>
 		inline void JSCallback<Args...>::Set(const v8::Local<v8::Value>& cb)
 		{
+			JSStateWrapper::IsolateLock lock(isolate);
+
 			v8::Local<v8::Value> value = cb;
 			callback_.Reset(JSStateWrapper::Instance()->isolate(), value.As<v8::Function>());
 			callback_.SetWeak(static_cast<JSCallback<Args...>*>(this), JSWeakCallback, v8::WeakCallbackType::kParameter);
@@ -244,11 +248,9 @@ namespace snuffbox
 			}
 
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
-			wrapper->Enter();
-
 			v8::Isolate* isolate = wrapper->isolate();
 
-			v8::HandleScope scope(isolate);
+			JSStateWrapper::IsolateLock lock(isolate);
 
 			v8::Local<v8::Context> ctx = wrapper->Context();
 
@@ -278,8 +280,6 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Log(console::LogSeverity::kError, exception);
 			}
-
-			wrapper->Exit();
 		}
 
 		//-------------------------------------------------------------------------------------------

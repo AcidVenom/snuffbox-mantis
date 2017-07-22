@@ -152,6 +152,7 @@ namespace snuffbox
 		private:
 			const v8::FunctionCallbackInfo<v8::Value>& args_; //!< The cached arguments
 			bool error_checks_; //!< A boolean for multiple type checking
+			JSStateWrapper::IsolateLock lock_; //!< The isolate lock for the wrapper
 		};
 
 		//-------------------------------------------------------------------------------------------

@@ -11,7 +11,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		JSWrapper::JSWrapper(const FunctionCallbackInfo<Value>& args) :
 			args_(args),
-			error_checks_(true)
+			error_checks_(true),
+			lock_(JSStateWrapper::Instance()->isolate())
 		{
 			
 		}

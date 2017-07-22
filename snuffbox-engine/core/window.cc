@@ -49,10 +49,11 @@ namespace snuffbox
 			LogService& log = Services::Get<LogService>();
 			log.Assert(window_ != nullptr, "Attempted to change the title of a non-existing window");
 
-			glfwSetWindowTitle(window_, title.c_str());
-			title_ = title;
+			WindowCommand cmd;
+			cmd.flag = WindowCommand::Flags::kSetTitle;
+			cmd.title = title;
 
-			log.Log(console::LogSeverity::kInfo, "Renamed the window title to: {0}", title_);
+			command_queue_.push(cmd);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -70,12 +71,12 @@ namespace snuffbox
 				return;
 			}
 
-			glfwSetWindowSize(window_, width, height);
+			WindowCommand cmd;
+			cmd.flag = WindowCommand::Flags::kSetSize;
+			cmd.size[0] = width;
+			cmd.size[1] = height;
 
-			width_ = width;
-			height_ = height;
-
-			log.Log(console::LogSeverity::kInfo, "Resized the window to: {0}x{1}", width, height);
+			command_queue_.push(cmd);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -112,6 +113,51 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Window::Poll()
 		{
+			LogService& log = Services::Get<LogService>();
+
+			auto SizeCommand = [=](const WindowCommand& cmd, LogService& l)
+			{
+				const unsigned int& width = cmd.size[0];
+				const unsigned int& height = cmd.size[1];
+
+				glfwSetWindowSize(window_, width, height);
+
+				width_ = width;
+				height_ = height;
+
+				l.Log(console::LogSeverity::kInfo, "Resized the window to: {0}x{1}", width, height);
+			};
+
+			auto TitleCommand = [=](const WindowCommand& cmd, LogService& l)
+			{
+				const String& title = cmd.title;
+				glfwSetWindowTitle(window_, title.c_str());
+				title_ = title;
+
+				l.Log(console::LogSeverity::kInfo, "Renamed the window title to: {0}", title_);
+			};
+
+			while (command_queue_.empty() == false)
+			{
+				const WindowCommand& top = command_queue_.front();
+
+				switch (top.flag)
+				{
+				case WindowCommand::Flags::kSetTitle:
+					TitleCommand(top, log);
+					break;
+
+				case WindowCommand::Flags::kSetSize:
+					SizeCommand(top, log);
+					break;
+
+				default:
+					break;
+				}
+
+				command_queue_.pop();
+			}
+
 			glfwPollEvents();
 		}
 

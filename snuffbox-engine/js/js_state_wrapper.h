@@ -49,6 +49,34 @@ namespace snuffbox
 
         protected:
 
+			/**
+			* @class snuffbox::engine::IsolateLock
+			* @brief An isolate lock that locks an isolate with v8::Locker, enters it and the context and exits on destruction
+			* @author Daniël Konings
+			*/
+			class IsolateLock
+			{
+
+			public:
+
+				/**
+				* @brief Construct by specifying the isolate to lock
+				* @param[in] isolate (v8::Isolate*) The isolate to lock
+				*/
+				IsolateLock(v8::Isolate* isolate);
+
+				/**
+				* @brief Exits the isolate and the context
+				*/
+				~IsolateLock();
+
+			private:
+
+				v8::Locker lock_; //!< The V8 lock that locks the isolate and unlocks at destruction
+				v8::HandleScope handle_scope_; //!< The handle scope to create local handles in
+				v8::Isolate::Scope isolate_scope_; //!< The isolate scope to enter the scope of the isolate
+			};
+
             /**
             * @brief Default constructor
             * @param[in] allocator (snuffbox::engine::Allocator&) The allocator to use for the JavaScript state
@@ -176,8 +204,6 @@ namespace snuffbox
             v8::Persistent<v8::Context> context_; //!< The context we will use for this JavaScript state
             v8::Persistent<v8::ObjectTemplate> global_; //!< The global scope for use with the JavaScript state
             v8::Platform* platform_; //!< The V8 platform
-
-            std::mutex isolate_mutex_; //!< The mutex to run JavaScript code from multiple threads
 
             static JSStateWrapper* instance_; //!< The current instance
 			static const unsigned int STACK_LIMIT_; //!< The stack limit for each isolate

@@ -26,6 +26,21 @@ namespace snuffbox
 		const unsigned int JSStateWrapper::STACK_LIMIT_ = 1024 * 1024 * 2;
 
 		//-----------------------------------------------------------------------------------------------
+		JSStateWrapper::IsolateLock::IsolateLock(Isolate* isolate) :
+			lock_(isolate),
+			isolate_scope_(isolate),
+			handle_scope_(isolate)
+		{
+			JSStateWrapper::Instance()->Enter();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		JSStateWrapper::IsolateLock::~IsolateLock()
+		{
+			JSStateWrapper::Instance()->Exit();
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		JSStateWrapper::JSStateWrapper(Allocator& allocator) :
             allocator_(allocator),
 			isolate_(nullptr),
@@ -48,8 +63,6 @@ namespace snuffbox
 			Isolate::CreateParams params;
             params.array_buffer_allocator = &allocator_;
 			isolate_ = Isolate::New(params);
-			
-			Enter();
 
 			HandleScope scope(isolate_);
 
@@ -59,7 +72,7 @@ namespace snuffbox
             Local<v8::Context> context = CreateContext(global);
 			context_.Reset(isolate_, context);
 
-			context->Enter();
+			Enter();
 
 			instance_ = this;
 			RegisterCommon();
@@ -178,15 +191,15 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void JSStateWrapper::Enter()
 		{
-			isolate_mutex_.lock();
 			isolate_->Enter();
+			Context()->Enter();
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void JSStateWrapper::Exit()
 		{
+			Context()->Exit();
 			isolate_->Exit();
-			isolate_mutex_.unlock();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -196,7 +209,8 @@ namespace snuffbox
 
 			log.Log(console::LogSeverity::kDebug, "Collecting all JavaScript garbage");
 
-			HandleScope scope(isolate_);
+			JSStateWrapper::IsolateLock lock(isolate_);
+
 			Local<Object> g = Global();
             Local<v8::Context> ctx = Context();
 
@@ -234,7 +248,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		Local<Object> JSStateWrapper::Global() const
 		{
-			return Local<v8::Context>::New(isolate_, context_)->Global();
+			return Context()->Global();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -251,46 +265,44 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, const bool& echo)
-        {
-			Enter();
-            isolate_->SetStackLimit(STACK_LIMIT_);
-            HandleScope scope(isolate_);
+		{
+			IsolateLock lock(isolate_);
 
-            TryCatch try_catch;
+			isolate_->SetStackLimit(STACK_LIMIT_);
 
-            LogService& log = Services::Get<LogService>();
+			TryCatch try_catch;
 
-            Local<v8::Context> ctx = Context();
-            Context::Scope context_scope(ctx);
+			LogService& log = Services::Get<LogService>();
 
-            v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate_, file_name.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
-            v8::ScriptCompiler::Source s(v8::String::NewFromUtf8(isolate_, src.c_str(), v8::NewStringType::kNormal).ToLocalChecked(), origin);
+			Local<v8::Context> ctx = Context();
+			Context::Scope context_scope(ctx);
 
-            Local<v8::Script> script;
-            bool compiled = v8::ScriptCompiler::Compile(ctx, &s).ToLocal(&script);
+			v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate_, file_name.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			v8::ScriptCompiler::Source s(v8::String::NewFromUtf8(isolate_, src.c_str(), v8::NewStringType::kNormal).ToLocalChecked(), origin);
 
-            Local<Value> result;
+			Local<v8::Script> script;
+			bool compiled = v8::ScriptCompiler::Compile(ctx, &s).ToLocal(&script);
 
-            if (compiled == false || script->Run(ctx).ToLocal(&result) == false)
-            {
-                engine::String error;
-                bool has_error = GetException(&try_catch, &error);
+			Local<Value> result;
 
-                if (has_error == true)
-                {
-                    log.Log(console::LogSeverity::kError, "{0}", error);
-                }
-
-                isolate_->Exit();
-                return false;
-            }
-			
-			if (echo == true && Services::Get<WindowService>().Closed() == false)
+			if (compiled == false || script->Run(ctx).ToLocal(&result) == false)
 			{
-                log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString(ctx).ToLocalChecked()));
+				engine::String error;
+				bool has_error = GetException(&try_catch, &error);
+
+				if (has_error == true)
+				{
+					log.Log(console::LogSeverity::kError, "{0}", error);
+				}
+
+				return false;
 			}
 
-			Exit();
+			if (echo == true && Services::Get<WindowService>().Closed() == false)
+			{
+				log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString(ctx).ToLocalChecked()));
+			}
+
 			return true;
 		}
 
