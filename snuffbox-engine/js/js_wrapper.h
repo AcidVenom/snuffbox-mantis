@@ -138,10 +138,11 @@ namespace snuffbox
 			/**
 			* @brief Checks the argument scope if the format is as it should be
 			* @param[in] format (const char*) The format to check
+			* @param[in] force (const bool&) Should this check be enforced, even in Release mode? Default = true
 			* @remarks e.g. B = Boolean, N = Number, concat the values like so; 'BN' in order of arguments
 			* @return (bool) Was the format check completed succesfully?
 			*/
-			bool Check(const char* format);
+			bool Check(const char* format, const bool& force = true);
 
 			/**
 			* @brief Disables error checking in snuffbox::engine::JSWrapper::Check

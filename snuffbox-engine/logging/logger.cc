@@ -26,7 +26,8 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		Logger::Logger() :
-			enabled_(true)
+			enabled_(true),
+			client_(stream_)
 		{
 
 		}
@@ -81,7 +82,7 @@ namespace snuffbox
 				return;
 			}
 
-			stream_.Log(console::LogSeverity::kDebug, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kDebug, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -92,7 +93,7 @@ namespace snuffbox
 				return;
 			}
 
-			stream_.Log(console::LogSeverity::kInfo, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kInfo, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -103,7 +104,7 @@ namespace snuffbox
 				return;
 			}
 
-			stream_.Log(console::LogSeverity::kSuccess, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kSuccess, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -114,7 +115,7 @@ namespace snuffbox
 				return;
 			}
 
-			stream_.Log(console::LogSeverity::kWarning, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kWarning, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -125,7 +126,7 @@ namespace snuffbox
 				return;
 			}
 
-			stream_.Log(console::LogSeverity::kError, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kError, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -136,7 +137,7 @@ namespace snuffbox
 				return;
 			}
 
-			stream_.Log(console::LogSeverity::kFatal, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kFatal, message.c_str(), static_cast<int>(message.size()));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -147,7 +148,7 @@ namespace snuffbox
 				return;
 			}
 
-			stream_.Log(console::LogSeverity::kRGB, message.c_str(), static_cast<int>(message.size()), &colour.background.r, &colour.foreground.r);
+			client_.QueueLog(console::LogSeverity::kRGB, message.c_str(), static_cast<int>(message.size()), &colour.background.r, &colour.foreground.r);
 		}
 
 		//-----------------------------------------------------------------------------------------------

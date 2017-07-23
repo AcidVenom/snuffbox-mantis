@@ -22,7 +22,16 @@ namespace snuffbox
 			}
 
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
-			return wrapper->Run(buffer, file->path(), false);
+			String error;
+			bool success = wrapper->Run(buffer, file->path(), nullptr, &error);
+
+			if (success == false)
+			{
+				Services::Get<LogService>().Log(console::LogSeverity::kError, error);
+				return false;
+			}
+
+			return true;
 #else
 			return false;
 #endif

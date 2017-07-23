@@ -9,12 +9,13 @@ SET_PROPERTY(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake-targets")
 SET(SNUFF_DEFAULT_PORT "8888" CACHE STRING "Specifies the default port for the logging connection to use")
 SET(SNUFF_LOG_TIMEOUT "3" CACHE STRING "Specifies the default timeout in seconds for the logging connection to use")
 SET(SNUFF_LOG_BUFFERSIZE "512" CACHE STRING "Specifies the maximum buffer size for the logging connection to use per socket")
+SET(SNUFF_LOG_DEFAULT_MAXLINES "5000" CACHE STRING "Specifies the default for the maximum number of lines in the console")
 OPTION(SNUFF_USE_OGL "Forces OpenGL or Vulkan on Windows")
 SET(SNUFF_DIRECTX_VERSION "11" CACHE STRING "Specifies the DirectX version to use")
 SET(SNUFF_OGL_VERSION "ogl" CACHE STRING "Specifies whether to use OpenGL or Vulkan")
 SET_PROPERTY(CACHE "SNUFF_DIRECTX_VERSION" PROPERTY STRINGS "11" "12")
 SET_PROPERTY(CACHE "SNUFF_OGL_VERSION" PROPERTY STRINGS "ogl" "vulkan")
-SET(SNUFF_RELOAD_AFTER "100" CACHE STRING "Specifies after how many frames the file watcher should reload")
+SET(SNUFF_RELOAD_AFTER "50" CACHE STRING "Specifies after how many frames the file watcher should reload")
 OPTION(SNUFF_BUILD_TEST "Build the test environment project 'snuffbox-test'")
 
 OPTION(SNUFF_JAVASCRIPT "Should V8 (JavaScript) be enabled for this build?")
@@ -23,9 +24,13 @@ IF (WIN32)
 	FOREACH(FLAG CMAKE_C_FLAGS
 	             CMAKE_C_FLAGS_DEBUG
 	             CMAKE_C_FLAGS_RELEASE
+				 CMAKE_C_FLAGS_RELWITHDEBINFO
+				 CMAKE_C_FLAGS_MINSIZEREL
 	             CMAKE_CXX_FLAGS
 	             CMAKE_CXX_FLAGS_DEBUG
-	             CMAKE_CXX_FLAGS_RELEASE)
+	             CMAKE_CXX_FLAGS_RELEASE
+				 CMAKE_CXX_FLAGS_RELWITHDEBINFO
+				 CMAKE_CXX_FLAGS_MINSIZEREL)
 
 	    IF (${FLAG} MATCHES "/MD")
 	        STRING(REGEX REPLACE "/MD" "/MT" ${FLAG} "${${FLAG}}")
@@ -41,6 +46,8 @@ ENDIF ()
 SET_PROPERTY(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
     $<$<CONFIG:Debug>:SNUFF_DEBUG>
     $<$<CONFIG:Release>:SNUFF_RELEASE>
+    $<$<CONFIG:RelWithDebInfo>:SNUFF_RELEASE>
+    $<$<CONFIG:MinSizeRel>:SNUFF_RELEASE>
 )
 
 IF (WIN32)
@@ -53,6 +60,7 @@ ENDIF ()
 ADD_DEFINITIONS("/DSNUFF_DEFAULT_PORT=${SNUFF_DEFAULT_PORT}")
 ADD_DEFINITIONS("/DSNUFF_LOG_TIMEOUT=${SNUFF_LOG_TIMEOUT}")
 ADD_DEFINITIONS("/DSNUFF_LOG_BUFFERSIZE=${SNUFF_LOG_BUFFERSIZE}")
+ADD_DEFINITIONS("/DSNUFF_LOG_DEFAULT_MAXLINES=${SNUFF_LOG_DEFAULT_MAXLINES}")
 ADD_DEFINITIONS("/DSNUFF_RELOAD_AFTER=${SNUFF_RELOAD_AFTER}")
 
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
@@ -80,11 +88,15 @@ IF (WIN32)
 	INCLUDE_DIRECTORIES(
 		$<$<CONFIG:Debug>:${wxWidgets_LIB_DIR}/mswud>
 		$<$<CONFIG:Release>:${wxWidgets_LIB_DIR}/mswu>
+		$<$<CONFIG:RelWithDebInfo>:${wxWidgets_LIB_DIR}/mswu>
+		$<$<CONFIG:MinSizeRel>:${wxWidgets_LIB_DIR}/mswu>
 	)
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	INCLUDE_DIRECTORIES(
 		$<$<CONFIG:Debug>:${wxWidgets_LIB_DIR}/wx/include/gtk3-unicode-static-${WX_VERSION}>
 		$<$<CONFIG:Release>:${wxWidgets_LIB_DIR}/wx/include/gtk3-unicode-static-${WX_VERSION}>
+		$<$<CONFIG:RelWithDebInfo>:${wxWidgets_LIB_DIR}/wx/include/gtk3-unicode-static-${WX_VERSION}>
+		$<$<CONFIG:MinSizeRel>:${wxWidgets_LIB_DIR}/wx/include/gtk3-unicode-static-${WX_VERSION}>
 	)
 ENDIF ()
 

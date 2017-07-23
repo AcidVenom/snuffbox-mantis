@@ -18,7 +18,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ConsoleServer::OnConnect(const bool& stream_quit) const
+		void ConsoleServer::OnConnect(const bool& stream_quit)
 		{
 			if (stream_quit == false)
 			{
@@ -27,7 +27,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ConsoleServer::OnDisconnect(const bool& stream_quit) const
+		void ConsoleServer::OnDisconnect(const bool& stream_quit)
 		{
 			if (stream_quit == false)
 			{
@@ -264,15 +264,8 @@ namespace snuffbox
 
 			if (messages_ + 1 > max_line_count_)
 			{
-				wxString top = output_console->GetLineText(0);
-
-				output_console->SetEditable(true);
-				output_console->Remove(0, top.size());
-				output_console->MoveHome();
-				output_console->Delete(wxRichTextRange(0, 1));
-				output_console->SetEditable(false);
-
-				--messages_;
+				messages_ = 0;
+				output_console->Clear();
 			}
 
 			wxColour fg_col, bg_col;
@@ -336,36 +329,43 @@ namespace snuffbox
 				return;
 			}
 
-			if (val == "exit")
+			if (val == "exit" && idx == 0)
 			{
 				CloseWindow();
 				return;
 			}
-
-			if (stream_.Connected() == false)
+			else if (val == "clear" && idx == 0)
 			{
-				AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
-				return;
+				output_console->Clear();
 			}
 			else
 			{
-				wxString dupe = val;
-
-				if (send_thread_.joinable() == true)
+				if (stream_.Connected() == false)
 				{
-					send_thread_.join();
+					AddMessage(LogSeverity::kWarning, "There is currently no connection with the engine, command will not be evaluated");
+					return;
 				}
-
-				send_thread_ = std::thread([=]()
+				else
 				{
-					stream_.SendCommand(
-						idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
-						dupe.c_str(),
-						dupe.size());
-				});
+					wxString dupe = val;
+
+					if (send_thread_.joinable() == true)
+					{
+						send_thread_.join();
+					}
+
+					send_thread_ = std::thread([=]()
+					{
+						stream_.SendCommand(
+							idx == 0 ? logging::LoggingStream::Commands::kCommand : logging::LoggingStream::Commands::kJavaScript,
+							dupe.c_str(),
+							dupe.size());
+					});
+				}
 			}
 
-			if (input_history_.size() == 0 || val != input_history_.at(input_history_.size() - 1).value)
+			const InputHistory& history = input_history_.at(input_history_.size() - 1);
+			if (input_history_.size() == 0 || val != history.value || idx != history.command)
 			{
 				input_history_.push_back({ val, idx });
 			}

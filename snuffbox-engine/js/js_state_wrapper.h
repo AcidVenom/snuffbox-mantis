@@ -170,10 +170,11 @@ namespace snuffbox
             * @brief Runs a specified piece of code from a virtual file
             * @param[in] src (const snuffbox::engine::String&) The JavaScript code to execute
             * @param[in] file_name (const snuffbox::engine::String&) The file name in which this piece of code runs
-            * @param[in] echo (const bool&) Should the result be echo'd to the console?
+            * @param[out] output (snuffbox::engine::String*) The resulting output of the script represented as a string, default = nullptr
+			* @param[out] error (snuffbox::engine::String*) The error string, which is empty if this method returns true, default = nullptr
             * @return (bool) Was the execution succesful?
             */
-            bool Run(const engine::String& src, const engine::String& file_name, const bool& echo);
+            bool Run(const engine::String& src, const engine::String& file_name, engine::String* output = nullptr, engine::String* error = nullptr);
 
             /**
             * @return (snuffbox::engine::JSStateWrapper*) The current instance

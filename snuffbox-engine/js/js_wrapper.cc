@@ -106,9 +106,14 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool JSWrapper::Check(const char* format)
+		bool JSWrapper::Check(const char* format, const bool& force)
 		{
-#ifdef SNUFF_DEBUG
+#ifdef SNUFF_RELEASE
+			if (force == false)
+			{
+				return true;
+			}
+#endif
 			size_t len = strlen(format);
 			if (len == 0)
 			{
@@ -158,7 +163,6 @@ namespace snuffbox
 					return false;
 				}
 			}
-#endif
 
 			return true;
 		}

@@ -264,7 +264,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, const bool& echo)
+		bool JSStateWrapper::Run(const engine::String& src, const engine::String& file_name, engine::String* output, engine::String* error)
 		{
 			IsolateLock lock(isolate_);
 
@@ -287,20 +287,12 @@ namespace snuffbox
 
 			if (compiled == false || script->Run(ctx).ToLocal(&result) == false)
 			{
-				engine::String error;
-				bool has_error = GetException(&try_catch, &error);
-
-				if (has_error == true)
-				{
-					log.Log(console::LogSeverity::kError, "{0}", error);
-				}
-
-				return false;
+				return GetException(&try_catch, error) == false;
 			}
 
-			if (echo == true && Services::Get<WindowService>().Closed() == false)
+			if (output != nullptr)
 			{
-				log.Log(console::LogSeverity::kDebug, "{0}", *v8::String::Utf8Value(result->ToString(ctx).ToLocalChecked()));
+				*output = *v8::String::Utf8Value(result->ToString(ctx).ToLocalChecked());
 			}
 
 			return true;

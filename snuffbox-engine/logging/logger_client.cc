@@ -15,6 +15,37 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
+		LoggerClient::LoggerClient(logging::LoggingStream& stream) :
+			stream_(stream)
+		{
+			
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LoggerClient::OnConnect(const bool& stream_quit)
+		{
+			if (stream_quit == true)
+			{
+				return;
+			}
+
+			if (flush_thread_.joinable() == true)
+			{
+				flush_thread_.join();
+			}
+
+			flush_thread_ = std::thread([=]()
+			{
+				while (connected_ == true)
+				{
+					FlushLogs();
+				}
+
+				wait_cv_.notify_all();
+			});
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void LoggerClient::OnCommand(const logging::LoggingClient::CommandTypes& cmd, const char* message)
 		{
 			String msg = message;
@@ -22,7 +53,7 @@ namespace snuffbox
 			colour.foreground = { 200, 0, 200 };
 			colour.background = { 0, 0, 0 };
 
-			Services::Get<LogService>().Log(console::LogSeverity::kRGB, "{0}", msg, colour);
+			QueueLog(console::LogSeverity::kRGB, "{0}", msg, colour);
 
 			switch (cmd)
 			{
@@ -37,19 +68,61 @@ namespace snuffbox
 			default:
 				break;
 			}
+
+			flush_cv_.notify_one();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LoggerClient::IdleNotification()
+		{
+			flush_cv_.notify_all();
+			while (log_queue_.empty() == false) 
+			{ 
+				std::this_thread::sleep_for(std::chrono::milliseconds(1)); 
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void LoggerClient::FlushLogs()
+		{
+			std::unique_lock<std::mutex> lock(flush_mutex_);
+			flush_cv_.wait(lock);
+
+			while (log_queue_.empty() == false)
+			{
+				const ToLog& front = log_queue_.front();
+
+				if (front.severity == console::LogSeverity::kRGB)
+				{
+					stream_.Log(front.severity, 
+						front.message.c_str(), 
+						static_cast<int>(front.message.size()), 
+						reinterpret_cast<const unsigned char*>(&front.colour.background),
+						reinterpret_cast<const unsigned char*>(&front.colour.foreground));
+				}
+				else
+				{
+					stream_.Log(front.severity,
+						front.message.c_str(),
+						static_cast<int>(front.message.size()));
+				}
+
+				log_queue_.pop();
+			}
+
+			wait_cv_.notify_one();
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LoggerClient::OnConsoleCommand(const char* message)
 		{
-			LogService& log = Services::Get<LogService>();
-
 			if (strcmp("help", message) == 0)
 			{
 				String commands[] = {
 					"set <name> <value> - Sets a CVar by name",
 					"get <name> - Outputs a CVar by name",
 					"show_all - Outputs all currently registered CVars",
+					"clear - Clears the console window",
 					"quit - Closes the window and shuts down the application",
 					"exit - Closes the console",
 					"help - Shows this dialog"
@@ -63,7 +136,7 @@ namespace snuffbox
 
 				help += "\n";
 
-				log.Log(console::LogSeverity::kInfo, help);
+				QueueLog(console::LogSeverity::kInfo, help);
 				return;
 			}
 			else if (strcmp(message, "show_all") == 0)
@@ -84,19 +157,27 @@ namespace snuffbox
 				}
 			}
 
-			log.Log(console::LogSeverity::kError, "Invalid command '{0}', type 'help' for a list of available commands", message);
+			QueueLog(console::LogSeverity::kError, "Invalid command '{0}', type 'help' for a list of available commands", message);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LoggerClient::OnJSCommand(const char* message)
 		{
-			LogService& log = Services::Get<LogService>();
-
 #ifndef SNUFF_JAVASCRIPT
-			log.Log(console::LogSeverity::kWarning, "JavaScript is disabled, so the code will not be executed");
+			QueueLog(console::LogSeverity::kWarning, "JavaScript is disabled, so the code will not be executed");
 #else
             JSStateWrapper* js = JSStateWrapper::Instance();
-            js->Run(message, "console", true);
+			engine::String output, error;
+
+            bool success = js->Run(message, "console", &output, &error);
+
+			if (success == true)
+			{
+				QueueLog(console::LogSeverity::kDebug, output);
+				return;
+			}
+
+			QueueLog(console::LogSeverity::kError, error);
 #endif
 		}
 
@@ -137,7 +218,6 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool LoggerClient::HandleCommand(const String& command, const char* args)
 		{
-			LogService& log = Services::Get<LogService>();
 			CVarService& cvar = Services::Get<CVarService>();
 
 			if (strlen(args) == 0 || std::isspace(args[0]) == 0)
@@ -172,13 +252,13 @@ namespace snuffbox
 
 				if (key.size() == 0 || value.size() == 0 || split == false)
 				{
-					log.Log(console::LogSeverity::kError, "Invalid syntax for command 'set', usage: set <name> <value>");
+					QueueLog(console::LogSeverity::kError, "Invalid syntax for command 'set', usage: set <name> <value>");
 					return true;
 				}
 
 				if (key.size() > 255 || value.size() > 255)
 				{
-					log.Log(console::LogSeverity::kError, "Invalid arguments for command 'set', buffer overflow");
+					QueueLog(console::LogSeverity::kError, "Invalid arguments for command 'set', buffer overflow");
 					return true;
 				}
 
@@ -198,13 +278,13 @@ namespace snuffbox
 
 				cvar.ParseCommandLine(3, argv);
 
-				log.Log(console::LogSeverity::kDebug, "Set CVar '{0}' to '{1}'", key, value);
+				QueueLog(console::LogSeverity::kDebug, "Set CVar '{0}' to '{1}'", key, value);
 			}
 			else if (command == "get")
 			{
 				if (strlen(args) == 0)
 				{
-					log.Log(console::LogSeverity::kError, "Invalid syntax for command 'get', usage: get <name>");
+					QueueLog(console::LogSeverity::kError, "Invalid syntax for command 'get', usage: get <name>");
 					return true;
 				}
 
@@ -212,7 +292,7 @@ namespace snuffbox
 				{
 					if (std::isspace(args[i]) != 0)
 					{
-						log.Log(console::LogSeverity::kError, "Invalid syntax for command 'get', usage: get <name>");
+						QueueLog(console::LogSeverity::kError, "Invalid syntax for command 'get', usage: get <name>");
 						return true;
 					}
 				}
@@ -223,21 +303,21 @@ namespace snuffbox
 				CVarString* str = cvar.Get<CVarString>(key);
 				if (str != nullptr)
 				{
-					log.Log(console::LogSeverity::kDebug, "String -> {0}", str->value());
+					QueueLog(console::LogSeverity::kDebug, "String -> {0}", str->value());
 					found = true;
 				}
 
 				CVarBoolean* boolean = cvar.Get<CVarBoolean>(key);
 				if (boolean != nullptr)
 				{
-					log.Log(console::LogSeverity::kDebug, "Boolean -> {0}", boolean->value());
+					QueueLog(console::LogSeverity::kDebug, "Boolean -> {0}", boolean->value());
 					found = true;
 				}
 
 				CVarNumber* number = cvar.Get<CVarNumber>(key);
 				if (number != nullptr)
 				{
-					log.Log(console::LogSeverity::kDebug, "Number -> {0}", number->value());
+					QueueLog(console::LogSeverity::kDebug, "Number -> {0}", number->value());
 					found = true;
 				}
 
@@ -246,10 +326,21 @@ namespace snuffbox
 					return true;
 				}
 
-				log.Log(console::LogSeverity::kDebug, "CVar '{0}' is undefined", args);
+				QueueLog(console::LogSeverity::kDebug, "CVar '{0}' is undefined", args);
 			}
 
 			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		LoggerClient::~LoggerClient()
+		{
+			flush_cv_.notify_all();
+			
+			if (flush_thread_.joinable() == true)
+			{
+				flush_thread_.join();
+			}
 		}
 	}
 }

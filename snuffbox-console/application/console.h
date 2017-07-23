@@ -39,12 +39,12 @@ namespace snuffbox
 			/**
 			* @see snuffbox::logging::LoggingServer::OnConnect
 			*/
-			void OnConnect(const bool& stream_quit) const override;
+			void OnConnect(const bool& stream_quit) override;
 
 			/**
 			* @see snuffbox::logging::LoggingServer::OnDisconnect
 			*/
-			void OnDisconnect(const bool& stream_quit) const override;
+			void OnDisconnect(const bool& stream_quit) override;
 
 			/**
 			* @see snuffbox::logging::LoggingServer::OnLog
@@ -133,9 +133,10 @@ namespace snuffbox
 			* @brief Default constructor, requires a parent window to construct the underlying MainWindow form
 			* @param[in] parent (wxWindow*) The parent window to assign to the MainWindow
             * @param[in] port (const int&) The port to open the connection on
-			* @param[in] max_lines (const int&) The maximum number of lines in the console, default = 10000
+			* @param[in] max_lines (const int&) The maximum number of lines in the console
+			* @remarks After the max lines are reached, the console will clear
 			*/
-            Console(wxWindow* parent, const int& port, const int& max_lines = 10000);
+            Console(wxWindow* parent, const int& port, const int& max_lines);
 
 			/**
 			* @brief Adds a message with a severity and a timestamp to the console

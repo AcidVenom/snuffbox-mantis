@@ -98,37 +98,15 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		std::thread& LoggingSocket::Execute(const std::function<void()>& func)
-		{
-			if (execution_thread_.joinable() == true)
-			{
-				execution_thread_.join();
-			}
-
-			execution_thread_ = std::thread(func);
-
-			return execution_thread_;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void LoggingSocket::OnConnect(const bool& stream_quit) const
+		void LoggingSocket::OnConnect(const bool& stream_quit)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingSocket::OnDisconnect(const bool& stream_quit) const
+		void LoggingSocket::OnDisconnect(const bool& stream_quit)
 		{
 
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		LoggingSocket::~LoggingSocket()
-		{
-			if (execution_thread_.joinable() == true)
-			{
-				execution_thread_.join();
-			}
 		}
 	}
 }

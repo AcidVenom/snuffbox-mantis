@@ -16,6 +16,8 @@ namespace snuffbox
 {
 	namespace engine
 	{
+		class LoggerClient;
+
 		/**
 		* @class snuffbox::engine::LogService : public snuffbox::engine::Service<snuffbox::engine::ServiceIDs::kLogService>
 		* @brief The logging service interface for all log services to use
@@ -25,6 +27,7 @@ namespace snuffbox
 		{
 			
 			friend class Services;
+			friend class LoggerClient;
 
 		protected:
 

@@ -9,6 +9,7 @@ namespace snuffbox
 		bool ConsoleApp::OnInit()
 		{
             int port = SNUFF_DEFAULT_PORT;
+			int max_lines = SNUFF_LOG_DEFAULT_MAXLINES;
 
             for (int i = 1; i < argc; ++i)
             {
@@ -17,18 +18,33 @@ namespace snuffbox
                     if (i + 1 < argc)
                     {
                         port = atoi(argv[i + 1].c_str());
-                        break;
+						++i;
                     }
                 }
+				else if (strcmp(argv[i].c_str(), "max_lines") == 0)
+				{
+					if (i + 1 < argc)
+					{
+						max_lines = atoi(argv[i + 1].c_str());
+						++i;
+					}
+				}
             }
 			
-            console_ = new Console(nullptr, port);
+            console_ = new Console(nullptr, port, max_lines);
 
 			console_->Show();
+
             if (port != SNUFF_DEFAULT_PORT)
             {
                 console_->AddMessage(LogSeverity::kInfo, "Set custom port: " + std::to_string(port));
             }
+
+			if (max_lines != SNUFF_LOG_DEFAULT_MAXLINES)
+			{
+				console_->AddMessage(LogSeverity::kInfo, "Set custom max lines: " + std::to_string(max_lines));
+			}
+
 			console_->AddMessage(LogSeverity::kInfo, "Looking for an available connection..");
 
 			return true;
