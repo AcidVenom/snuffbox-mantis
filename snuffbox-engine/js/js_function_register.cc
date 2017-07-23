@@ -1,5 +1,6 @@
 #include "js_function_register.h"
 #include "js_state_wrapper.h"
+#include "js_wrapper.h"
 
 using namespace v8;
 
@@ -36,13 +37,19 @@ namespace snuffbox
 
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
 			Isolate* isolate = wrapper->isolate();
+			Local<Context> ctx = wrapper->Context();
+
+			Local<Function> func;
+			Local<v8::String> name;
 
 			int current = -1;
 			while (funcs[++current].name != nullptr)
 			{
-                Local<Function> func = Function::New(wrapper->Context(), funcs[current].function).ToLocalChecked();
-                func->SetName(v8::String::NewFromUtf8(isolate, funcs[current].name, v8::NewStringType::kNormal).ToLocalChecked());
-                obj->Set(wrapper->Context(), v8::String::NewFromUtf8(isolate, funcs[current].name, v8::NewStringType::kNormal).ToLocalChecked(), func);
+                func = Function::New(ctx, funcs[current].function).ToLocalChecked();
+				name = JSWrapper::CreateString(funcs[current].name);
+
+                func->SetName(name);
+                obj->Set(ctx, name, func);
 			}
 		}
 

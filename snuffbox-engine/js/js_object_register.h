@@ -76,7 +76,7 @@ namespace snuffbox
 			T::RegisterJS(object);
 
             object->Set(wrapper->Context(),
-                        v8::String::NewFromUtf8(isolate, "toString", v8::NewStringType::kNormal).ToLocalChecked(),
+                        JSWrapper::CreateString("toString"),
                         v8::Function::New(wrapper->Context(), JSObjectRegister<T>::ToString).ToLocalChecked());
 			
 			wrapper->RegisterGlobal(T::js_name(), object);

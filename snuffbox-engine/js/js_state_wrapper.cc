@@ -184,7 +184,7 @@ namespace snuffbox
 		{
 			Local<Object> global = Global();
             global->Set(Context(),
-                        v8::String::NewFromUtf8(isolate_, name, v8::NewStringType::kNormal).ToLocalChecked(),
+                        JSWrapper::CreateString(name),
                         value);
 		}
 
@@ -277,8 +277,8 @@ namespace snuffbox
 			Local<v8::Context> ctx = Context();
 			Context::Scope context_scope(ctx);
 
-			v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate_, file_name.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
-			v8::ScriptCompiler::Source s(v8::String::NewFromUtf8(isolate_, src.c_str(), v8::NewStringType::kNormal).ToLocalChecked(), origin);
+			v8::ScriptOrigin origin(JSWrapper::CreateString(file_name));
+			v8::ScriptCompiler::Source s(JSWrapper::CreateString(src), origin);
 
 			Local<v8::Script> script;
 			bool compiled = v8::ScriptCompiler::Compile(ctx, &s).ToLocal(&script);
