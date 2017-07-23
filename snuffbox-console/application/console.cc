@@ -233,7 +233,7 @@ namespace snuffbox
 			unsigned int count = atoi(value.c_str()) + 1;
 			output_status->SetTextValue(std::to_string(count), row, 1);
 
-			if (msg.repeat == true)
+			if (msg.repeat == true && last_message_ != "")
 			{
 				unsigned int old_repeat = repeat_count_ - 1;
 				wxTextPos last = output_console->GetLastPosition();
@@ -265,6 +265,8 @@ namespace snuffbox
 			if (messages_ + 1 > max_line_count_)
 			{
 				messages_ = 0;
+				last_message_ = "";
+				repeat_count_ = 0;
 				output_console->Clear();
 			}
 
@@ -336,6 +338,8 @@ namespace snuffbox
 			}
 			else if (val == "clear" && idx == 0)
 			{
+				last_message_ = "";
+				repeat_count_ = 0;
 				output_console->Clear();
 			}
 			else

@@ -113,9 +113,6 @@ namespace snuffbox
 			std::thread flush_thread_; //!< The thread to flush the logs with
 			std::mutex flush_mutex_; //!< The mutex for flushing
 			std::condition_variable flush_cv_; //!< The condition variable to let the flush thread know there are new logs
-
-			std::mutex wait_mutex_; //!< Used in conjuction with the wait condition variable
-			std::condition_variable wait_cv_; //!< If logging from the main thread, wait until all logs are flushed
 		};
 
 		//-----------------------------------------------------------------------------------------------

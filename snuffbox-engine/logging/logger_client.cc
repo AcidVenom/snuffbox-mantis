@@ -41,7 +41,10 @@ namespace snuffbox
 					FlushLogs();
 				}
 
-				wait_cv_.notify_all();
+				while (log_queue_.empty() == false)
+				{
+					log_queue_.pop();
+				}
 			});
 		}
 
@@ -109,8 +112,6 @@ namespace snuffbox
 
 				log_queue_.pop();
 			}
-
-			wait_cv_.notify_one();
 		}
 
 		//-----------------------------------------------------------------------------------------------
