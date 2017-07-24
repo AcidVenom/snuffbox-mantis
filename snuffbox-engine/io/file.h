@@ -62,9 +62,10 @@ namespace snuffbox
 			* @brief Opens the file for use with specified access flags
 			* @param[in] path (const snuffbox::engine::String&) The path to load the file from
 			* @param[in] flags (unsigned int) The access flags to open the file with
+			* @param[in] opened (snuffbox::engine::File*) If there's a file to be re-opened, use this file instead, default = nullptr
 			* @return (snuffbox::engine::File*) The opened file, File::file_ will be nullptr if opening failed
 			*/
-			static File* Open(const engine::String& path, unsigned int flags);
+			static File* Open(const engine::String& path, unsigned int flags, File* opened = nullptr);
 
 			/**
 			* @brief Closes the file and deallocates all used memory
@@ -81,6 +82,14 @@ namespace snuffbox
 			* @return (const char*) The file's buffer as a string format
 			*/
 			const char* String();
+
+			/**
+			* @brief Writes data into the opened file
+			* @remarks The file will be emptied (removed and readded) first, before writing to it
+			* @param[in] data (const unsigned char*) The data to write to the file
+			* @param[in] size (size_t) The size of the data to write to the file
+			*/
+			bool Write(const unsigned char* data, size_t size);
 
 			/**
 			* @return (const snuffbox::engine::String&) The path this file originates from

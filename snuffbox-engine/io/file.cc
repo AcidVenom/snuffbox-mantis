@@ -48,9 +48,10 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		File* File::Open(const engine::String& path, unsigned int flags)
+		File* File::Open(const engine::String& path, unsigned int flags, File* opened)
 		{
-			File* file = Memory::default_allocator().Construct<File>();
+			File* file = opened == nullptr ? Memory::default_allocator().Construct<File>() : opened;
+
 			engine::String mode = "";
 
 			mode += (flags & AccessFlags::kRead) == AccessFlags::kRead ? "r" : "";
@@ -87,6 +88,29 @@ namespace snuffbox
 		{
 			Read();
 			return reinterpret_cast<const char*>(buffer_);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool File::Write(const unsigned char* data, size_t size)
+		{
+			if (file_ == nullptr)
+			{
+				return false;
+			}
+
+			fclose(file_);
+			remove(path_.c_str());
+
+			Open(path_.c_str(), File::AccessFlags::kWrite | File::AccessFlags::kBinary, this);
+
+			if (file_ == nullptr)
+			{
+				return false;
+			}
+
+			fwrite(data, sizeof(unsigned char), size, file_);
+
+			return true;
 		}
 
 		//-----------------------------------------------------------------------------------------------
