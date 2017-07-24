@@ -57,7 +57,7 @@ namespace snuffbox
 		};
 
 		/**
-		* @class snuffbox::console::Console : public MainWindow
+		* @class snuffbox::console::Console : public snuffbox::MainWindow
 		* @brief The main console window that you can send messages to
 		* @author Daniel Konings
 		*/

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../wx_defines.h"
+#include <wx_defines.h>
 
 namespace snuffbox
 {
