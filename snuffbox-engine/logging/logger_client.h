@@ -6,6 +6,8 @@
 
 #include "../core/eastl.h"
 
+#include <condition_variable>
+
 namespace snuffbox
 {
 	namespace engine

@@ -1,5 +1,7 @@
 #include "rc4.h"
 #include <memory>
+#include <stdio.h>
+#include <string.h>
 
 #define RC4_SWAP(a, b) ((a) ^= (b), (b) ^= (a), (a) ^= (b))
 

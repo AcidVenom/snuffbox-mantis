@@ -2,6 +2,7 @@
 #include "../utils/rc4.h"
 
 #include <memory>
+#include <string.h>
 
 namespace snuffbox
 {
