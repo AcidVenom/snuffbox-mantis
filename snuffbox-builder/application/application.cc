@@ -31,6 +31,13 @@ namespace snuffbox
 			}
 			else if (type == wxEVT_BUTTON)
 			{
+				int id = evt.GetId();
+
+				if (id != BUTTON_START_ID && id != BUTTON_STOP_ID)
+				{
+					return -1;
+				}
+
 				builder_->OnButton(evt);
 				return 1;
 			}
