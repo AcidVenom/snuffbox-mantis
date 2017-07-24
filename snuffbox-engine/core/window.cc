@@ -24,7 +24,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Window::Initialise(const String& title, const unsigned int& width, const unsigned int& height)
+		void Window::Initialise(const String& title, unsigned int width, unsigned int height)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -57,7 +57,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Window::SetSize(const unsigned int& width, const unsigned int& height)
+		void Window::SetSize(unsigned int width, unsigned int height)
 		{
 			LogService& log = Services::Get<LogService>();
 			log.Assert(window_ != nullptr, "Attempted to size a non-existing window");
@@ -117,8 +117,8 @@ namespace snuffbox
 
 			auto SizeCommand = [=](const WindowCommand& cmd, LogService& l)
 			{
-				const unsigned int& width = cmd.size[0];
-				const unsigned int& height = cmd.size[1];
+				unsigned int width = cmd.size[0];
+				unsigned int height = cmd.size[1];
 
 				glfwSetWindowSize(window_, width, height);
 

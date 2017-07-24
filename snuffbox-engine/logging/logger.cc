@@ -152,7 +152,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Logger::DoAssert(const bool& expr, const String& message)
+		void Logger::DoAssert(bool expr, const String& message)
 		{
 			if (expr == false)
 			{

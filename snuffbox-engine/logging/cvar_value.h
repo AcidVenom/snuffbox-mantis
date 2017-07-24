@@ -160,9 +160,9 @@ namespace snuffbox
 
 			/**
 			* @brief Default constructor, initialises the CVar
-			* @param[in] init (const bool&) The initial value
+			* @param[in] init (bool) The initial value
 			*/
-			CVarBoolean(const bool& init);
+			CVarBoolean(bool init);
 		};
 
 		/**
@@ -180,9 +180,9 @@ namespace snuffbox
 
 			/**
 			* @brief Default constructor, initialises the CVar
-			* @param[in] init (const float&) The initial value
+			* @param[in] init (float) The initial value
 			*/
-			CVarNumber(const float& init);
+			CVarNumber(float init);
 
 		public:
 

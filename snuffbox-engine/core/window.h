@@ -57,10 +57,10 @@ namespace snuffbox
 			/**
 			* @brief Initialises the window with a width and height
 			* @param[in] title (const snuffbox::engine::String&) The title of the window
-			* @param[in] width (const unsigned int&) The width of the window, default = snuffbox::engine::Window::DEFAULT_WIDTH_
-			* @param[in] height (const unsigned int&) The height of the window, default = snuffbox::engine::Window::DEFAULT_HEIGHT_
+			* @param[in] width (unsigned int) The width of the window, default = snuffbox::engine::Window::DEFAULT_WIDTH_
+			* @param[in] height (unsigned int) The height of the window, default = snuffbox::engine::Window::DEFAULT_HEIGHT_
 			*/
-			void Initialise(const String& title, const unsigned int& width = DEFAULT_WIDTH_, const unsigned int& height = DEFAULT_HEIGHT_);
+			void Initialise(const String& title, unsigned int width = DEFAULT_WIDTH_, unsigned int height = DEFAULT_HEIGHT_);
 
 			/**
 			* @see snuffbox::engine::WindowService::SetTitle
@@ -70,7 +70,7 @@ namespace snuffbox
 			/**
 			* @see snuffbox::engine::WindowService::SetSize
 			*/
-			void SetSize(const unsigned int& width, const unsigned int& height) override;
+			void SetSize(unsigned int width, unsigned int height) override;
 
 			/**
 			* @see snuffbox::engine::WindowService::Close

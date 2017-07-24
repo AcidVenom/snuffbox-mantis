@@ -39,7 +39,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::Open(LoggingServer* server, const int& port)
+		void LoggingStream::Open(LoggingServer* server, int port)
 		{
 			is_server_ = true;
 			socket_ = server;
@@ -47,7 +47,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::Open(LoggingClient* client, const int& port, const char* ip)
+		void LoggingStream::Open(LoggingClient* client, int port, const char* ip)
 		{
 			is_server_ = false;
 			socket_ = client;
@@ -55,7 +55,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::Start(LoggingSocket* socket, const int& port, const char* ip)
+		void LoggingStream::Start(LoggingSocket* socket, int port, const char* ip)
 		{
 			int err = 0;
 
@@ -77,7 +77,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::RunThread(LoggingSocket* socket, const int& port, const char* ip)
+		void LoggingStream::RunThread(LoggingSocket* socket, int port, const char* ip)
 		{
 			connection_thread_ = std::thread([=]()
 			{
@@ -130,7 +130,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::Log(const console::LogSeverity& severity, const char* message, const int& size, const unsigned char* col_bg, const unsigned char* col_fg)
+		void LoggingStream::Log(console::LogSeverity severity, const char* message, int size, const unsigned char* col_bg, const unsigned char* col_fg)
 		{
 			assert(is_server_ == false);
 			assert(size + sizeof(char) + sizeof(console::LogColour) <= SNUFF_LOG_BUFFERSIZE);
@@ -164,7 +164,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::SendCommand(const Commands& cmd, const char* message, const int& size)
+		void LoggingStream::SendCommand(const Commands& cmd, const char* message, int size)
 		{
 			assert(is_server_ == true);
 
@@ -214,7 +214,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::LogError(const int& error) const
+		void LoggingStream::LogError(int error) const
 		{
 			if (error_handler_ == nullptr)
 			{
@@ -231,7 +231,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingStream::Send(const Commands& cmd, const int& other, const char* buffer, const int& size)
+		void LoggingStream::Send(Commands cmd, int other, const char* buffer, int size)
 		{
 			if (socket_->connected_ == false)
 			{

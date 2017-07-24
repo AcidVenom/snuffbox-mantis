@@ -37,14 +37,14 @@ namespace snuffbox
 			/**
 			* @see snuffbox::logging::LoggingClient::OnCommand
 			*/
-			void OnCommand(const CommandTypes& cmd, const char* message) override;
+			void OnCommand(CommandTypes cmd, const char* message) override;
 
 			/**
 			* @brief Basically does a regular log, but queues it up instead
 			* @see snuffbox::engine::LogService::FormatString
 			*/
 			template <typename ... Args>
-			void QueueLog(const console::LogSeverity& severity, const String& message, const Args&... args);
+			void QueueLog(console::LogSeverity severity, const String& message, const Args&... args);
 
 			/**
 			* @brief Called when the application is idle
@@ -117,7 +117,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename ... Args>
-		inline void LoggerClient::QueueLog(const console::LogSeverity& severity, const String& message, const Args&... args)
+		inline void LoggerClient::QueueLog(console::LogSeverity severity, const String& message, const Args&... args)
 		{
 			if (connected_ == false)
 			{

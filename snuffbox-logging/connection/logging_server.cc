@@ -20,7 +20,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		int LoggingServer::OpenSocket(const int& port)
+		int LoggingServer::OpenSocket(int port)
 		{
 			socket_ = static_cast<int>(socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
 
@@ -49,7 +49,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		int LoggingServer::Connect(const int& port, const char* ip, const bool& quit)
+		int LoggingServer::Connect(int port, const char* ip, const bool& quit)
 		{
 			if (quit == true)
 			{
@@ -133,7 +133,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingServer::OnLog(const console::LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg)
+		void LoggingServer::OnLog(console::LogSeverity severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg)
 		{
 
 		}

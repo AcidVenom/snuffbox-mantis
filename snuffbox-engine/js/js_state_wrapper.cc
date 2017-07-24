@@ -158,7 +158,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		engine::String JSStateWrapper::StackTrace(const unsigned int& max) const
+		engine::String JSStateWrapper::StackTrace(unsigned int max) const
         {
 			HandleScope scope(isolate_);
 			engine::String error;

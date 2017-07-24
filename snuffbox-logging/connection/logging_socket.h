@@ -38,18 +38,18 @@ namespace snuffbox
 
 			/**
 			* @brief Opens a server socket on a specific port
-			* @param[in] port (const int&) The port to start listening at
+			* @param[in] port (int) The port to start listening at
 			*/
-			virtual int OpenSocket(const int& port) = 0;
+			virtual int OpenSocket(int port) = 0;
 
 			/**
 			* @brief Listens for a connection
-			* @param[in] port (const int&) The port to listen at
+			* @param[in] port (int) The port to listen at
 			* @param[in] ip (const char*) The IP address to listen at, client only
 			* @param[in] quit (const bool&) Has the logging stream been closed yet?
 			* @return (int) Are we connected yet? Success = 0
 			*/
-			virtual int Connect(const int& port, const char* ip, const bool& quit) = 0;
+			virtual int Connect(int port, const char* ip, const bool& quit) = 0;
 
 			/**
 			* @brief Closes the socket
@@ -59,31 +59,31 @@ namespace snuffbox
 
 			/**
 			* @brief Has the connection been timed out?
-			* @param[in] timeout (const unsigned int&) The timeout in seconds
+			* @param[in] timeout (unsigned int) The timeout in seconds
 			* @return (bool) Has the connection between a client and server timed out?
 			*/
-			bool TimedOut(const unsigned int& timeout = SNUFF_LOG_TIMEOUT) const;
+			bool TimedOut(unsigned int timeout = SNUFF_LOG_TIMEOUT) const;
 
 			/**
 			* @brief Receive a packet from a specified socket
 			* @remarks When the connection is not established this method will return false
-			* @param[in] socket (const int&) The socket to receive packets from
-			* @param[in] expected_size (const int&) The expected size of the packet, which will be written to the buffer
+			* @param[in] socket (int) The socket to receive packets from
+			* @param[in] expected_size (int) The expected size of the packet, which will be written to the buffer
 			* @param[in] quit (const bool&) Has the logging stream been closed yet?
 			* @return (bool) Are we still connected?
 			*/
-			bool ReceivePacket(const int& socket, const int& expected_size, const bool& quit);
+			bool ReceivePacket(int socket, int expected_size, const bool& quit);
 
 			/**
 			* @brief Sends a packet to a specified socket
 			* @remarks When the connection is not established this method will return false
-			* @param[in] socket (const int&) The socket to send packets to
+			* @param[in] socket (int) The socket to send packets to
 			* @param[in] buffer (const char*) The buffer to send
-			* @param[in] size (const int&) The size of the packet, which will be sent over the connection
+			* @param[in] size (int) The size of the packet, which will be sent over the connection
 			* @param[in] quit (const bool&) Has the logging stream been closed yet?
 			* @return (bool) Are we still connected?
 			*/
-			bool SendPacket(const int& socket, const char* buffer, const int& size, const bool& quit);
+			bool SendPacket(int socket, const char* buffer, int size, const bool& quit);
 
 			/**
 			* @brief Updates the connection between server and client
@@ -95,13 +95,13 @@ namespace snuffbox
 
 			/**
 			* @brief Called when the server is connected to a client
-			* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
+			* @param[in] stream_quit (bool) Was the stream shutdown yet?
 			*/
 			virtual void OnConnect(const bool& stream_quit);
 
 			/**
 			* @brief Called when the server is disconnected from a client or the main stream closes
-			* @param[in] stream_quit (const bool&) Was the stream shutdown yet?
+			* @param[in] stream_quit (bool) Was the stream shutdown yet?
 			*/
 			virtual void OnDisconnect(const bool& stream_quit);
 

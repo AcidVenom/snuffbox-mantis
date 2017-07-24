@@ -20,7 +20,7 @@ namespace snuffbox
 			/**
 			* @see snuffbox::engine::Allocator::Allocator
 			*/
-			MallocAllocator(const size_t& max_memory);
+			MallocAllocator(size_t max_memory);
 
 		protected:
 
@@ -28,7 +28,7 @@ namespace snuffbox
 			* @see snuffbox::engine::Allocator::Allocate
 			* @remarks Simply a call to 'malloc'
 			*/
-			void* Allocate(const size_t& size, const size_t& align) override;
+			void* Allocate(size_t size, size_t align) override;
 
 			/**
 			* @see snuffbox::engine::Allocator::Deallocate

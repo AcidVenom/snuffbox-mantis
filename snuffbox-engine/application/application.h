@@ -47,17 +47,17 @@ namespace snuffbox
 
 			/**
 			* @brief Default constructor
-			* @param[in] max_memory (const size_t&) The maximum amount of memory for the application to use, default = 4Gb
+			* @param[in] max_memory (size_t) The maximum amount of memory for the application to use, default = 4Gb
 			*/
-			SnuffboxApp(const size_t& max_memory = static_cast<size_t>(4294967296));
+			SnuffboxApp(size_t max_memory = static_cast<size_t>(4294967296));
 
 			/**
 			* @brief Runs the application
-			* @param[in] argc (const int&) The number of command line arguments
+			* @param[in] argc (int) The number of command line arguments
 			* @param[in] argv (char**) The command line arguments
 			* @return (snuffbox::engine::SnuffboxApp::ExitCodes) The exit code of the application, 0 = success
 			*/
-			ExitCodes Exec(const int& argc, char** argv);
+			ExitCodes Exec(int argc, char** argv);
 
 			/**
 			* @brief Default destructor
@@ -68,10 +68,10 @@ namespace snuffbox
 
 			/**
 			* @brief Initialises the application
-			* @param[in] argc (const int&) The number of command line arguments
+			* @param[in] argc (int) The number of command line arguments
 			* @parma[in] argv (char**) The actual command line arguments
 			*/
-			void Initialise(const int& argc, char** argv);
+			void Initialise(int argc, char** argv);
 
 			/**
 			* @brief Called when a file is reloaded from the content manager
@@ -104,9 +104,9 @@ namespace snuffbox
 
 			/**
 			* @brief Called each frame when the application updates
-			* @param[in] dt (const float&) The current delta time of the application
+			* @param[in] dt (float) The current delta time of the application
 			*/
-			virtual void OnUpdate(const float& dt);
+			virtual void OnUpdate(float dt);
 
 			/**
 			* @brief Called when a file has been reloaded

@@ -20,7 +20,7 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		SnuffboxApp::SnuffboxApp(const size_t& max_memory) :
+		SnuffboxApp::SnuffboxApp(size_t max_memory) :
 			running_(true),
 #ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_(nullptr),
@@ -38,7 +38,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		SnuffboxApp::ExitCodes SnuffboxApp::Exec(const int& argc, char** argv)
+		SnuffboxApp::ExitCodes SnuffboxApp::Exec(int argc, char** argv)
 		{
 			Initialise(argc, argv);
 
@@ -75,7 +75,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void SnuffboxApp::Initialise(const int& argc, char** argv)
+		void SnuffboxApp::Initialise(int argc, char** argv)
 		{
 			cvar_service_ = Memory::ConstructUnique<CVar>();
 			log_service_ = Memory::ConstructUnique<Logger>();
@@ -182,7 +182,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void SnuffboxApp::OnUpdate(const float& dt)
+		void SnuffboxApp::OnUpdate(float dt)
 		{
 
 		}

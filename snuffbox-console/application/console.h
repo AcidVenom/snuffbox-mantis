@@ -49,7 +49,7 @@ namespace snuffbox
 			/**
 			* @see snuffbox::logging::LoggingServer::OnLog
 			*/
-			void OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg) override;
+			void OnLog(LogSeverity severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg) override;
 
 		private:
 
@@ -98,9 +98,9 @@ namespace snuffbox
 				/**
 				* @brief Construct through an event type required by a wxCommandEvent
 				* @param[in] type (const wxEventType&) The type of command
-				* @param[in] id (const int&) The ID of this command, currently unused
+				* @param[in] id (int) The ID of this command, currently unused
 				*/
-				Event(const wxEventType& type, const int& id = 0);
+				Event(const wxEventType& type, int id = 0);
 
 				/**
 				* @brief Copy constructor
@@ -132,20 +132,20 @@ namespace snuffbox
 			/**
 			* @brief Default constructor, requires a parent window to construct the underlying MainWindow form
 			* @param[in] parent (wxWindow*) The parent window to assign to the MainWindow
-            * @param[in] port (const int&) The port to open the connection on
-			* @param[in] max_lines (const int&) The maximum number of lines in the console
+            * @param[in] port (int) The port to open the connection on
+			* @param[in] max_lines (int) The maximum number of lines in the console
 			* @remarks After the max lines are reached, the console will clear
 			*/
-            Console(wxWindow* parent, const int& port, const int& max_lines);
+            Console(wxWindow* parent, int port, int max_lines);
 
 			/**
 			* @brief Adds a message with a severity and a timestamp to the console
 			* @remarks The different severities also change the colour of the log
-			* @param[in] severity (const snuffbox::console::LogSeverity&) The severity to log with
+			* @param[in] severity (snuffbox::console::LogSeverity) The severity to log with
 			* @param[in] msg (const wxString&) The message to log
 			* @param[in] colour (const snuffbox::console::LogColour&) Optional, this parameter is only used with LogSeverity::kRGB
 			*/
-			void AddMessage(const LogSeverity& severity, const wxString& msg, const LogColour& colour = LogColour());
+			void AddMessage(LogSeverity severity, const wxString& msg, const LogColour& colour = LogColour());
 
 			/**
 			* @brief Actually adds the line to the console after thread-to-thread data transfer
@@ -165,10 +165,10 @@ namespace snuffbox
 
 			/**
 			* @brief Changes the current history index
-			* @param[in] dir (const int&) The direction to move in
+			* @param[in] dir (int) The direction to move in
 			* @return (bool) Is the input box focussed?
 			*/
-			bool HistoryChange(const int& dir);
+			bool HistoryChange(int dir);
 
 			/**
 			* @brief Closes the console window

@@ -24,18 +24,18 @@ namespace snuffbox
 
 			/**
 			* @brief Construct by specifying the maximum memory size
-			* @param[in] max_memory (const size_t&) The maximum memory that can be allocated in bytes
+			* @param[in] max_memory (size_t) The maximum memory that can be allocated in bytes
 			*/
-			Allocator(const size_t& max_memory);
+			Allocator(size_t max_memory);
 
 			/**
 			* @brief Allocates a block of memory with a given size
 			* @remarks This call increases the number of allocations and allocated memory members in the base allocator
-			* @param[in] size (const size_t&) The size to allocate
-			* @param[in] align (const size_t&) The alignment to allocate with, default = 0
+			* @param[in] size (size_t) The size to allocate
+			* @param[in] align (size_t) The alignment to allocate with, default = 0
 			* @return (void*) A pointer pointing to the address at the start of the block
 			*/
-			void* Malloc(const size_t& size, const size_t& align = 0);
+			void* Malloc(size_t size, size_t align = 0);
 
 			/**
 			* @brief Frees up a block of memory at a given pointer
@@ -79,11 +79,11 @@ namespace snuffbox
 
 			/**
 			* @brief Allocates a block of memory with a specified size and alignment
-			* @param[in] size (const size_t&) The size to allocate
-			* @param[in] align (const size_t&) The alignment
+			* @param[in] size (size_t) The size to allocate
+			* @param[in] align (size_t) The alignment
 			* @return (void*) A pointer pointing to the first address of the memory block
 			*/
-			virtual void* Allocate(const size_t& size, const size_t& align) = 0;
+			virtual void* Allocate(size_t size, size_t align) = 0;
 
 			/**
 			* @brief Deallocates a block of memory

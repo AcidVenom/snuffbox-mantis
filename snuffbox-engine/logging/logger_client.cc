@@ -49,7 +49,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggerClient::OnCommand(const logging::LoggingClient::CommandTypes& cmd, const char* message)
+		void LoggerClient::OnCommand(logging::LoggingClient::CommandTypes cmd, const char* message)
 		{
 			String msg = message;
 			console::LogColour colour;

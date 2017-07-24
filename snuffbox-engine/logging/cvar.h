@@ -50,12 +50,12 @@ namespace snuffbox
 			/**
 			* @see snuffbox::engine::CVarService::SetBoolean
 			*/
-			void SetBoolean(const String& name, const bool& value) override;
+			void SetBoolean(const String& name, bool value) override;
 
 			/**
 			* @see snuffbox::engine::CVarService::SetNumber
 			*/
-			void SetNumber(const String& name, const float& value) override;
+			void SetNumber(const String& name, float value) override;
 
 			/**
 			* @see snuffbox::engine::CVarService::GetString
@@ -83,10 +83,10 @@ namespace snuffbox
 			/**
 			* @brief Sets a specific CVarValue by name and its typed value
 			* @param[in] name (const snuffbox::engine::String&) The name of the CVar to set
-			* @param[in] value (const snuffbox::engine::CVarBase::value_type<T>::type&) The value to set
+			* @param[in] value (snuffbox::engine::CVarBase::value_type<T>::type) The value to set
 			*/
 			template <typename T>
-            void DoSet(const String& name, const typename CVarBase::value_type<T>::type& value);
+            void DoSet(const String& name, typename CVarBase::value_type<T>::type value);
 
 		private:
 
@@ -117,7 +117,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T>
-        void CVar::DoSet(const String& name, const typename CVarBase::value_type<T>::type& value)
+        void CVar::DoSet(const String& name, typename CVarBase::value_type<T>::type value)
 		{
 			CVarMap::iterator it = cvars_[T::TYPE_ID].find(name);
 

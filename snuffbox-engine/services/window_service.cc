@@ -17,7 +17,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void WindowService::SetSize(const unsigned int& width, const unsigned int& height)
+		void WindowService::SetSize(unsigned int width, unsigned int height)
 		{
 
 		}

@@ -35,10 +35,10 @@ namespace snuffbox
 
 			/**
 			* @brief Initialises the memory system with an allocator of type T
-			* @param[in] max_memory (const size_t&) The maximum memory that can be allocated
+			* @param[in] max_memory (size_t) The maximum memory that can be allocated
 			*/
 			template <typename T>
-			static void Initialise(const size_t& max_memory);
+			static void Initialise(size_t max_memory);
 
 		public:
 
@@ -95,7 +95,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T>
-		inline void Memory::Initialise(const size_t& max_memory)
+		inline void Memory::Initialise(size_t max_memory)
 		{
 			assert(default_allocator_ == nullptr);
 

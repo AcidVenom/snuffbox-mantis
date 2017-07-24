@@ -26,10 +26,10 @@ namespace snuffbox
 
 			/**
 			* @brief Converts an error code to a descriptive string
-			* @param[in] error (const int&) The error code to convert
+			* @param[in] error (int) The error code to convert
 			* @return (char*) The error message as a string
 			*/
-			char* GetErrorMessage(const int& error);
+			char* GetErrorMessage(int error);
 
 			/**
 			* @brief Initialises WinSock

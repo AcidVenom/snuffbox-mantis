@@ -80,7 +80,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentBase* ContentManager::GetContent(const String& path, const ContentBase::Types& type)
+		ContentBase* ContentManager::GetContent(const String& path, ContentBase::Types type)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -99,7 +99,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentBase* ContentManager::LoadContent(const String& path, const ContentBase::Types& type)
+		ContentBase* ContentManager::LoadContent(const String& path, ContentBase::Types type)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -146,7 +146,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ContentManager::UnloadContent(const String& path, const ContentBase::Types& type)
+		void ContentManager::UnloadContent(const String& path, ContentBase::Types type)
 		{
 			String full_path = FullPath(path);
 

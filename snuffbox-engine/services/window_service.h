@@ -24,6 +24,16 @@ namespace snuffbox
 			*/
 			WindowService();
 
+			/**
+			* @brief Delete copy constructor
+			*/
+			WindowService(const WindowService& other) = delete;
+
+			/**
+			* @brief Delete assignment operator
+			*/
+			WindowService operator=(const WindowService& other) = delete;
+
 		public:
 
 			/**
@@ -34,10 +44,10 @@ namespace snuffbox
 
 			/**
 			* @brief Sets the size of the window
-			* @param[in] width (const unsigned int&) The new width
-			* @param[in] height (const unsigned int&) The new height
+			* @param[in] width (unsigned int) The new width
+			* @param[in] height (unsigned int) The new height
 			*/
-			virtual void SetSize(const unsigned int& width, const unsigned int& height);
+			virtual void SetSize(unsigned int width, unsigned int height);
 
 			/**
 			* @brief Closes the window

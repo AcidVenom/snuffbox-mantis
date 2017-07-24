@@ -15,7 +15,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		char* WinSockWrapper::GetErrorMessage(const int& error)
+		char* WinSockWrapper::GetErrorMessage(int error)
 		{
 			LPSTR s = nullptr;
 			FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,

@@ -111,10 +111,10 @@ namespace snuffbox
 
             /**
             * @brief Retrieves a stack track by a maximum number of calls
-            * @param[in] max (const unsigned int&) The maximum number of calls to retrieve from the current stack
+            * @param[in] max (unsigned int) The maximum number of calls to retrieve from the current stack
             * @return (engine::String) The stack trace as a string
             */
-            engine::String StackTrace(const unsigned int& max = 10) const;
+            engine::String StackTrace(unsigned int max = 10) const;
 
             /**
             * @brief Registers a global value

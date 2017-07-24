@@ -61,52 +61,52 @@ namespace snuffbox
 			/**
 			* @brief Opens a server to stream with a client
 			* @param[in] server (snuffbox::logging::LoggingServer*) A logging server socket with its own implementation
-			* @param[in] port (const int&) The port to stream on, default = SNUFF_DEFAULT_PORT
+			* @param[in] port (int) The port to stream on
 			*/
-			void Open(LoggingServer* server, const int& port = SNUFF_DEFAULT_PORT);
+			void Open(LoggingServer* server, int port);
 
 			/**
 			* @brief Opens a stream between a client and an existing server
 			* @param[in] client (snuffbox::logging::LoggingClient*) A logging client socket with its own implementation
-			* @param[in] port (const int&) The port to stream on, default = SNUFF_DEFAULT_PORT
-			* @param[in] ip (const char*) The IP address to stream on, default = "127.0.0.1" (localhost)
+			* @param[in] port (int) The port to stream on
+			* @param[in] ip (const char*) The IP address to stream on
 			*/
-			void Open(LoggingClient* client, const int& port = SNUFF_DEFAULT_PORT, const char* ip = "127.0.0.1");
+			void Open(LoggingClient* client, int port, const char* ip);
 
 			/**
 			* @brief Starts streaming between a client and a server
 			* @remarks This will start a connection thread next to the main thread
 			* @param[in] socket (snuffbox::logging::LoggingSocket*) The client or server socket to stream with
-			* @param[in] port (const int&) The port to stream on
+			* @param[in] port (int) The port to stream on
 			* @param[in] ip (const char*) The IP address to stream to, client only
-			* @param[in] is_server (const bool&) Is the socket a server?
+			* @param[in] is_server (bool) Is the socket a server?
 			*/
-			void Start(LoggingSocket* socket, const int& port, const char* ip);
+			void Start(LoggingSocket* socket, int port, const char* ip);
 
 			/**
 			* @brief Starts the connection thread
 			* @see snuffbox::logging::LoggingStream::Start
 			*/
-			void RunThread(LoggingSocket* socket, const int& port, const char* ip);
+			void RunThread(LoggingSocket* socket, int port, const char* ip);
 
 			/**
 			* @brief Logs a message, client only
-			* @param[in] severity (const snuffbox::console::LogSeverity&) The severity to log with
+			* @param[in] severity (snuffbox::console::LogSeverity) The severity to log with
 			* @param[in] message (const char*) The message to send
-			* @param[in] size (const int&) The message size
+			* @param[in] size (int) The message size
 			* @param[in] col_bg (const unsigned char*) The background colour to log with, default = nullptr
 			* @param[in] col_fg (const unsigned char*) The foreground colour to log with, default = nullptr
 			* @remarks Colour parameters are only applicable for the RGB severity
 			*/
-			void Log(const console::LogSeverity& severity, const char* message, const int& size, const unsigned char* col_bg = nullptr, const unsigned char* col_fg = nullptr);
+			void Log(console::LogSeverity severity, const char* message, int size, const unsigned char* col_bg = nullptr, const unsigned char* col_fg = nullptr);
 
 			/**
 			* @brief Sends a command to the client, server only
 			* @param[in] cmd (const snuffbox::logging::LoggingStream::Commands&) The command type
 			* @param[in] message (const char*) The message to send
-			* @param[in] size (const int&) The size of the message
+			* @param[in] size (int) The size of the message
 			*/
-			void SendCommand(const Commands& cmd, const char* message, const int& size);
+			void SendCommand(const Commands& cmd, const char* message, int size);
 
 			/**
 			* @brief Closes the stream and kills the connection if it exists
@@ -129,18 +129,18 @@ namespace snuffbox
 
 			/**
 			* @brief Called whenever an error occurs, formats the errorcode as a string and passes it to the error handler
-			* @param[in] error (const int&) The error code
+			* @param[in] error (int) The error code
 			*/
-			void LogError(const int& error) const;
+			void LogError(int error) const;
 
 			/**
 			* @brief Sends a packet from this stream's socket to a specified socket
-			* @param[in] cmd (const snuffbox::logging::LoggingStream::Commands&) The command to send
-			* @param[in] other (const int&) The other socket to send to
+			* @param[in] cmd (snuffbox::logging::LoggingStream::Commands) The command to send
+			* @param[in] other (int) The other socket to send to
 			* @param[in] buffer (const char*) The buffer to send
-			* @param[in] size (const int&) The size of the buffer
+			* @param[in] size (int) The size of the buffer
 			*/
-			void Send(const Commands& cmd, const int& other, const char* buffer, const int& size);
+			void Send(Commands cmd, int other, const char* buffer, int size);
 
 			static const unsigned int STARTUP_SLEEP_; //!< The client-sided wait time so we can receive initialisation logs
 			static const unsigned int WAIT_SLEEP_; //!< The sleep to prevent busy-waiting while the console isn't doing anything

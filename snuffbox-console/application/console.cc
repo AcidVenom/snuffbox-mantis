@@ -36,7 +36,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ConsoleServer::OnLog(const LogSeverity& severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg)
+		void ConsoleServer::OnLog(LogSeverity severity, const char* message, const unsigned char* col_fg, const unsigned char* col_bg)
 		{
 			std::unique_lock<std::mutex> lock(console_->receive_mutex_);
 			
@@ -66,7 +66,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		Console::Event::Event(const wxEventType& type, const int& id) :
+		Console::Event::Event(const wxEventType& type, int id) :
 			wxCommandEvent(type, id)
 		{
 
@@ -145,7 +145,7 @@ namespace snuffbox
 		};
 
 		//-----------------------------------------------------------------------------------------------
-        Console::Console(wxWindow* parent, const int& port, const int& max_lines) :
+        Console::Console(wxWindow* parent, int port, int max_lines) :
 			MainWindow(parent),
 			messages_(0),
 			server_(this),
@@ -185,7 +185,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Console::AddMessage(const LogSeverity& severity, const wxString& msg, const LogColour& colour)
+		void Console::AddMessage(LogSeverity severity, const wxString& msg, const LogColour& colour)
 		{
 			if (severity == LogSeverity::kCount)
 			{
@@ -368,8 +368,22 @@ namespace snuffbox
 				}
 			}
 
-			const InputHistory& history = input_history_.at(input_history_.size() - 1);
-			if (input_history_.size() == 0 || val != history.value || idx != history.command)
+			bool add = false;
+
+			if (input_history_.size() > 0)
+			{
+				const InputHistory& history = input_history_.at(input_history_.size() - 1);
+				if (val != history.value || idx != history.command)
+				{
+					add = true;
+				}
+			}
+			else
+			{
+				add = true;
+			}
+
+			if (add == true)
 			{
 				input_history_.push_back({ val, idx });
 			}
@@ -386,7 +400,7 @@ namespace snuffbox
         }
 
 		//-----------------------------------------------------------------------------------------------
-		bool Console::HistoryChange(const int& dir)
+		bool Console::HistoryChange(int dir)
 		{
 			if (input_box->HasFocus() == false || input_history_.size() == 0)
 			{
@@ -446,7 +460,7 @@ namespace snuffbox
 			std::time_t now = std::chrono::system_clock::to_time_t(tp);
 			tm* time = std::localtime(&now);
 
-			auto FormatTime = [](const int& time)
+			auto FormatTime = [](int time)
 			{
 				wxString formatted = std::to_string(time);
 				formatted = formatted.size() == 1 ? "0" + formatted : formatted;

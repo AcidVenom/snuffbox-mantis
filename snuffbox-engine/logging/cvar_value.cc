@@ -12,14 +12,14 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		CVarBoolean::CVarBoolean(const bool& init) :
+		CVarBoolean::CVarBoolean(bool init) :
 			CVarValue(init)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		CVarNumber::CVarNumber(const float& init) :
+		CVarNumber::CVarNumber(float init) :
 			CVarValue(init)
 		{
 

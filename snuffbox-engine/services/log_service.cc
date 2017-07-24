@@ -17,7 +17,7 @@ namespace snuffbox
 			static String numerical = "01234567890";
 			String token_value = "";
 
-			static auto IsNumber = [](const char& c)
+			static auto IsNumber = [](char c)
 			{
 				for (unsigned int i = 0; i < numerical.length(); ++i)
 				{
@@ -95,7 +95,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LogService::DoAssert(const bool& expr, const String& message)
+		void LogService::DoAssert(bool expr, const String& message)
 		{
 			if (expr == false)
 			{

@@ -54,11 +54,11 @@ namespace snuffbox
 
 			/**
 			* @brief Gets a value off of the argument stack
-			* @param[in] arg (const int&) The argument to retrieve the value of
+			* @param[in] arg (int) The argument to retrieve the value of
 			* @param[in] def (const T&) The default value if no value was found
 			*/
 			template<typename T>
-			T GetValue(const int& arg, const T& def);
+			T GetValue(int arg, const T& def);
 
 			/**
 			* @brief Gets a C++ pointer from a value with an external __ptr field
@@ -70,11 +70,11 @@ namespace snuffbox
 
 			/**
 			* @brief Gets a C++ pointer from a value with an external __ptr field
-			* @param[in] arg (const int&) The argument to retrieve the pointer from
+			* @param[in] arg (int) The argument to retrieve the pointer from
 			* @return (T*) The returned pointer, nullptr if none was found
 			*/
 			template<typename T>
-			T* GetPointer(const int& arg);
+			T* GetPointer(int arg);
 
 			/**
 			* @brief Casts a value to a JavaScript handle
@@ -115,10 +115,10 @@ namespace snuffbox
 
 			/**
 			* @brief Converts a JavaScript type to a string value
-			* @param[in] type (const snuffbox::engine::JSWrapper::Types&) The type to convert
+			* @param[in] type (snuffbox::engine::JSWrapper::Types) The type to convert
 			* @return (snuffbox::engine::String) The converted string value
 			*/
-			static engine::String TypeToString(const Types& type);
+			static engine::String TypeToString(Types type);
 
 			/**
 			* @brief Creates a string from an UTF-8 value
@@ -129,26 +129,26 @@ namespace snuffbox
 
 			/**
 			* @brief Constructs an argument error and logs it
-			* @param[in] expected (const snuffbox::engine::JSWrapper::Types&) The expected type
-			* @param[in] got (const snuffbox::engine::JSWrapper::Types&) The type that was actually received
-			* @param[in] arg (const int&) The current argument
+			* @param[in] expected (snuffbox::engine::JSWrapper::Types) The expected type
+			* @param[in] got (snuffbox::engine::JSWrapper::Types) The type that was actually received
+			* @param[in] arg (int) The current argument
 			*/
-			void Error(const Types& expected, const Types& got, const int& arg);
+			void Error(Types expected, Types got, int arg);
 
 			/**
 			* @brief Checks the argument scope if the format is as it should be
 			* @param[in] format (const char*) The format to check
-			* @param[in] force (const bool&) Should this check be enforced, even in Release mode? Default = true
+			* @param[in] force (bool) Should this check be enforced, even in Release mode? Default = true
 			* @remarks e.g. B = Boolean, N = Number, concat the values like so; 'BN' in order of arguments
 			* @return (bool) Was the format check completed succesfully?
 			*/
-			bool Check(const char* format, const bool& force = true);
+			bool Check(const char* format, bool force = true);
 
 			/**
 			* @brief Disables error checking in snuffbox::engine::JSWrapper::Check
-			* @param[in] value (const bool&) On/off value for error checking
+			* @param[in] value (bool) On/off value for error checking
 			*/
-			void set_error_checks(const bool& value);
+			void set_error_checks(bool value);
 
 		private:
 			const v8::FunctionCallbackInfo<v8::Value>& args_; //!< The cached arguments
@@ -158,7 +158,7 @@ namespace snuffbox
 
 		//-------------------------------------------------------------------------------------------
 		template<>
-		inline bool JSWrapper::GetValue<bool>(const int& arg, const bool& def)
+		inline bool JSWrapper::GetValue<bool>(int arg, const bool& def)
 		{
 			if (args_[arg]->IsNull() || args_[arg]->IsUndefined())
 			{
@@ -176,7 +176,7 @@ namespace snuffbox
 
         //-------------------------------------------------------------------------------------------
         template<>
-        inline double JSWrapper::GetValue<double>(const int& arg, const double& def)
+        inline double JSWrapper::GetValue<double>(int arg, const double& def)
         {
             if (args_[arg]->IsNull() || args_[arg]->IsUndefined())
             {
@@ -193,28 +193,28 @@ namespace snuffbox
 
 		//-------------------------------------------------------------------------------------------
 		template<>
-        inline int JSWrapper::GetValue<int>(const int& arg, const int& def)
+        inline int JSWrapper::GetValue<int>(int arg, const int& def)
 		{
             return static_cast<int>(GetValue<double>(arg, def));
 		}
 
 		//-------------------------------------------------------------------------------------------
 		template<>
-		inline unsigned int JSWrapper::GetValue<unsigned int>(const int& arg, const unsigned int& def)
+		inline unsigned int JSWrapper::GetValue<unsigned int>(int arg, const unsigned int& def)
 		{
 			return static_cast<unsigned int>(GetValue<double>(arg, def));
 		}
 
 		//-------------------------------------------------------------------------------------------
 		template<>
-		inline float JSWrapper::GetValue<float>(const int& arg, const float& def)
+		inline float JSWrapper::GetValue<float>(int arg, const float& def)
         {
             return static_cast<float>(GetValue<double>(arg, def));
 		}
 
 		//-------------------------------------------------------------------------------------------
 		template<>
-		inline String JSWrapper::GetValue<String>(const int& arg, const String& def)
+		inline String JSWrapper::GetValue<String>(int arg, const String& def)
 		{
 			if (args_[arg]->IsNull() || args_[arg]->IsUndefined())
 			{
@@ -232,7 +232,7 @@ namespace snuffbox
 
 		//-------------------------------------------------------------------------------------------
 		template<>
-        inline v8::Local<v8::Value> JSWrapper::GetValue<v8::Local<v8::Value>>(const int& arg, const v8::Local<v8::Value>& def)
+        inline v8::Local<v8::Value> JSWrapper::GetValue<v8::Local<v8::Value>>(int arg, const v8::Local<v8::Value>& def)
 		{
 			if (args_[arg]->IsNull() || args_[arg]->IsUndefined())
 			{
@@ -268,7 +268,7 @@ namespace snuffbox
 
 		//-------------------------------------------------------------------------------------------
 		template<typename T>
-		inline T* JSWrapper::GetPointer(const int& arg)
+		inline T* JSWrapper::GetPointer(int arg)
 		{
 			v8::Local<v8::Object> obj = args_[arg]->ToObject();
 			if (obj.IsEmpty() || obj->IsUndefined())

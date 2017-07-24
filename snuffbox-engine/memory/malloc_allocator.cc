@@ -5,14 +5,14 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		MallocAllocator::MallocAllocator(const size_t& size) :
+		MallocAllocator::MallocAllocator(size_t size) :
 			Allocator(size)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void* MallocAllocator::Allocate(const size_t& size, const size_t& align)
+		void* MallocAllocator::Allocate(size_t size, size_t align)
 		{
 			return malloc(size);
 		}

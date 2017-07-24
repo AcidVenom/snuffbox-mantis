@@ -69,7 +69,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		engine::String JSWrapper::TypeToString(const Types& type)
+		engine::String JSWrapper::TypeToString(Types type)
 		{
 			switch (type)
 			{
@@ -106,7 +106,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool JSWrapper::Check(const char* format, const bool& force)
+		bool JSWrapper::Check(const char* format, bool force)
 		{
 #ifdef SNUFF_RELEASE
 			if (force == false)
@@ -168,7 +168,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void JSWrapper::Error(const Types& expected, const Types& got, const int& arg)
+		void JSWrapper::Error(Types expected, Types got, int arg)
 		{
 			if (error_checks_ == false)
 			{
@@ -191,7 +191,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void JSWrapper::set_error_checks(const bool& value)
+		void JSWrapper::set_error_checks(bool value)
 		{
 			error_checks_ = value;
 		}

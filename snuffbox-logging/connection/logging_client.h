@@ -36,12 +36,12 @@ namespace snuffbox
 			/**
 			* @see snuffbox::logging::LoggingSocket::OpenSocket
 			*/
-			int OpenSocket(const int& port) override;
+			int OpenSocket(int port) override;
 
 			/**
 			* @see snuffbox::logging::LoggingSocket::Connect
 			*/
-			int Connect(const int& port, const char* ip, const bool& quit) override;
+			int Connect(int port, const char* ip, const bool& quit) override;
 
 			/**
 			* @see snuffbox::logging::LoggingSocket::CloseSocket
@@ -55,9 +55,9 @@ namespace snuffbox
 
 			/**
 			* @brief Called when a command is received from the server
-			* @param[in] cmd (const snuffbox::logging::LoggingClient::CommandTypes&) The command type
+			* @param[in] cmd (snuffbox::logging::LoggingClient::CommandTypes) The command type
 			*/
-			virtual void OnCommand(const CommandTypes& cmd, const char* message);
+			virtual void OnCommand(CommandTypes cmd, const char* message);
 		};
 	}
 }

@@ -61,13 +61,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVar::SetBoolean(const String& name, const bool& value)
+		void CVar::SetBoolean(const String& name, bool value)
 		{
 			DoSet<CVarBoolean>(name, value);
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVar::SetNumber(const String& name, const float& value)
+		void CVar::SetNumber(const String& name, float value)
 		{
 			DoSet<CVarNumber>(name, value);
 		}

@@ -20,7 +20,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		int LoggingClient::OpenSocket(const int& port)
+		int LoggingClient::OpenSocket(int port)
 		{
 			socket_ = static_cast<int>(socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
 
@@ -33,7 +33,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		int LoggingClient::Connect(const int& port, const char* ip, const bool& quit)
+		int LoggingClient::Connect(int port, const char* ip, const bool& quit)
 		{
 			if (quit == true)
 			{
@@ -147,7 +147,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggingClient::OnCommand(const CommandTypes& cmd, const char* message)
+		void LoggingClient::OnCommand(CommandTypes cmd, const char* message)
 		{
 			
 		}

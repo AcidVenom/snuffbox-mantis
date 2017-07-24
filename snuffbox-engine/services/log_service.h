@@ -104,23 +104,23 @@ namespace snuffbox
 
 			/**
 			* @brief Logs with a specified severity and message
-			* @param[in] severity (const snuffbox::console::LogSeverity&) The severity to log with
+			* @param[in] severity (snuffbox::console::LogSeverity) The severity to log with
 			* @param[in] message (const snuffbox::engine::String&) The message to log
 			* @param[in] args (const Args&...) The arguments for formatting
 			* @remarks The formatting should be a token in the format of '{number}', e.g. 'This is a test {0}, this is as well {1}'
 			*/
 			template <typename ... Args>
-			void Log(const console::LogSeverity& severity, const String& message, const Args&... args);
+			void Log(console::LogSeverity severity, const String& message, const Args&... args);
 
 			/**
 			* @brief Asserts an expression and logs a fatal error if the assertion fails
-			* @param[in] expr (const bool&) The expression to evaluate
+			* @param[in] expr (bool) The expression to evaluate
 			* @param[in] message (const snuffbox::engine::String&) The message to log if the assertion fails
 			* @param[in] args (const Args&...) The arguments for formatting
 			* @remarks The formatting should be a token in the format of '{number}', e.g. 'This is a test {0}, this is as well {1}'
 			*/
 			template <typename ... Args>
-			void Assert(const bool& expr, const String& message, const Args&... args);
+			void Assert(bool expr, const String& message, const Args&... args);
 
 		protected:
 
@@ -169,10 +169,10 @@ namespace snuffbox
 
 			/**
 			* @brief Cross-platform assert with a message
-			* @param[in] expr (const bool&) The expression to evaluate
+			* @param[in] expr (bool) The expression to evaluate
 			* @param[in] message (const snuffbox::engine::String&) The message to log with fatal severity if the evaluation was false
 			*/
-			virtual void DoAssert(const bool& expr, const String& message);
+			virtual void DoAssert(bool expr, const String& message);
 		};
 
 		//-----------------------------------------------------------------------------------------------
@@ -272,7 +272,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename ... Args>
-		inline void LogService::Log(const console::LogSeverity& severity, const String& message, const Args&... args)
+		inline void LogService::Log(console::LogSeverity severity, const String& message, const Args&... args)
 		{
 			assert(severity < console::LogSeverity::kCount);
 
@@ -321,7 +321,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename ... Args>
-		inline void LogService::Assert(const bool& expr, const String& message, const Args&... args)
+		inline void LogService::Assert(bool expr, const String& message, const Args&... args)
 		{
 			String formatted = FormatString(message, nullptr, args...);
 

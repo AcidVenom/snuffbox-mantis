@@ -46,7 +46,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVarService::ParseCommandLine(const int& argc, char** argv)
+		void CVarService::ParseCommandLine(int argc, char** argv)
 		{
 			char* name = nullptr;
 			char* val = nullptr;
@@ -96,13 +96,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVarService::SetBoolean(const String& name, const bool& value)
+		void CVarService::SetBoolean(const String& name, bool value)
 		{
 			Services::Get<LogService>().Log(console::LogSeverity::kWarning, "Attempted to set CVar boolean '{0} -> {1}', but the CVar service is running a null-service", name, value);
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void CVarService::SetNumber(const String& name, const float& value)
+		void CVarService::SetNumber(const String& name, float value)
 		{
 			Services::Get<LogService>().Log(console::LogSeverity::kWarning, "Attempted to set CVar number '{0} -> {1}', but the CVar service is running a null-service", name, value);
 		}

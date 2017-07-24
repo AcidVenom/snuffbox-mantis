@@ -68,19 +68,19 @@ namespace snuffbox
 			* @see snuffbox::ContentService::Get
 			* @remarks param[in] type will be deduced from template argument T
 			*/
-			virtual ContentBase* GetContent(const String& path, const ContentBase::Types& type);
+			virtual ContentBase* GetContent(const String& path, ContentBase::Types type);
 
 			/**
 			* @see snuffbox::ContentService::Load
 			* @remarks param[in] type will be deduced from template argument T
 			*/
-			virtual ContentBase* LoadContent(const String& path, const ContentBase::Types& type);
+			virtual ContentBase* LoadContent(const String& path, ContentBase::Types type);
 
 			/**
 			* @see snuffbox::ContentService::Unload
 			* @remarks param[in] type will be deduced from template argument T
 			*/
-			virtual void UnloadContent(const String& path, const ContentBase::Types& type);
+			virtual void UnloadContent(const String& path, ContentBase::Types type);
 		};
 
 		//-----------------------------------------------------------------------------------------------

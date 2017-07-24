@@ -28,7 +28,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool LoggingSocket::TimedOut(const unsigned int& timeout) const
+		bool LoggingSocket::TimedOut(unsigned int timeout) const
 		{
 			time_t now;
 			time(&now);
@@ -42,7 +42,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool LoggingSocket::ReceivePacket(const int& socket, const int& expected_size, const bool& quit)
+		bool LoggingSocket::ReceivePacket(int socket, int expected_size, const bool& quit)
 		{
 			int bytes = 0;
 			int result = -1;
@@ -70,7 +70,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool LoggingSocket::SendPacket(const int& socket, const char* buffer, const int& size, const bool& quit)
+		bool LoggingSocket::SendPacket(int socket, const char* buffer, int size, const bool& quit)
 		{
 			int bytes = 0;
 			int result = -1;

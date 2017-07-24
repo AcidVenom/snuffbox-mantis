@@ -61,10 +61,10 @@ namespace snuffbox
 			/**
 			* @brief Opens the file for use with specified access flags
 			* @param[in] path (const snuffbox::engine::String&) The path to load the file from
-			* @param[in] flags (const unsigned int&) The access flags to open the file with
+			* @param[in] flags (unsigned int) The access flags to open the file with
 			* @return (snuffbox::engine::File*) The opened file, File::file_ will be nullptr if opening failed
 			*/
-			static File* Open(const engine::String& path, const unsigned int& flags);
+			static File* Open(const engine::String& path, unsigned int flags);
 
 			/**
 			* @brief Closes the file and deallocates all used memory

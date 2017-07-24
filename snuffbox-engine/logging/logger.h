@@ -82,7 +82,7 @@ namespace snuffbox
 			/**
 			* @see snuffbox::engine::LogService::DoAssert
 			*/
-			void DoAssert(const bool& expr, const String& message) override;
+			void DoAssert(bool expr, const String& message) override;
 
 		private:
 

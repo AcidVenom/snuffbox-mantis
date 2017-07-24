@@ -6,7 +6,7 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		Allocator::Allocator(const size_t& max_memory_) :
+		Allocator::Allocator(size_t max_memory_) :
 			max_memory_(max_memory_),
 			allocated_(0),
 			num_allocations_(0)
@@ -15,7 +15,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void* Allocator::Malloc(const size_t& size, const size_t& align)
+		void* Allocator::Malloc(size_t size, size_t align)
 		{
 			std::lock_guard<std::recursive_mutex> lock(allocator_mutex_);
 

@@ -48,7 +48,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		File* File::Open(const engine::String& path, const unsigned int& flags)
+		File* File::Open(const engine::String& path, unsigned int flags)
 		{
 			File* file = Memory::default_allocator().Construct<File>();
 			engine::String mode = "";
