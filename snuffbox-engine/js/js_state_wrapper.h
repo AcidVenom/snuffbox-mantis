@@ -52,7 +52,7 @@ namespace snuffbox
 			/**
 			* @class snuffbox::engine::IsolateLock
 			* @brief An isolate lock that locks an isolate with v8::Locker, enters it and the context and exits on destruction
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			class IsolateLock
 			{

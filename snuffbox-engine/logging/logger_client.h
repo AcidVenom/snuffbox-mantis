@@ -88,7 +88,7 @@ namespace snuffbox
 			/**
 			* @struct snuffbox::engine::LoggerClient::ToLog
 			* @brief Used to queue up the logs after a command so they can be executed on a seperate thread
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			struct ToLog
 			{

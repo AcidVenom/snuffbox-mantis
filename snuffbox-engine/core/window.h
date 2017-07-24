@@ -31,7 +31,7 @@ namespace snuffbox
 			* @struct snuffbox::engine::WindowCommand
 			* @brief Used to execute commands on the main thread only
 			* @remarks This is especially useful on Win32, as the Win32 API doesn't allow for function calls from another thread
-			* @author Daniël Konings
+			* @author Daniel Konings
 			*/
 			struct WindowCommand
 			{
