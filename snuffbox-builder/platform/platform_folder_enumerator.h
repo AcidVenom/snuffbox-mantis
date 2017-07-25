@@ -12,7 +12,7 @@ namespace snuffbox
 	{
 #ifdef SNUFF_WIN32
 		typedef Win32FolderEnumerator FolderEnumerator;
-#else
+#elif defined SNUFF_LINUX
 		typedef LinuxFolderEnumerator FolderEnumerator;
 #endif
 	}
