@@ -2,6 +2,7 @@
 
 #include "../forms/main_window.h"
 #include "../platform/platform_directory_lister.h"
+#include "../utils/build_graph.h"
 
 namespace snuffbox
 {
@@ -98,7 +99,7 @@ namespace snuffbox
 			/**
 			* @brief Save all the current settings
 			*/
-			void SaveSettings();
+			void SaveSettings() const;
 
 			/**
 			* @brief Loads any old settings
@@ -130,6 +131,7 @@ namespace snuffbox
 			BuildStatus status_; //!< The current status of the builder
 
 			DirectoryLister lister_; //!< The directory lister
+			BuildGraph graph_; //!< The current build graph
 
 			unsigned int compiled_; //!< The number of files that are already compiled
 			unsigned int to_compile_; //!< The number of files to compile

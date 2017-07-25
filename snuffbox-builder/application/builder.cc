@@ -23,8 +23,6 @@ namespace snuffbox
 			compiled_(0),
 			to_compile_(0)
 		{
-			gauge_progress->SetRange(100);
-
 			button_start->Disable();
 			button_stop->Disable();
 			
@@ -195,7 +193,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Builder::SaveSettings()
+		void Builder::SaveSettings() const
 		{
 			remove(".build_settings");
 			std::ofstream fout(".build_settings");

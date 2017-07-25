@@ -30,6 +30,12 @@ ELSEIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	)
 ENDIF ()
 
+SET (SNUFF_BUILDER_UTILS
+	${SNUFF_BUILDER_UTILS}
+	"utils/build_graph.cc"
+	"utils/build_graph.h"
+)
+
 FILE(GLOB SNUFF_BUILDER_PLATFORM
 	"platform/*.cc"
 	"platform/*.h"
