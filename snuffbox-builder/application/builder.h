@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../forms/main_window.h"
+#include "../platform/platform_directory_lister.h"
 
 namespace snuffbox
 {
@@ -85,6 +86,16 @@ namespace snuffbox
 			void MakeSourceDirectory(const wxString& path);
 
 			/**
+			* @brief List the source directory
+			*/
+			void ListSource();
+
+			/**
+			* @brief Updates the progress bar of the builder
+			*/
+			void UpdateProgress();
+
+			/**
 			* @brief Save all the current settings
 			*/
 			void SaveSettings();
@@ -117,6 +128,11 @@ namespace snuffbox
 
 			wxString paths_[static_cast<int>(DirectoryType::kCount)]; //!< The directories set by the source/build directory pickers
 			BuildStatus status_; //!< The current status of the builder
+
+			DirectoryLister lister_; //!< The directory lister
+
+			unsigned int compiled_; //!< The number of files that are already compiled
+			unsigned int to_compile_; //!< The number of files to compile
 
 			static const wxString STATUS_TEXTS_[static_cast<int>(BuildStatus::kCount)]; //!< The different status texts per status
 		};

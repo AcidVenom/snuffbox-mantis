@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 namespace snuffbox
 {
@@ -17,15 +18,35 @@ namespace snuffbox
 
 		public:
 
+			typedef std::map<std::string, std::vector<std::string>> DirectoryTree;
+
+			/**
+			* @brief Default constructor
+			*/
 			Win32DirectoryLister();
+
+			/**
+			* @brief Start listing all directories and files starting at a root
+			* @param[in] start_at (const std::string&) The root directory to start at
+			* @param[in] root (bool) Is this the root directory? Default = true
+			* @return (bool) Was listing the directories a success?
+			*/
+			bool List(const std::string& start_at, bool root = true);
+
+			/**
+			* @brief Clears any old data
+			*/
+			void Clear();
+
+			/**
+			* @return (const snuffbox::builder::Win32DirectoryLister::DirectoryTree&) The directory tree
+			*/
+			const DirectoryTree& tree() const;
 
 		private:
 
-			unsigned int folder_count_; //!< How many folders were found?
-			unsigned int file_count_; //!< How many files were found?
-
-			std::vector<std::string> folders_; //!< All folders
-			std::vector<std::string> files_; //!< All files
+			std::string root_; //!< The current root directory
+			DirectoryTree tree_; //!< The directory tree
 		};
 	}
 }

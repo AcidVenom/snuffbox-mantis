@@ -19,7 +19,9 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		Builder::Builder(wxWindow* parent) :
 			MainWindow(parent),
-			status_(BuildStatus::kStopped)
+			status_(BuildStatus::kStopped),
+			compiled_(0),
+			to_compile_(0)
 		{
 			gauge_progress->SetRange(100);
 
@@ -64,6 +66,9 @@ namespace snuffbox
 				if (fin.is_open() == true)
 				{
 					Log("This source directory appears to be valid");
+
+					ListSource();
+					
 					button_start->Enable();
 
 					fin.close();
@@ -149,6 +154,44 @@ namespace snuffbox
 			std::ofstream fout(path.ToStdString() + "/.snuff");
 			fout << "snuffbox-mantis Source directory";
 			fout.close();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::ListSource()
+		{
+			lister_.List(paths_[static_cast<int>(DirectoryType::kSource)].ToStdString());
+			const DirectoryLister::DirectoryTree& tree = lister_.tree();
+
+			unsigned int dir_count = 0;
+
+			if (tree.size() >= 1)
+			{
+				dir_count = static_cast<unsigned int>(tree.size()) - 1;
+			}
+
+			unsigned int file_count = 0;
+			for (DirectoryLister::DirectoryTree::const_iterator it = tree.begin(); it != tree.end(); ++it)
+			{
+				file_count += static_cast<unsigned int>(it->second.size());
+			}
+
+			wxString directory_string = dir_count == 1 ? "directory" : "directories";
+
+			Log(wxString("Found ") + std::to_string(dir_count) + " " + directory_string + " and " + std::to_string(file_count) + " file(s)");
+		
+			to_compile_ = file_count;
+
+			UpdateProgress();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::UpdateProgress()
+		{
+			float percent = to_compile_ == 0 ? 1.0f : static_cast<float>(compiled_) / static_cast<float>(to_compile_);
+			percent = std::fmaxf(0.0f, std::fminf(percent, 1.0f));
+
+			gauge_progress->SetValue(static_cast<int>(std::floorf(percent * static_cast<float>(gauge_progress->GetRange()) + 0.5f)));
+			label_count->SetLabelText(std::to_string(compiled_) + "/" + std::to_string(to_compile_));
 		}
 
 		//-----------------------------------------------------------------------------------------------
