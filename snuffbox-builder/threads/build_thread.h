@@ -5,6 +5,7 @@
 #include <vector>
 #include <mutex>
 #include <condition_variable>
+#include <queue>
 
 namespace snuffbox
 {
@@ -41,12 +42,22 @@ namespace snuffbox
 			* @brief Stops the build thread
 			*/
 			void Stop();
+
+			/**
+			* @brief Locks the queue mutex
+			*/
+			void LockQueue();
 			
 			/**
-			* @brief Notify about a new build command that is available
-			* @param[in] cmd (const snuffbox::builder::WorkerThread::BuildCommand&) The command to execute
+			* @brief Queues a new build command that is available
+			* @param[in] cmd (const snuffbox::builder::WorkerThread::BuildCommand&) The command to queue
 			*/
-			void Notify(const WorkerThread::BuildCommand& cmd);
+			void Queue(const WorkerThread::BuildCommand& cmd);
+
+			/**
+			* @brief Unlocks the queue mutex
+			*/
+			void UnlockQueue();
 
 			/**
 			* @brief Called when a worker thread has finished its work
@@ -69,7 +80,9 @@ namespace snuffbox
 			std::thread build_thread_; //!< The actual build thread
 			std::vector<WorkerThread*> threads_; //!< All current worker threads
 
-			WorkerThread::BuildCommand command_; //!< The current build command
+			std::queue<WorkerThread::BuildCommand> queue_; //!< The current build commands
+
+			std::mutex queue_mutex_; //!< The mutex for the build queue
 
 			std::mutex wait_mutex_; //!< The mutex to lock while waiting for input
 			std::condition_variable wait_cv_; //!< The condition variable to notify when there is new input

@@ -52,23 +52,32 @@ namespace snuffbox
 
 				while (building_ == true)
 				{
-					std::unique_lock<std::mutex> lock(wait_mutex_);
-					wait_cv_.wait(lock, [=]() { return building_ == false; });
+					std::unique_lock<std::mutex> cv_lock(wait_mutex_);
+					wait_cv_.wait(cv_lock);
 
 					if (building_ == false)
 					{
 						break;
 					}
 
-					if (static_cast<unsigned int>(current_thread) < MAX_THREADS_)
+					std::lock_guard<std::mutex> queue_lock(queue_mutex_);
+					while (queue_.empty() == false && building_ == true)
 					{
-						threads_.at(current_thread)->Run(current_thread, command_);
+						const WorkerThread::BuildCommand& front = queue_.front();
+						if (static_cast<unsigned int>(current_thread) < MAX_THREADS_)
+						{
+							threads_.at(current_thread)->Run(current_thread, front);
+							FindCurrent();
+
+							queue_.pop();
+
+							continue;
+						}
+
+						queue_.pop();
+
 						FindCurrent();
-
-						continue;
 					}
-
-					FindCurrent();
 				}
 			});
 		}
@@ -77,7 +86,6 @@ namespace snuffbox
 		void BuildThread::Stop()
 		{
 			building_ = false;
-
 			wait_cv_.notify_all();
 
 			if (build_thread_.joinable() == true)
@@ -87,12 +95,22 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void BuildThread::Notify(const WorkerThread::BuildCommand& cmd)
+		void BuildThread::LockQueue()
 		{
-			std::unique_lock<std::mutex> lock(wait_mutex_);
+			queue_mutex_.lock();
+		}
 
-			command_ = cmd;
-			wait_cv_.notify_one();
+		//-----------------------------------------------------------------------------------------------
+		void BuildThread::Queue(const WorkerThread::BuildCommand& cmd)
+		{
+			queue_.push(cmd);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void BuildThread::UnlockQueue()
+		{
+			queue_mutex_.unlock();
+			wait_cv_.notify_all();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -103,7 +121,7 @@ namespace snuffbox
 
 			if (has_error == true)
 			{
-				//Do error handling
+				
 			}
 		}
 

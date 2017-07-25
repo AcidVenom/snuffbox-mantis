@@ -38,7 +38,7 @@ namespace snuffbox
 			memcpy(data_, &header, header_size);
 			memcpy(data_ + header_size, input, size);
 
-			rc4.Encrypt(reinterpret_cast<char*>(data_) + header_size, SNUFF_ENCRYPTION_KEY);
+			rc4.Encrypt(reinterpret_cast<char*>(data_) + header_size, size, SNUFF_ENCRYPTION_KEY);
 
 			if (out_size != nullptr)
 			{
@@ -69,7 +69,7 @@ namespace snuffbox
 
 			memcpy(data_, input + sizeof(FileHeader), s);
 
-			rc4.Decrypt(reinterpret_cast<char*>(data_), SNUFF_ENCRYPTION_KEY);
+			rc4.Decrypt(reinterpret_cast<char*>(data_), s, SNUFF_ENCRYPTION_KEY);
 
 			return true;
 		}

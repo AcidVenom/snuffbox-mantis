@@ -1,8 +1,6 @@
 #include "worker_thread.h"
 #include "build_thread.h"
 
-#include <snuffbox-compilers/compilers/script_compiler.h>
-
 #include <fstream>
 #include <assert.h>
 
@@ -53,7 +51,14 @@ namespace snuffbox
 
 			thread_ = std::thread([=]()
 			{
+				if (command_.file_type == FileType::kSkip)
+				{
+					SetError("Skipping file, as it is not of a content type");
+					return;
+				}
+
 				size_t file_size;
+				size_t out_size;
 				unsigned char* input = OpenFile(command_.src_path, &file_size);
 
 				if (input == nullptr)
@@ -70,8 +75,7 @@ namespace snuffbox
 				{
 				case FileType::kScript:
 				{
-					compilers::ScriptCompiler script;
-					compiled = script.Compile(input, file_size, &file_size, &output);
+					compiled = script_compiler_.Compile(input, file_size, &out_size, &output);
 				}
 					break;
 
@@ -95,7 +99,7 @@ namespace snuffbox
 					return;
 				}
 
-				fout.write(reinterpret_cast<const char*>(output), file_size);
+				fout.write(reinterpret_cast<const char*>(output), out_size);
 				fout.close();
 
 				build_thread_->OnFinish(this);
@@ -106,7 +110,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void WorkerThread::Join()
 		{
-			if (id_ != -1 && thread_.joinable() == true)
+			if (thread_.joinable() == true)
 			{
 				thread_.join();
 			}

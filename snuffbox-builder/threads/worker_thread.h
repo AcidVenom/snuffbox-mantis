@@ -3,6 +3,8 @@
 #include <thread>
 #include <mutex>
 
+#include <snuffbox-compilers/compilers/script_compiler.h>
+
 namespace snuffbox
 {
 	namespace builder
@@ -29,6 +31,7 @@ namespace snuffbox
 			enum struct FileType
 			{
 				kScript, //!< A JavaScript file
+				kSkip, //!< Skip this file
 				kCount //!< The number of different file types
 			};
 
@@ -112,6 +115,8 @@ namespace snuffbox
 			BuildCommand command_; //!< The current build command of this thread
 
 			bool finished_; //!< Has this thread finished?
+
+			compilers::ScriptCompiler script_compiler_; //!< The compiler for scripts
 		};
 	}
 }

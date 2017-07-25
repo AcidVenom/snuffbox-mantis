@@ -129,8 +129,6 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Build()
 		{
-			Sync();
-
 			dir_picker_source->Disable();
 			dir_picker_build->Disable();
 			dir_picker_snuff->Disable();
@@ -138,6 +136,7 @@ namespace snuffbox
 			button_stop->Enable();
 
 			build_thread_.Run();
+			Sync();
 
 			SetStatusText("Build started..");
 		}
@@ -150,8 +149,6 @@ namespace snuffbox
 			dir_picker_snuff->Enable();
 			button_stop->Disable();
 			button_start->Enable();
-
-			Sync();
 
 			build_thread_.Stop();
 
@@ -169,10 +166,32 @@ namespace snuffbox
 		{
 			ListSource();
 
+			std::string src_path = paths_[static_cast<int>(DirectoryType::kSource)].ToStdString();
 			std::string build_path = paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString();
+
 			graph_.Load(build_path);
 			compiled_ = graph_.Sync(&lister_, build_path);
 			graph_.Save(build_path);
+
+			build_thread_.LockQueue();
+			
+			WorkerThread::BuildCommand cmd;
+			std::string relative;
+			std::string ext;
+
+			for (int i = 0; i < graph_.graph_.size(); ++i)
+			{
+				relative = "/" + graph_.graph_.at(i).path;
+				cmd.src_path = src_path + relative;
+				cmd.build_path = build_path + relative;
+
+				ext = relative.c_str() + relative.find_last_of('.');
+				cmd.file_type = ext == ".js" ? WorkerThread::FileType::kScript : WorkerThread::FileType::kSkip;
+			
+				build_thread_.Queue(cmd);
+			}
+
+			build_thread_.UnlockQueue();
 
 			UpdateProgress();
 		}
