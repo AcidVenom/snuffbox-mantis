@@ -25,6 +25,8 @@ namespace snuffbox
 			is_valid_(false),
 			to_compile_(0)
 		{
+			Bind(BUILDER_MESSAGE, &Builder::AddLine, this);
+
 			button_start->Disable();
 			button_stop->Disable();
 
@@ -51,10 +53,23 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::ChangeDirectory(wxTextCtrl* ctrl, const wxString& path, DirectoryType type, bool save)
 		{
-			ctrl->SetValue(path);
-			paths_[static_cast<int>(type)] = path;
+			wxString remove_backslashes;
+			remove_backslashes.resize(path.size());
+			for (int i = 0; i < path.size(); ++i)
+			{
+				if (path.at(i) == '\\')
+				{
+					remove_backslashes.at(i) = '/';
+					continue;
+				}
 
-			SetStatusText(wxString("Set ") + (type == DirectoryType::kSource ? "source" : "build") + " directory to '" + path + "'");
+				remove_backslashes.at(i) = path.at(i);
+			}
+
+			ctrl->SetValue(remove_backslashes);
+			paths_[static_cast<int>(type)] = remove_backslashes;
+
+			SetStatusText(wxString("Set ") + (type == DirectoryType::kSource ? "source" : "build") + " directory to '" + remove_backslashes + "'");
 
 			if (save == true)
 			{
@@ -63,7 +78,7 @@ namespace snuffbox
 
 			if (type == DirectoryType::kSource)
 			{
-				std::ifstream fin(path.ToStdString() + "/.snuff");
+				std::ifstream fin(remove_backslashes.ToStdString() + "/.snuff");
 
 				if (fin.is_open() == true)
 				{
@@ -183,12 +198,18 @@ namespace snuffbox
 
 			for (int i = 0; i < graph_.graph_.size(); ++i)
 			{
-				relative = "/" + graph_.graph_.at(i).path;
-				cmd.src_path = src_path + relative;
-				cmd.build_path = build_path + relative;
+				relative = graph_.graph_.at(i).path;
+
+				if (relative == ".snuff")
+				{
+					continue;
+				}
+
+				cmd.src_path = src_path + '/' + relative;
+				cmd.build_path = build_path + '/' + relative;
 
 				ext = relative.c_str() + relative.find_last_of('.');
-				cmd.file_type = ext == ".js" ? WorkerThread::FileType::kScript : WorkerThread::FileType::kSkip;
+				cmd.file_type = GetFileType(ext);
 			
 				build_thread_.Queue(cmd);
 			}
@@ -284,25 +305,16 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Log(const wxString& message)
 		{
-			output_text->AppendText(CreateTimeStamp() + " " + message + "\n");
+			wxCommandEvent evt(BUILDER_MESSAGE, 0);
+			evt.SetString(CreateTimeStamp() + " " + message + "\n");
+
+			wxPostEvent(this, evt);
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		wxString Builder::CreateTimeStamp()
+		void Builder::AddLine(const wxCommandEvent& evt)
 		{
-			std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
-			std::time_t now = std::chrono::system_clock::to_time_t(tp);
-			tm* time = std::localtime(&now);
-
-			auto FormatTime = [](int time)
-			{
-				wxString formatted = std::to_string(time);
-				formatted = formatted.size() == 1 ? "0" + formatted : formatted;
-
-				return formatted;
-			};
-
-			return "[" + FormatTime(time->tm_hour) + ":" + FormatTime(time->tm_min) + ":" + FormatTime(time->tm_sec) + "]";
+			output_text->AppendText(evt.GetString());
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -333,6 +345,35 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		wxString Builder::CreateTimeStamp()
+		{
+			std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
+			std::time_t now = std::chrono::system_clock::to_time_t(tp);
+			tm* time = std::localtime(&now);
+
+			auto FormatTime = [](int time)
+			{
+				wxString formatted = std::to_string(time);
+				formatted = formatted.size() == 1 ? "0" + formatted : formatted;
+
+				return formatted;
+			};
+
+			return "[" + FormatTime(time->tm_hour) + ":" + FormatTime(time->tm_min) + ":" + FormatTime(time->tm_sec) + "]";
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		WorkerThread::FileType Builder::GetFileType(const std::string& ext)
+		{
+			if (ext == ".js")
+			{
+				return WorkerThread::FileType::kScript;
+			}
+
+			return WorkerThread::FileType::kSkip;
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		Builder::~Builder()
 		{
 			if (is_valid_ == true)
@@ -340,5 +381,8 @@ namespace snuffbox
 				graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------
+		wxDEFINE_EVENT(BUILDER_MESSAGE, wxCommandEvent);
 	}
 }

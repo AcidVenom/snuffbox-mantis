@@ -61,9 +61,10 @@ namespace snuffbox
 			/**
 			* @brief Sets an error message of this worker thread
 			* @param[in] error (const std::string&) The error message to set
+			* @param[in] compiling (const std::string&) What was the thread compiling?
 			* @remarks This will set snuffbox::builder::WorkerThread::has_error_ to true, it will also finish the thread
 			*/
-			void SetError(const std::string& error);
+			void SetError(const std::string& error, const std::string& compiling);
 
 			/**
 			* @brief Runs this worker thread with a given ID

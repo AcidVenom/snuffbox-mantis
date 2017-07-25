@@ -1,11 +1,11 @@
 #pragma once
 
-#include "worker_thread.h"
-
 #include <vector>
 #include <mutex>
 #include <condition_variable>
 #include <queue>
+
+#include "worker_thread.h"
 
 namespace snuffbox
 {
@@ -62,8 +62,9 @@ namespace snuffbox
 			/**
 			* @brief Called when a worker thread has finished its work
 			* @param[in] thread (const snuffbox::builder::WorkerThread*) The worker thread that finished
+			* @param[in] compiled (const std::string&) The path to the file that was compiled
 			*/
-			void OnFinish(const WorkerThread* thread);
+			void OnFinish(const WorkerThread* thread, const std::string& compiled);
 
 		public:
 

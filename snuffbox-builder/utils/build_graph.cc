@@ -28,7 +28,7 @@ namespace snuffbox
 			{
 				for (int i = 0; i < static_cast<int>(it->second.size()); ++i)
 				{
-					data.path = it->first + "/" + it->second.at(i);
+					data.path = (it->first == "" ? "" : (it->first + "/")) + it->second.at(i);
 					data.is_content = data.was_build = false;
 					data.last_build = data.last_modified = time(0);
 

@@ -28,13 +28,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void WorkerThread::SetError(const std::string& error)
+		void WorkerThread::SetError(const std::string& error, const std::string& compiling)
 		{
 			finished_ = true;
 			has_error_ = true;
 			error_ = error;
 
-			build_thread_->OnFinish(this);
+			build_thread_->OnFinish(this, compiling);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ namespace snuffbox
 			{
 				if (command_.file_type == FileType::kSkip)
 				{
-					SetError("Skipping file, as it is not of a content type");
+					SetError("Skipping file, as it is not of a content type", command_.src_path);
 					return;
 				}
 
@@ -63,7 +63,7 @@ namespace snuffbox
 
 				if (input == nullptr)
 				{
-					SetError("Could not open file '" + command_.src_path + "'");
+					SetError("Could not open file", command_.src_path);
 					return;
 				}
 
@@ -87,7 +87,7 @@ namespace snuffbox
 
 				if (compiled == false)
 				{
-					SetError("Could not compile '" + command_.src_path + "'");
+					SetError("Could not compile", command_.src_path);
 					return;
 				}
 
@@ -95,14 +95,14 @@ namespace snuffbox
 
 				if (fout.is_open() == false)
 				{
-					SetError("Could not save '" + command_.build_path + "'");
+					SetError("Could not save", command_.build_path);
 					return;
 				}
 
 				fout.write(reinterpret_cast<const char*>(output), out_size);
 				fout.close();
 
-				build_thread_->OnFinish(this);
+				build_thread_->OnFinish(this, command_.build_path);
 				finished_ = true;
 			});
 		}

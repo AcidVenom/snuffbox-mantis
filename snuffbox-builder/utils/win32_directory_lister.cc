@@ -52,11 +52,6 @@ namespace snuffbox
 				}
 				else
 				{
-					if (relative.size() == 0)
-					{
-						relative = ".";
-					}
-
 					if (tree_.find(relative) == tree_.end())
 					{
 						tree_.emplace(relative, std::vector<std::string>());
@@ -76,6 +71,11 @@ namespace snuffbox
 
 			for (DirectoryTree::const_iterator it = tree_.begin(); it != tree_.end(); ++it)
 			{
+				if (it->first == "")
+				{
+					continue;
+				}
+
 				full_path = bin + '/' + it->first;
 				if (DirectoryExists(full_path) == false)
 				{

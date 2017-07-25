@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../forms/main_window.h"
+#include "../threads/build_thread.h"
 #include "../platform/platform_directory_lister.h"
 #include "../utils/build_graph.h"
-#include "../threads/build_thread.h"
 
 namespace snuffbox
 {
@@ -20,6 +20,7 @@ namespace snuffbox
 		{
 
 			friend class BuilderApp;
+			friend class BuildThread;
 
 		protected:
 
@@ -124,15 +125,28 @@ namespace snuffbox
 			void Log(const wxString& message);
 
 			/**
-			* @return (wxString) A generated time stamp of the current time point
+			* @brief Actually adds the line to the output after thread-to-thread data transfer
+			* @param[in] evt (const wxCommandEvent& evt) The event received from wxWidgets
 			*/
-			static wxString CreateTimeStamp();
+			void AddLine(const wxCommandEvent& evt);
 
 			/**
 			* @brief Switches the current build status
 			* @param[in] status (snuffbox::builder::Builder::BuildStatus) The build status to switch to
 			*/
 			void SwitchStatus(BuildStatus status);
+
+			/**
+			* @return (wxString) A generated time stamp of the current time point
+			*/
+			static wxString CreateTimeStamp();
+
+			/**
+			* @brief Retrieves a file type from a file extension
+			* @param[in] ext (const std::string&) The file extension as a string
+			* @return (snuffbox::builder::WorkerThread::FileType) The file type
+			*/
+			static WorkerThread::FileType GetFileType(const std::string& ext);
 
 		public:
 
@@ -159,5 +173,7 @@ namespace snuffbox
 
 			static const wxString STATUS_TEXTS_[static_cast<int>(BuildStatus::kCount)]; //!< The different status texts per status
 		};
+
+		wxDECLARE_EVENT(BUILDER_MESSAGE, wxCommandEvent);
 	}
 }

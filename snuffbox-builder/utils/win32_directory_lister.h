@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 namespace snuffbox
 {
@@ -18,7 +18,7 @@ namespace snuffbox
 
 		public:
 
-			typedef std::map<std::string, std::vector<std::string>> DirectoryTree;
+			typedef std::unordered_map<std::string, std::vector<std::string>> DirectoryTree;
 
 			/**
 			* @brief Default constructor
