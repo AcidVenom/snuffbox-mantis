@@ -121,11 +121,11 @@ namespace snuffbox
 
 			if (has_error == true)
 			{
-				builder_->Log(id + "\t[ERROR] " + compiled + ": " + error.c_str());
+				builder_->Log(id + "-- [ERROR] " + compiled + ": " + error.c_str());
 				return;
 			}
 
-			builder_->Log(id + "\tSuccessfully compiled: " + compiled);
+			builder_->Log(id + "-- Successfully compiled: " + compiled);
 		}
 
 		//-----------------------------------------------------------------------------------------------
