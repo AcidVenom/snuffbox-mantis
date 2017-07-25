@@ -75,8 +75,6 @@ namespace snuffbox
 							continue;
 						}
 
-						queue_.pop();
-
 						FindCurrent();
 					}
 				}
