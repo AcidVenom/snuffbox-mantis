@@ -55,7 +55,7 @@ namespace snuffbox
 				{
 					if (relative.size() == 0)
 					{
-						relative = "./";
+						relative = ".";
 					}
 
 					if (tree_.find(relative) == tree_.end())

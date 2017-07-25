@@ -87,6 +87,11 @@ namespace snuffbox
 			void Idle();
 
 			/**
+			* @brief Relist all directories and synchronise the build graph with it
+			*/
+			void Sync();
+
+			/**
 			* @brief Makes a specified folder a source directory by placing a '.snuff' file in it
 			* @param[in] path (const wxString&) The path to folder to promote
 			*/

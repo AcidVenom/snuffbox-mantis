@@ -17,9 +17,61 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void BuildGraph::Save(const std::string& src) const
+		unsigned int BuildGraph::Sync(const DirectoryLister* lister, const std::string& bin_path)
 		{
-			std::string full_path = src + "/.build_graph";
+			const DirectoryLister::DirectoryTree& tree = lister->tree();
+
+			Graph new_graph;
+			BuildData data;
+
+			for (DirectoryLister::DirectoryTree::const_iterator it = tree.begin(); it != tree.end(); ++it)
+			{
+				for (int i = 0; i < static_cast<int>(it->second.size()); ++i)
+				{
+					data.path = it->first + "/" + it->second.at(i);
+					data.is_content = data.was_build = false;
+					data.last_build = data.last_modified = time(0);
+
+					new_graph.push_back(data);
+				}
+			}
+
+			unsigned int built = 0;
+			bool found = false;
+			for (int i = 0; i < graph_.size(); ++i)
+			{
+				found = false;
+				for (int j = 0; j < new_graph.size(); ++j)
+				{
+					if (graph_.at(i).path == new_graph.at(j).path)
+					{
+						found = true;
+						new_graph.at(j) = graph_.at(i);
+
+						if (new_graph.at(j).was_build == true)
+						{
+							++built;
+						}
+
+						break;
+					}
+				}
+
+				if (found == false)
+				{
+					remove((bin_path + "/" + graph_.at(i).path).c_str());
+				}
+			}
+
+			graph_ = new_graph;
+
+			return built;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void BuildGraph::Save(const std::string& bin) const
+		{
+			std::string full_path = bin + "/.build_graph";
 			remove(full_path.c_str());
 
 			std::ofstream fout(full_path, std::ios::binary);
@@ -57,9 +109,9 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void BuildGraph::Load(const std::string& src)
+		void BuildGraph::Load(const std::string& bin)
 		{
-			std::string full_path = src + "/.build_graph";
+			std::string full_path = bin + "/.build_graph";
 			std::ifstream fin(full_path, std::ios::binary);
 
 			if (fin.is_open() == false)
@@ -78,6 +130,11 @@ namespace snuffbox
 			while (fin.eof() == false)
 			{
 				fin.read(reinterpret_cast<char*>(&size), sizeof(size_t));
+
+				if (fin.eof() == true)
+				{
+					break;
+				}
 				
 				assert(size + 1 <= 256);
 				fin.read(buffer, size);

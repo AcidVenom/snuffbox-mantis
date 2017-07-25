@@ -69,8 +69,6 @@ namespace snuffbox
 				{
 					Log("This source directory appears to be valid");
 					is_valid_ = true;
-
-					ListSource();
 					
 					button_start->Enable();
 
@@ -131,7 +129,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Build()
 		{
-			graph_.Load(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
+			Sync();
 
 			dir_picker_source->Disable();
 			dir_picker_build->Disable();
@@ -153,7 +151,7 @@ namespace snuffbox
 			button_stop->Disable();
 			button_start->Enable();
 
-			graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
+			Sync();
 
 			build_thread_.Stop();
 
@@ -163,7 +161,20 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Idle()
 		{
-			graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
+			Sync();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::Sync()
+		{
+			ListSource();
+
+			std::string build_path = paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString();
+			graph_.Load(build_path);
+			compiled_ = graph_.Sync(&lister_, build_path);
+			graph_.Save(build_path);
+
+			UpdateProgress();
 		}
 
 		//-----------------------------------------------------------------------------------------------

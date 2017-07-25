@@ -5,6 +5,8 @@
 #include <vector>
 #include <ctime>
 
+#include "../platform/platform_directory_lister.h"
+
 namespace snuffbox
 {
 	namespace builder
@@ -32,10 +34,11 @@ namespace snuffbox
 			*/
 			struct BuildData
 			{
-				std::string path;
-				bool is_content;
-				time_t last_modified;
-				time_t last_build;
+				std::string path; //!< The path to the file to build
+				bool is_content; //!< Is this file actual content?
+				bool was_build; //!< Was the file already build before?
+				time_t last_modified; //!< The last time the file was modified
+				time_t last_build; //!< The last time the file was build
 
 				static const size_t BINARY_OFFSET;
 				static const size_t BINARY_SIZE;
@@ -47,10 +50,18 @@ namespace snuffbox
 			BuildGraph();
 
 			/**
-			* @brief Saves the current build graph
-			* @param[in] src (const std::string&) The current source path
+			* @brief Syncs the build graph with the source directory lister
+			* @param[in] lister (const snuffbox::builder::DirectoryLister*) The lister to sync with
+			* @param[in] bin (const std::string&) The path to the binary directory
+			* @return (unsigned int) How many files were already built?
 			*/
-			void Save(const std::string& src) const;
+			unsigned int Sync(const DirectoryLister* lister, const std::string& bin);
+
+			/**
+			* @brief Saves the current build graph to the binary path
+			* @param[in] bin (const std::string&) The current binary path
+			*/
+			void Save(const std::string& bin) const;
 
 			/**
 			* @brief Write build data to a file
@@ -61,10 +72,10 @@ namespace snuffbox
 			void WriteToFile(std::ofstream& file, const BuildData& data, bool last) const;
 
 			/**
-			* @brief Loads an old build graph
-			* @param[in] src (const std::string&) The current source path
+			* @brief Loads an old build graph from the binary path
+			* @param[in] bin (const std::string&) The current binary path
 			*/
-			void Load(const std::string& src);
+			void Load(const std::string& bin);
 
 		private:
 
