@@ -13,15 +13,16 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		BuildGraph::BuildGraph()
 		{
-			Load();
+			
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void BuildGraph::Save() const
+		void BuildGraph::Save(const std::string& src) const
 		{
-			remove(".build_graph");
+			std::string full_path = src + "/.build_graph";
+			remove(full_path.c_str());
 
-			std::ofstream fout(".build_graph", std::ios::binary);
+			std::ofstream fout(full_path, std::ios::binary);
 
 			if (fout.is_open() == false)
 			{
@@ -56,9 +57,10 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void BuildGraph::Load()
+		void BuildGraph::Load(const std::string& src)
 		{
-			std::ifstream fin(".build_graph", std::ios::binary);
+			std::string full_path = src + "/.build_graph";
+			std::ifstream fin(full_path, std::ios::binary);
 
 			if (fin.is_open() == false)
 			{

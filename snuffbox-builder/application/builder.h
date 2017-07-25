@@ -129,6 +129,13 @@ namespace snuffbox
 			*/
 			void SwitchStatus(BuildStatus status);
 
+		public:
+
+			/**
+			* @brief Saves the graph on disk if we're in a valid directory
+			*/
+			~Builder();
+
 		private:
 
 			wxFont font_; //!< The font of the output
@@ -139,6 +146,8 @@ namespace snuffbox
 			DirectoryLister lister_; //!< The directory lister
 			BuildGraph graph_; //!< The current build graph
 			BuildThread build_thread_; //!< The build thread
+
+			bool is_valid_; //!< Is the current source directory valid?
 
 			unsigned int compiled_; //!< The number of files that are already compiled
 			unsigned int to_compile_; //!< The number of files to compile

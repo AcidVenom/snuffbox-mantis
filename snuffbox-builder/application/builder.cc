@@ -22,6 +22,7 @@ namespace snuffbox
 			status_(BuildStatus::kStopped),
 			build_thread_(this),
 			compiled_(0),
+			is_valid_(false),
 			to_compile_(0)
 		{
 			button_start->Disable();
@@ -67,6 +68,7 @@ namespace snuffbox
 				if (fin.is_open() == true)
 				{
 					Log("This source directory appears to be valid");
+					is_valid_ = true;
 
 					ListSource();
 					
@@ -77,6 +79,7 @@ namespace snuffbox
 					return;
 				}
 
+				is_valid_ = false;
 				Log("An invalid source directory was specified, please make sure the folder contains a '.snuff' file");
 				button_start->Disable();
 			}
@@ -128,6 +131,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Build()
 		{
+			graph_.Load(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
+
 			dir_picker_source->Disable();
 			dir_picker_build->Disable();
 			dir_picker_snuff->Disable();
@@ -148,7 +153,7 @@ namespace snuffbox
 			button_stop->Disable();
 			button_start->Enable();
 
-			graph_.Save();
+			graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
 
 			build_thread_.Stop();
 
@@ -158,7 +163,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Idle()
 		{
-			graph_.Save();
+			graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -292,6 +297,15 @@ namespace snuffbox
 			if (status != BuildStatus::kCount)
 			{
 				label_current->SetLabelText(STATUS_TEXTS_[static_cast<int>(status)]);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		Builder::~Builder()
+		{
+			if (is_valid_ == true)
+			{
+				graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
 			}
 		}
 	}

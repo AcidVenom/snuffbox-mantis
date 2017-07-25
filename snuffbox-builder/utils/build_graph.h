@@ -48,8 +48,9 @@ namespace snuffbox
 
 			/**
 			* @brief Saves the current build graph
+			* @param[in] src (const std::string&) The current source path
 			*/
-			void Save() const;
+			void Save(const std::string& src) const;
 
 			/**
 			* @brief Write build data to a file
@@ -61,8 +62,9 @@ namespace snuffbox
 
 			/**
 			* @brief Loads an old build graph
+			* @param[in] src (const std::string&) The current source path
 			*/
-			void Load();
+			void Load(const std::string& src);
 
 		private:
 
