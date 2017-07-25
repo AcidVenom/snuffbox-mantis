@@ -20,11 +20,14 @@ namespace snuffbox
 		Builder::Builder(wxWindow* parent) :
 			MainWindow(parent),
 			status_(BuildStatus::kStopped),
+			build_thread_(this),
 			compiled_(0),
 			to_compile_(0)
 		{
 			button_start->Disable();
 			button_stop->Disable();
+
+			Log("Using " + std::to_string(BuildThread::MAX_THREADS_) + " worker threads");
 			
 			SetStatusText("Please specify a valid source/build directory");
 
@@ -131,6 +134,8 @@ namespace snuffbox
 			button_start->Disable();
 			button_stop->Enable();
 
+			build_thread_.Run();
+
 			SetStatusText("Build started..");
 		}
 
@@ -144,6 +149,8 @@ namespace snuffbox
 			button_start->Enable();
 
 			graph_.Save();
+
+			build_thread_.Stop();
 
 			SetStatusText("Stopped build");
 		}

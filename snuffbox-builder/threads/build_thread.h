@@ -21,6 +21,7 @@ namespace snuffbox
 		class BuildThread
 		{
 
+			friend class Builder;
 			friend class WorkerThread;
 
 		protected:
@@ -35,6 +36,17 @@ namespace snuffbox
 			* @brief Runs the build thread
 			*/
 			void Run();
+
+			/**
+			* @brief Stops the build thread
+			*/
+			void Stop();
+			
+			/**
+			* @brief Notify about a new build command that is available
+			* @param[in] cmd (const snuffbox::builder::WorkerThread::BuildCommand&) The command to execute
+			*/
+			void Notify(const WorkerThread::BuildCommand& cmd);
 
 			/**
 			* @brief Called when a worker thread has finished its work

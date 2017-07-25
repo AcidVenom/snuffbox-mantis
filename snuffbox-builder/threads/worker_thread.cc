@@ -44,11 +44,12 @@ namespace snuffbox
 		{
 			assert(build_thread_ != nullptr);
 
+			Join();
+
 			id_ = id;
 			command_ = cmd;
 			
 			Reset();
-			Join();
 
 			thread_ = std::thread([=]()
 			{
@@ -105,7 +106,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void WorkerThread::Join()
 		{
-			if (thread_.joinable() == true)
+			if (id_ != -1 && thread_.joinable() == true)
 			{
 				thread_.join();
 			}

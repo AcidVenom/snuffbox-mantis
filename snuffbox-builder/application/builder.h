@@ -3,6 +3,7 @@
 #include "../forms/main_window.h"
 #include "../platform/platform_directory_lister.h"
 #include "../utils/build_graph.h"
+#include "../threads/build_thread.h"
 
 namespace snuffbox
 {
@@ -137,6 +138,7 @@ namespace snuffbox
 
 			DirectoryLister lister_; //!< The directory lister
 			BuildGraph graph_; //!< The current build graph
+			BuildThread build_thread_; //!< The build thread
 
 			unsigned int compiled_; //!< The number of files that are already compiled
 			unsigned int to_compile_; //!< The number of files to compile
