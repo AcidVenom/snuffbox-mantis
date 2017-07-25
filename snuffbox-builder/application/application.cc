@@ -10,7 +10,7 @@ namespace snuffbox
 		{
 			builder_ = new Builder(nullptr);
 			builder_->Show(true);
-
+			
 			return true;
 		}
 
