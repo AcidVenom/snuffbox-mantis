@@ -81,6 +81,11 @@ namespace snuffbox
 			void Stop();
 
 			/**
+			* @brief Stop building but keep running
+			*/
+			void Idle();
+
+			/**
 			* @brief Makes a specified folder a source directory by placing a '.snuff' file in it
 			* @param[in] path (const wxString&) The path to folder to promote
 			*/

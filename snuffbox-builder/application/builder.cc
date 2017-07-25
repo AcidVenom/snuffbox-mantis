@@ -143,7 +143,15 @@ namespace snuffbox
 			button_stop->Disable();
 			button_start->Enable();
 
+			graph_.Save();
+
 			SetStatusText("Stopped build");
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::Idle()
+		{
+			graph_.Save();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -267,6 +275,7 @@ namespace snuffbox
 				break;
 
 			case BuildStatus::kIdle:
+				Idle();
 				break;
 
 			default:
