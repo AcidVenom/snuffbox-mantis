@@ -66,7 +66,7 @@ namespace snuffbox
 						const WorkerThread::BuildCommand& front = queue_.front();
 						if (static_cast<unsigned int>(current_thread) < MAX_THREADS_)
 						{
-							builder_->Log(std::to_string(current_thread + 1) + "> Compiling " + front.src_path);
+							builder_->Log(std::to_string(current_thread + 1) + "> " + front.src_path);
 							threads_.at(current_thread)->Run(current_thread, front);
 							FindCurrent();
 
@@ -117,15 +117,15 @@ namespace snuffbox
 		{
 			bool has_error = false;
 			const std::string& error = thread->GetError(&has_error);
-			std::string id = std::to_string(thread->id() + 1) + "> ";
+			std::string id = std::to_string(thread->id() + 1) + ">";
 
 			if (has_error == true)
 			{
-				builder_->Log(id + "-- [ERROR] " + compiled + ": " + error.c_str());
+				builder_->Log(id + " -- [ERROR] " + compiled + ": " + error.c_str());
 				return;
 			}
 
-			builder_->Log(id + "-- Successfully compiled: " + compiled);
+			builder_->Log(id + " -- Compiled " + compiled);
 		}
 
 		//-----------------------------------------------------------------------------------------------
