@@ -34,6 +34,12 @@ namespace snuffbox
 			bool List(const std::string& start_at, bool root = true);
 
 			/**
+			* @brief Create the directories that reflect on the source directory in the build directory
+			* @param[in] bin (const std::string&) The build directory
+			*/
+			void CreateDirectories(const std::string& bin);
+
+			/**
 			* @brief Clears any old data
 			*/
 			void Clear();
@@ -43,9 +49,19 @@ namespace snuffbox
 			*/
 			const DirectoryTree& tree() const;
 
+		protected:
+
+			/**
+			* @brief Checks if a directory exists
+			* @param[in] path (const std::string&) The path to the directory
+			* @return (bool) Does it exist?
+			*/
+			static bool DirectoryExists(const std::string& path);
+
 		private:
 
 			std::string root_; //!< The current root directory
+
 			DirectoryTree tree_; //!< The directory tree
 		};
 	}

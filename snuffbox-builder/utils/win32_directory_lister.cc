@@ -27,7 +27,7 @@ namespace snuffbox
 			
 			if (root == true)
 			{
-				root_ = start_at + "/";
+				root_ = start_at;
 			}
 
 			current = FindFirstFileA((start_at + "/*").c_str(), &ffd);
@@ -44,12 +44,11 @@ namespace snuffbox
 					continue;
 				}
 
-				new_dir = start_at + "/";
-				relative = new_dir.c_str() + root_.size();
+				relative = start_at.c_str() + root_.size() + (root == true ? 0 : 1);
 
 				if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 				{
-					List(new_dir + ffd.cFileName, false);
+					List(start_at + "/" + ffd.cFileName, false);
 				}
 				else
 				{
@@ -63,11 +62,26 @@ namespace snuffbox
 						tree_.emplace(relative, std::vector<std::string>());
 					}
 
-					tree_[relative].push_back((start_at + "/" + ffd.cFileName).c_str() + root_.size());
+					tree_[relative].push_back(ffd.cFileName);
 				}
 			} while (FindNextFileA(current, &ffd) != 0);
 
 			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Win32DirectoryLister::CreateDirectories(const std::string& bin)
+		{
+			std::string full_path;
+
+			for (DirectoryTree::const_iterator it = tree_.begin(); it != tree_.end(); ++it)
+			{
+				full_path = bin + '/' + it->first;
+				if (DirectoryExists(full_path) == false)
+				{
+					CreateDirectoryA(full_path.c_str(), NULL);
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -80,6 +94,14 @@ namespace snuffbox
 		const Win32DirectoryLister::DirectoryTree& Win32DirectoryLister::tree() const
 		{
 			return tree_;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Win32DirectoryLister::DirectoryExists(const std::string& path)
+		{
+			DWORD attrib = GetFileAttributesA(path.c_str());
+
+			return (attrib != INVALID_FILE_ATTRIBUTES && ((attrib & FILE_ATTRIBUTE_DIRECTORY) == 1));
 		}
 	}
 }

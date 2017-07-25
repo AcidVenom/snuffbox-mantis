@@ -169,6 +169,8 @@ namespace snuffbox
 			std::string src_path = paths_[static_cast<int>(DirectoryType::kSource)].ToStdString();
 			std::string build_path = paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString();
 
+			lister_.CreateDirectories(build_path);
+
 			graph_.Load(build_path);
 			compiled_ = graph_.Sync(&lister_, build_path);
 			graph_.Save(build_path);
