@@ -29,6 +29,10 @@ namespace snuffbox
 			{
 				root_ = start_at;
 			}
+			else
+			{
+				directories_.push_back(start_at.c_str() + root_.size() + 1);
+			}
 
 			current = FindFirstFileA((start_at + "/*").c_str(), &ffd);
 
@@ -68,15 +72,17 @@ namespace snuffbox
 		void Win32DirectoryLister::CreateDirectories(const std::string& bin)
 		{
 			std::string full_path;
+			std::string dir;
 
-			for (DirectoryTree::const_iterator it = tree_.begin(); it != tree_.end(); ++it)
+			for (int i = 0; i < directories_.size(); ++i)
 			{
-				if (it->first == "")
+				dir = directories_.at(i);
+				if (dir == "")
 				{
 					continue;
 				}
 
-				full_path = bin + '/' + it->first;
+				full_path = bin + '/' + dir;
 				if (DirectoryExists(full_path) == false)
 				{
 					CreateDirectoryA(full_path.c_str(), NULL);
@@ -87,6 +93,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Win32DirectoryLister::Clear()
 		{
+			directories_.clear();
 			tree_.clear();
 		}
 

@@ -42,11 +42,6 @@ namespace snuffbox
 			* @brief Stops the build thread
 			*/
 			void Stop();
-
-			/**
-			* @brief Locks the queue mutex
-			*/
-			void LockQueue();
 			
 			/**
 			* @brief Queues a new build command that is available
@@ -55,16 +50,16 @@ namespace snuffbox
 			void Queue(const WorkerThread::BuildCommand& cmd);
 
 			/**
-			* @brief Unlocks the queue mutex
-			*/
-			void UnlockQueue();
-
-			/**
 			* @brief Called when a worker thread has finished its work
 			* @param[in] thread (const snuffbox::builder::WorkerThread*) The worker thread that finished
 			* @param[in] compiled (const std::string&) The path to the file that was compiled
 			*/
-			void OnFinish(const WorkerThread* thread, const std::string& compiled);
+			void OnCompiled(const WorkerThread* thread, const std::string& compiled);
+
+			/**
+			* @brief Called when the build has finished
+			*/
+			void OnFinished();
 
 		public:
 
@@ -84,9 +79,6 @@ namespace snuffbox
 			std::queue<WorkerThread::BuildCommand> queue_; //!< The current build commands
 
 			std::mutex queue_mutex_; //!< The mutex for the build queue
-
-			std::mutex wait_mutex_; //!< The mutex to lock while waiting for input
-			std::condition_variable wait_cv_; //!< The condition variable to notify when there is new input
 
 			static const unsigned int MAX_THREADS_; //!< The maximum number of threads
 		};

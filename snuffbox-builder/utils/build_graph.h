@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <ctime>
+#include <time.h>
 
 #include "../platform/platform_directory_lister.h"
 
@@ -37,8 +37,8 @@ namespace snuffbox
 				std::string path; //!< The path to the file to build
 				bool is_content; //!< Is this file actual content?
 				bool was_build; //!< Was the file already build before?
-				time_t last_modified; //!< The last time the file was modified
-				time_t last_build; //!< The last time the file was build
+				tm last_modified; //!< The last time the file was modified
+				tm last_build; //!< The last time the file was build
 
 				static const size_t BINARY_OFFSET;
 				static const size_t BINARY_SIZE;
@@ -55,7 +55,7 @@ namespace snuffbox
 			* @param[in] bin (const std::string&) The path to the binary directory
 			* @return (unsigned int) How many files were already built?
 			*/
-			unsigned int Sync(const DirectoryLister* lister, const std::string& bin);
+			unsigned int Sync(const DirectoryLister* lister, const std::string& src, const std::string& bin);
 
 			/**
 			* @brief Saves the current build graph to the binary path
@@ -76,6 +76,13 @@ namespace snuffbox
 			* @param[in] bin (const std::string&) The current binary path
 			*/
 			void Load(const std::string& bin);
+
+			/**
+			* @brief Retrieves the last modified time attribute from a file
+			* @param[in] path (const std::string&) The path to the file
+			* @return (tm) The last modified time
+			*/
+			static tm GetFileTime(const std::string& path);
 
 		private:
 

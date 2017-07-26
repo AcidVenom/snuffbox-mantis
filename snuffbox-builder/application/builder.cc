@@ -13,8 +13,11 @@ namespace snuffbox
 		{
 			"Stopped",
 			"Building",
-			"Idle"
+			"Idle",
+			"Exit"
 		};
+
+		const unsigned int Builder::IDLE_SLEEP_ = 500;
 
 		//-----------------------------------------------------------------------------------------------
 		Builder::Builder(wxWindow* parent) :
@@ -26,6 +29,9 @@ namespace snuffbox
 			to_compile_(0)
 		{
 			Bind(BUILDER_MESSAGE, &Builder::AddLine, this);
+			Bind(BUILDER_REBUILD, &Builder::Rebuild, this);
+			Bind(BUILDER_PROGRESS, &Builder::UpdateProgress, this);
+			Bind(BUILDER_STATUS, &Builder::UpdateStatus, this);
 
 			button_start->Disable();
 			button_stop->Disable();
@@ -150,8 +156,8 @@ namespace snuffbox
 			button_start->Disable();
 			button_stop->Enable();
 
-			build_thread_.Run();
 			Sync();
+			build_thread_.Run();
 
 			SetStatusText("Build started..");
 		}
@@ -167,17 +173,54 @@ namespace snuffbox
 
 			build_thread_.Stop();
 
+			if (idle_thread_.joinable() == true)
+			{
+				idle_thread_.join();
+			}
+
+			graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
 			SetStatusText("Stopped build");
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Idle()
 		{
-			Sync();
+			graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
+
+			if (idle_thread_.joinable() == true)
+			{
+				idle_thread_.join();
+			}
+
+			if (build_thread_.building_ == false)
+			{
+				wxCommandEvent evt(BUILDER_REBUILD);
+				evt.SetString("stop");
+				wxPostEvent(this, evt);
+				return;
+			}
+
+			idle_thread_ = std::thread([=]()
+			{
+				int count = 0;
+				while (status_ == BuildStatus::kIdle && count == 0)
+				{
+					count = Sync();
+
+					std::this_thread::sleep_for(std::chrono::milliseconds(IDLE_SLEEP_));
+				}
+
+				if (count > 0)
+				{
+					wxCommandEvent evt(BUILDER_REBUILD);
+					evt.SetString("build");
+					wxPostEvent(this, evt);
+				}
+			});
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Builder::Sync()
+		unsigned int Builder::Sync()
 		{
 			ListSource();
 
@@ -187,36 +230,69 @@ namespace snuffbox
 			lister_.CreateDirectories(build_path);
 
 			graph_.Load(build_path);
-			compiled_ = graph_.Sync(&lister_, build_path);
-			graph_.Save(build_path);
+			
+			progress_mutex_.lock();
+			compiled_ = graph_.Sync(&lister_, src_path, build_path);
+			progress_mutex_.unlock();
 
-			build_thread_.LockQueue();
+			build_thread_.queue_mutex_.lock();
 			
 			WorkerThread::BuildCommand cmd;
 			std::string relative;
 			std::string ext;
 
+			unsigned int count = 0;
 			for (int i = 0; i < graph_.graph_.size(); ++i)
 			{
-				relative = graph_.graph_.at(i).path;
+				const BuildGraph::BuildData& data = graph_.graph_.at(i);
+				
+				if (data.was_build == true)
+				{
+					continue;
+				}
+
+				relative = data.path;
 
 				if (relative == ".snuff")
 				{
 					continue;
 				}
 
-				cmd.src_path = src_path + '/' + relative;
-				cmd.build_path = build_path + '/' + relative;
+				++count;
 
-				ext = relative.c_str() + relative.find_last_of('.');
-				cmd.file_type = GetFileType(ext);
-			
-				build_thread_.Queue(cmd);
+				if (status_ == BuildStatus::kBuilding)
+				{
+					cmd.src_path = src_path + '/' + relative;
+					cmd.build_path = build_path + '/' + relative;
+
+					ext = relative.c_str() + relative.find_last_of('.');
+					cmd.file_type = GetFileType(ext);
+
+					build_thread_.Queue(cmd);
+				}
 			}
 
-			build_thread_.UnlockQueue();
+			build_thread_.queue_mutex_.unlock();
 
-			UpdateProgress();
+			ProgressBy(0);
+
+			return count;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::Rebuild(const wxCommandEvent& evt)
+		{
+			wxString str = evt.GetString();
+
+			if (str == "stop")
+			{
+				SwitchStatus(BuildStatus::kStopped);
+				SetStatusText("Check the output for errors");
+				return;
+			}
+
+			build_thread_.Stop();
+			SwitchStatus(BuildStatus::kBuilding);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -246,17 +322,22 @@ namespace snuffbox
 				file_count += static_cast<unsigned int>(it->second.size());
 			}
 
-			wxString directory_string = dir_count == 1 ? "directory" : "directories";
-
-			Log(wxString("Found ") + std::to_string(dir_count) + " " + directory_string + " and " + std::to_string(file_count) + " file(s)");
-		
+			file_count -= 1;
 			to_compile_ = file_count;
-
-			UpdateProgress();
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Builder::UpdateProgress()
+		void Builder::ProgressBy(unsigned int amount)
+		{
+			std::lock_guard<std::mutex> lock(progress_mutex_);
+			compiled_ += amount;
+
+			wxCommandEvent evt(BUILDER_PROGRESS);
+			wxPostEvent(this, evt);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::UpdateProgress(const wxCommandEvent& evt)
 		{
 			float percent = to_compile_ == 0 ? 1.0f : static_cast<float>(compiled_) / static_cast<float>(to_compile_);
 			percent = std::fmaxf(0.0f, std::fminf(percent, 1.0f));
@@ -320,6 +401,10 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::SwitchStatus(BuildStatus status)
 		{
+			std::lock_guard<std::mutex> lock(status_mutex_);
+
+			status_ = status;
+
 			switch (status)
 			{
 			case BuildStatus::kStopped:
@@ -340,8 +425,38 @@ namespace snuffbox
 
 			if (status != BuildStatus::kCount)
 			{
-				label_current->SetLabelText(STATUS_TEXTS_[static_cast<int>(status)]);
+				wxCommandEvent evt(BUILDER_STATUS);
+				evt.SetString(STATUS_TEXTS_[static_cast<int>(status)]);
+
+				wxPostEvent(this, evt);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::UpdateStatus(const wxCommandEvent& evt)
+		{
+			label_current->SetLabelText(evt.GetString());
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::OnCompiled(const std::string& path)
+		{
+			std::string relative = path.c_str() + paths_[static_cast<int>(DirectoryType::kSource)].size() + 1;
+			std::string build_path = paths_[static_cast<int>(DirectoryType::kBuild)] + '/' + relative;
+
+			for (int i = 0; i < graph_.graph_.size(); ++i)
+			{
+				BuildGraph::BuildData& data = graph_.graph_.at(i);
+
+				if (data.path == relative)
+				{
+					data.was_build = true;
+					data.last_build = BuildGraph::GetFileTime(build_path);
+					break;
+				}
+			}
+
+			ProgressBy(1);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -376,13 +491,22 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		Builder::~Builder()
 		{
+			status_ = BuildStatus::kExit;
 			if (is_valid_ == true)
 			{
 				graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
+			}
+
+			if (idle_thread_.joinable() == true)
+			{
+				idle_thread_.join();
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		wxDEFINE_EVENT(BUILDER_MESSAGE, wxCommandEvent);
+		wxDEFINE_EVENT(BUILDER_REBUILD, wxCommandEvent);
+		wxDEFINE_EVENT(BUILDER_PROGRESS, wxCommandEvent);
+		wxDEFINE_EVENT(BUILDER_STATUS, wxCommandEvent);
 	}
 }

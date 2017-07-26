@@ -42,6 +42,7 @@ namespace snuffbox
 				kStopped, //!< When the builder is stopped
 				kBuilding, //!< When the builder is building
 				kIdle, //!< When the builder is finished but still running
+				kExit, //!< When the user shuts down the builder
 				kCount //!< The number of statusses
 			};
 
@@ -89,8 +90,15 @@ namespace snuffbox
 
 			/**
 			* @brief Relist all directories and synchronise the build graph with it
+			* @return (unsigned int) The number of unbuild items
 			*/
-			void Sync();
+			unsigned int Sync();
+
+			/**
+			* @brief Rebuild when changes are detected
+			* @param[in] evt (const wxCommandEvent&) The event sent by wxWidgets
+			*/
+			void Rebuild(const wxCommandEvent& evt);
 
 			/**
 			* @brief Makes a specified folder a source directory by placing a '.snuff' file in it
@@ -104,9 +112,16 @@ namespace snuffbox
 			void ListSource();
 
 			/**
-			* @brief Updates the progress bar of the builder
+			* @brief Progresses the progress bar by an amount, this function is thread-safe
+			* @param[in] amount (unsigned int) The amount to add as progress
 			*/
-			void UpdateProgress();
+			void ProgressBy(unsigned int amount);
+
+			/**
+			* @brief Updates the progress bar of the builder
+			* @param[in] evt (const wxCommandEvent&) The event sent by wxWidgets
+			*/
+			void UpdateProgress(const wxCommandEvent& evt);
 
 			/**
 			* @brief Save all the current settings
@@ -135,6 +150,18 @@ namespace snuffbox
 			* @param[in] status (snuffbox::builder::Builder::BuildStatus) The build status to switch to
 			*/
 			void SwitchStatus(BuildStatus status);
+
+			/**
+			* @brief Updates the status text of the builder
+			* @param[in] evt (const wxCommandEvent&) The event sent by wxWidgets
+			*/
+			void UpdateStatus(const wxCommandEvent& evt);
+
+			/**
+			* @brief Called when a file was compiled
+			* @param[in] path (const std::string&) The compiled file
+			*/
+			void OnCompiled(const std::string& path);
 
 			/**
 			* @return (wxString) A generated time stamp of the current time point
@@ -171,9 +198,17 @@ namespace snuffbox
 			unsigned int compiled_; //!< The number of files that are already compiled
 			unsigned int to_compile_; //!< The number of files to compile
 
+			std::mutex progress_mutex_; //!< The mutex for progress
+			std::mutex status_mutex_; //!< The mutex for status switches
+			std::thread idle_thread_; //!< The thread to re-sync every now and then
+			
 			static const wxString STATUS_TEXTS_[static_cast<int>(BuildStatus::kCount)]; //!< The different status texts per status
+			static const unsigned int IDLE_SLEEP_; //!< The sleep before syncing again
 		};
 
 		wxDECLARE_EVENT(BUILDER_MESSAGE, wxCommandEvent);
+		wxDECLARE_EVENT(BUILDER_REBUILD, wxCommandEvent);
+		wxDECLARE_EVENT(BUILDER_PROGRESS, wxCommandEvent);
+		wxDECLARE_EVENT(BUILDER_STATUS, wxCommandEvent);
 	}
 }

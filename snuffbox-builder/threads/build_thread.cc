@@ -50,34 +50,31 @@ namespace snuffbox
 					current_thread = MAX_THREADS_;
 				};
 
-				while (building_ == true)
+				queue_mutex_.lock();
+				while (queue_.empty() == false && building_ == true)
 				{
-					std::unique_lock<std::mutex> cv_lock(wait_mutex_);
-					wait_cv_.wait(cv_lock);
-
-					if (building_ == false)
+					const WorkerThread::BuildCommand& front = queue_.front();
+					if (static_cast<unsigned int>(current_thread) < MAX_THREADS_)
 					{
-						break;
-					}
-
-					std::lock_guard<std::mutex> queue_lock(queue_mutex_);
-					while (queue_.empty() == false && building_ == true)
-					{
-						const WorkerThread::BuildCommand& front = queue_.front();
-						if (static_cast<unsigned int>(current_thread) < MAX_THREADS_)
-						{
-							builder_->Log(std::to_string(current_thread + 1) + "> " + front.src_path);
-							threads_.at(current_thread)->Run(current_thread, front);
-							FindCurrent();
-
-							queue_.pop();
-
-							continue;
-						}
-
+						builder_->Log(std::to_string(current_thread + 1) + "> " + front.src_path);
+						threads_.at(current_thread)->Run(current_thread, front);
 						FindCurrent();
+
+						queue_.pop();
+
+						continue;
 					}
+
+					FindCurrent();
 				}
+				queue_mutex_.unlock();
+
+				for (int i = 0; i < threads_.size(); ++i)
+				{
+					threads_.at(i)->Join();
+				}
+
+				OnFinished();
 			});
 		}
 
@@ -85,18 +82,11 @@ namespace snuffbox
 		void BuildThread::Stop()
 		{
 			building_ = false;
-			wait_cv_.notify_all();
 
 			if (build_thread_.joinable() == true)
 			{
 				build_thread_.join();
 			}
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void BuildThread::LockQueue()
-		{
-			queue_mutex_.lock();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -106,14 +96,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void BuildThread::UnlockQueue()
-		{
-			queue_mutex_.unlock();
-			wait_cv_.notify_all();
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void BuildThread::OnFinish(const WorkerThread* thread, const std::string& compiled)
+		void BuildThread::OnCompiled(const WorkerThread* thread, const std::string& compiled)
 		{
 			bool has_error = false;
 			const std::string& error = thread->GetError(&has_error);
@@ -122,10 +105,24 @@ namespace snuffbox
 			if (has_error == true)
 			{
 				builder_->Log(id + " -- [ERROR] " + compiled + ": " + error.c_str());
+				building_ = false;
+
+				queue_mutex_.lock();
+				while (queue_.empty() == false) { queue_.pop(); }
+				queue_mutex_.unlock();
+
 				return;
 			}
 
 			builder_->Log(id + " -- Compiled " + compiled);
+			builder_->OnCompiled(compiled);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void BuildThread::OnFinished()
+		{
+			builder_->Log(building_ == true ? "Done compiling" : "Error occurred, aborting");
+			builder_->SwitchStatus(Builder::BuildStatus::kIdle);
 		}
 
 		//-----------------------------------------------------------------------------------------------

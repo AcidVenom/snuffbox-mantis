@@ -2,6 +2,13 @@
 
 #include <assert.h>
 
+#ifdef SNUFF_WIN32
+	#define localtime(out, time) { localtime_s(&out, time); }
+#else
+	#include <sys/stat.h>
+	#define localtime(out, time) { out = *localtime(time); }
+#endif
+
 namespace snuffbox
 {
 	namespace builder
@@ -17,7 +24,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		unsigned int BuildGraph::Sync(const DirectoryLister* lister, const std::string& bin_path)
+		unsigned int BuildGraph::Sync(const DirectoryLister* lister, const std::string& src, const std::string& bin)
 		{
 			const DirectoryLister::DirectoryTree& tree = lister->tree();
 
@@ -28,13 +35,20 @@ namespace snuffbox
 			{
 				for (int i = 0; i < static_cast<int>(it->second.size()); ++i)
 				{
-					data.path = (it->first == "" ? "" : (it->first + "/")) + it->second.at(i);
+					data.path = (it->first == "" ? "" : (it->first + '/')) + it->second.at(i);
 					data.is_content = data.was_build = false;
-					data.last_build = data.last_modified = time(0);
+
+					data.last_build = data.last_modified = GetFileTime(src + '/' + data.path);
 
 					new_graph.push_back(data);
 				}
 			}
+
+			std::string src_path;
+			std::string bin_path;
+			std::ifstream fin;
+
+			tm last_modified;
 
 			unsigned int built = 0;
 			bool found = false;
@@ -46,10 +60,30 @@ namespace snuffbox
 					if (graph_.at(i).path == new_graph.at(j).path)
 					{
 						found = true;
-						new_graph.at(j) = graph_.at(i);
+						BuildData& data = new_graph.at(j);
+						data = graph_.at(i);
 
-						if (new_graph.at(j).was_build == true)
+						if (data.was_build == true)
 						{
+							src_path = src + '/' + data.path;
+							bin_path = bin + '/' + data.path;
+
+							last_modified = GetFileTime(src_path);
+
+							fin = std::ifstream(bin_path);
+
+							if (fin.is_open() == false || difftime(mktime(&last_modified), mktime(&data.last_build)) > 0.0)
+							{
+								data.last_modified = last_modified;
+								data.was_build = false;
+								continue;
+							}
+
+							if (fin.is_open() == true)
+							{
+								fin.close();
+							}
+
 							++built;
 						}
 
@@ -59,7 +93,7 @@ namespace snuffbox
 
 				if (found == false)
 				{
-					remove((bin_path + "/" + graph_.at(i).path).c_str());
+					remove((bin + "/" + graph_.at(i).path).c_str());
 				}
 			}
 
@@ -151,6 +185,18 @@ namespace snuffbox
 			}
 
 			fin.close();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		tm BuildGraph::GetFileTime(const std::string& path)
+		{
+			struct stat attributes;
+			stat(path.c_str(), &attributes);
+
+			tm out;
+			localtime(out, &attributes.st_mtime);
+
+			return out;
 		}
 	}
 }

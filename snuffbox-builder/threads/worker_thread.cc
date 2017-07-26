@@ -34,7 +34,7 @@ namespace snuffbox
 			has_error_ = true;
 			error_ = error;
 
-			build_thread_->OnFinish(this, compiling);
+			build_thread_->OnCompiled(this, compiling);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -95,14 +95,14 @@ namespace snuffbox
 
 				if (fout.is_open() == false)
 				{
-					SetError("Could not save", command_.build_path);
+					SetError("Could not save", command_.src_path);
 					return;
 				}
 
 				fout.write(reinterpret_cast<const char*>(output), out_size);
 				fout.close();
 
-				build_thread_->OnFinish(this, command_.build_path);
+				build_thread_->OnCompiled(this, command_.src_path);
 				finished_ = true;
 			});
 		}
