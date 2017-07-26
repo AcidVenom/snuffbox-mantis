@@ -59,8 +59,9 @@ namespace snuffbox
 
 			/**
 			* @brief Called when the build has finished
+			* @param[in] num_compiled (unsigned int) How many files were compiled?
 			*/
-			void OnFinished();
+			void OnFinished(unsigned int num_compiled);
 
 		public:
 

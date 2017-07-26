@@ -33,6 +33,7 @@ namespace snuffbox
 
 			build_thread_ = std::thread([=]()
 			{
+				unsigned int to_compile = static_cast<unsigned int>(queue_.size());
 				int current_thread = 0;
 				bool finished = false;
 
@@ -76,7 +77,7 @@ namespace snuffbox
 					threads_.at(i)->Join();
 				}
 
-				OnFinished();
+				OnFinished(to_compile);
 			});
 		}
 
@@ -121,9 +122,9 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void BuildThread::OnFinished()
+		void BuildThread::OnFinished(unsigned int num_compiled)
 		{
-			builder_->Log(building_ == true ? "Done compiling" : "Error occurred, aborting");
+			builder_->Log(building_ == true ? "Done compiling " + std::to_string(num_compiled) + " file(s)" : "Error occurred, aborting");
 			builder_->SwitchStatus(Builder::BuildStatus::kIdle);
 		}
 
