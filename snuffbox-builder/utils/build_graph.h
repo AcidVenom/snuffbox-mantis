@@ -67,10 +67,30 @@ namespace snuffbox
 
 		protected:
 
+			typedef std::vector<BuildData> Graph;
+
 			/**
 			* @brief Default constructor, loads any old build data
 			*/
 			BuildGraph();
+
+			/**
+			* @brief Creates a new graph from the lister tree
+			* @param[in] src (const std::string&) The current source directory
+			* @param[in] bin (const std::string&) The current build directory
+			* @remarks This method also relists the source directory using the directory lister
+			* @return (snuffbox::builder::BuildGraph::Graph) The newly created graph
+			*/
+			Graph CreateGraph(const std::string& src, const std::string& bin);
+
+			/**
+			* @brief Synchronises the a graph based on the current graph
+			* @param[in] graph (snuffbox::builder::BuildGraph::Graph&) The graph to synchronise with the current graph
+			* @param[in] src (const std::string&) The current source directory
+			* @param[in] bin (const std::string&) The current build directory
+			* @return (unsigned int) How many files in the graph were already built?
+			*/
+			unsigned int SyncGraph(Graph& graph, const std::string& src, const std::string& bin);
 
 			/**
 			* @brief Syncs the build graph with the source directory lister
@@ -138,8 +158,6 @@ namespace snuffbox
 			static BuildData::FileType GetFileType(const std::string& ext);
 
 		private:
-
-			typedef std::vector<BuildData> Graph;
 
 			Graph data_; //!< The full graph of build data
 			DirectoryLister lister_; //!< The directory lister

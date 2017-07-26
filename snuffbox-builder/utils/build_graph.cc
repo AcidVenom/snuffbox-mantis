@@ -25,7 +25,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		unsigned int BuildGraph::Sync(const std::string& src, const std::string& bin)
+		BuildGraph::Graph BuildGraph::CreateGraph(const std::string& src, const std::string& bin)
 		{
 			lister_.List(src);
 			lister_.CreateDirectories(bin);
@@ -59,6 +59,12 @@ namespace snuffbox
 				}
 			}
 
+			return std::move(new_graph);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		unsigned int BuildGraph::SyncGraph(Graph& graph, const std::string& src, const std::string& bin)
+		{
 			std::string src_path;
 			std::string bin_path;
 			std::ifstream fin;
@@ -70,12 +76,12 @@ namespace snuffbox
 			for (int i = 0; i < data_.size(); ++i)
 			{
 				found = false;
-				for (int j = 0; j < new_graph.size(); ++j)
+				for (int j = 0; j < graph.size(); ++j)
 				{
-					if (data_.at(i).path == new_graph.at(j).path)
+					if (data_.at(i).path == graph.at(j).path)
 					{
 						found = true;
-						BuildData& data = new_graph.at(j);
+						BuildData& data = graph.at(j);
 						data = data_.at(i);
 
 						if (data.was_build == true)
@@ -111,6 +117,15 @@ namespace snuffbox
 					remove((bin + "/" + data_.at(i).path).c_str());
 				}
 			}
+
+			return built;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		unsigned int BuildGraph::Sync(const std::string& src, const std::string& bin)
+		{
+			Graph new_graph = CreateGraph(src, bin);
+			unsigned int built = SyncGraph(new_graph, src, bin);
 
 			data_ = new_graph;
 
