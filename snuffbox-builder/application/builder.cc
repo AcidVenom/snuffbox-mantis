@@ -172,25 +172,15 @@ namespace snuffbox
 			button_start->Enable();
 
 			build_thread_.Stop();
+			FinaliseBuild();
 
-			if (idle_thread_.joinable() == true)
-			{
-				idle_thread_.join();
-			}
-
-			graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
 			SetStatusText("Stopped build");
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Idle()
 		{
-			graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
-
-			if (idle_thread_.joinable() == true)
-			{
-				idle_thread_.join();
-			}
+			FinaliseBuild();
 
 			if (build_thread_.building_ == false)
 			{
@@ -222,61 +212,29 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		unsigned int Builder::Sync()
 		{
-			ListSource();
+			std::string src_path = GetPath(DirectoryType::kSource);
+			std::string build_path = GetPath(DirectoryType::kBuild);
 
-			std::string src_path = paths_[static_cast<int>(DirectoryType::kSource)].ToStdString();
-			std::string build_path = paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString();
-
-			lister_.CreateDirectories(build_path);
-
-			graph_.Load(build_path);
-			
 			progress_mutex_.lock();
-			compiled_ = graph_.Sync(&lister_, src_path, build_path);
+			compiled_ = graph_.Sync(src_path, build_path);
 			progress_mutex_.unlock();
 
-			build_thread_.queue_mutex_.lock();
-			
-			WorkerThread::BuildCommand cmd;
-			std::string relative;
-			std::string ext;
+			BuildGraph::CompileData c;
 
-			unsigned int count = 0;
-			for (int i = 0; i < graph_.graph_.size(); ++i)
+			if (status_ == BuildStatus::kBuilding)
 			{
-				const BuildGraph::BuildData& data = graph_.graph_.at(i);
-				
-				if (data.was_build == true)
-				{
-					continue;
-				}
-
-				relative = data.path;
-
-				if (relative == ".snuff")
-				{
-					continue;
-				}
-
-				++count;
-
-				if (status_ == BuildStatus::kBuilding)
-				{
-					cmd.src_path = src_path + '/' + relative;
-					cmd.build_path = build_path + '/' + relative;
-
-					ext = relative.c_str() + relative.find_last_of('.');
-					cmd.file_type = GetFileType(ext);
-
-					build_thread_.Queue(cmd);
-				}
+				c = graph_.FillQueue(&build_thread_, src_path, build_path);
 			}
-
-			build_thread_.queue_mutex_.unlock();
+			else
+			{
+				c = graph_.GetCompileData();
+			}
 
 			ProgressBy(0);
 
-			return count;
+			to_compile_ = c.to_compile;
+
+			return c.not_build;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -301,29 +259,6 @@ namespace snuffbox
 			std::ofstream fout(path.ToStdString() + "/.snuff");
 			fout << "snuffbox-mantis Source directory";
 			fout.close();
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void Builder::ListSource()
-		{
-			lister_.List(paths_[static_cast<int>(DirectoryType::kSource)].ToStdString());
-			const DirectoryLister::DirectoryTree& tree = lister_.tree();
-
-			unsigned int dir_count = 0;
-
-			if (tree.size() >= 1)
-			{
-				dir_count = static_cast<unsigned int>(tree.size()) - 1;
-			}
-
-			unsigned int file_count = 0;
-			for (DirectoryLister::DirectoryTree::const_iterator it = tree.begin(); it != tree.end(); ++it)
-			{
-				file_count += static_cast<unsigned int>(it->second.size());
-			}
-
-			file_count -= 1;
-			to_compile_ = file_count;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -352,8 +287,8 @@ namespace snuffbox
 			remove(".build_settings");
 			std::ofstream fout(".build_settings");
 
-			fout << paths_[static_cast<int>(DirectoryType::kSource)] << std::endl;
-			fout << paths_[static_cast<int>(DirectoryType::kBuild)] << std::endl;
+			fout << GetPath(DirectoryType::kSource) << std::endl;
+			fout << GetPath(DirectoryType::kBuild) << std::endl;
 
 			fout.close();
 		}
@@ -439,24 +374,50 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Builder::OnCompiled(const std::string& path)
+		void Builder::OnCompiled(const std::string& src)
 		{
-			std::string relative = path.c_str() + paths_[static_cast<int>(DirectoryType::kSource)].size() + 1;
-			std::string build_path = paths_[static_cast<int>(DirectoryType::kBuild)] + '/' + relative;
+			std::string relative = src.c_str() + GetPath(DirectoryType::kSource).size() + 1;
+			std::string bin = GetPath(DirectoryType::kBuild);
 
-			for (int i = 0; i < graph_.graph_.size(); ++i)
-			{
-				BuildGraph::BuildData& data = graph_.graph_.at(i);
-
-				if (data.path == relative)
-				{
-					data.was_build = true;
-					data.last_build = BuildGraph::GetFileTime(build_path);
-					break;
-				}
-			}
+			graph_.OnCompiled(relative, bin);
 
 			ProgressBy(1);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::SaveGraph()
+		{
+			if (is_valid_ == true)
+			{
+				graph_.Save(GetPath(DirectoryType::kBuild).ToStdString());
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::JoinIdle()
+		{
+			if (idle_thread_.joinable() == true)
+			{
+				idle_thread_.join();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::FinaliseBuild()
+		{
+			SaveGraph();
+			JoinIdle();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		const wxString& Builder::GetPath(DirectoryType type) const
+		{
+			if (type == DirectoryType::kCount)
+			{
+				type = DirectoryType::kSource;
+			}
+
+			return paths_[static_cast<int>(type)];
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -478,29 +439,11 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		WorkerThread::FileType Builder::GetFileType(const std::string& ext)
-		{
-			if (ext == ".js")
-			{
-				return WorkerThread::FileType::kScript;
-			}
-
-			return WorkerThread::FileType::kSkip;
-		}
-
-		//-----------------------------------------------------------------------------------------------
 		Builder::~Builder()
 		{
 			status_ = BuildStatus::kExit;
-			if (is_valid_ == true)
-			{
-				graph_.Save(paths_[static_cast<int>(DirectoryType::kBuild)].ToStdString());
-			}
-
-			if (idle_thread_.joinable() == true)
-			{
-				idle_thread_.join();
-			}
+			SaveGraph();
+			JoinIdle();
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+#include "../application/builder.h"
 #include "build_graph.h"
 
 #include <assert.h>
@@ -24,18 +25,32 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		unsigned int BuildGraph::Sync(const DirectoryLister* lister, const std::string& src, const std::string& bin)
+		unsigned int BuildGraph::Sync(const std::string& src, const std::string& bin)
 		{
-			const DirectoryLister::DirectoryTree& tree = lister->tree();
+			lister_.List(src);
+			lister_.CreateDirectories(bin);
+
+			Load(bin);
+
+			const DirectoryLister::DirectoryTree& tree = lister_.tree();
 
 			Graph new_graph;
 			BuildData data;
+			std::string relative, ext;
 
 			for (DirectoryLister::DirectoryTree::const_iterator it = tree.begin(); it != tree.end(); ++it)
 			{
 				for (int i = 0; i < static_cast<int>(it->second.size()); ++i)
 				{
-					data.path = (it->first == "" ? "" : (it->first + '/')) + it->second.at(i);
+					relative = it->second.at(i);
+					ext = relative.c_str() + relative.find_last_of('.');
+
+					if (relative == ".snuff" || GetFileType(ext) == BuildData::FileType::kSkip)
+					{
+						continue;
+					}
+
+					data.path = (it->first == "" ? "" : (it->first + '/')) + relative;
 					data.is_content = data.was_build = false;
 
 					data.last_build = data.last_modified = GetFileTime(src + '/' + data.path);
@@ -52,16 +67,16 @@ namespace snuffbox
 
 			unsigned int built = 0;
 			bool found = false;
-			for (int i = 0; i < graph_.size(); ++i)
+			for (int i = 0; i < data_.size(); ++i)
 			{
 				found = false;
 				for (int j = 0; j < new_graph.size(); ++j)
 				{
-					if (graph_.at(i).path == new_graph.at(j).path)
+					if (data_.at(i).path == new_graph.at(j).path)
 					{
 						found = true;
 						BuildData& data = new_graph.at(j);
-						data = graph_.at(i);
+						data = data_.at(i);
 
 						if (data.was_build == true)
 						{
@@ -93,13 +108,91 @@ namespace snuffbox
 
 				if (found == false)
 				{
-					remove((bin + "/" + graph_.at(i).path).c_str());
+					remove((bin + "/" + data_.at(i).path).c_str());
 				}
 			}
 
-			graph_ = new_graph;
+			data_ = new_graph;
 
 			return built;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		BuildGraph::CompileData BuildGraph::GetCompileData()
+		{
+			CompileData c;
+			c.not_build = 0;
+			c.to_compile = static_cast<unsigned int>(data_.size());
+
+			for (unsigned int i = 0; i < c.to_compile; ++i)
+			{
+				const BuildGraph::BuildData& data = data_.at(i);
+
+				if (data.was_build == true)
+				{
+					continue;
+				}
+
+				++c.not_build;
+			}
+
+			return c;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		BuildGraph::CompileData BuildGraph::FillQueue(BuildThread* thread, const std::string& src, const std::string& bin)
+		{
+			thread->queue_mutex_.lock();
+
+			WorkerThread::BuildCommand cmd;
+			std::string relative;
+			std::string ext;
+
+			CompileData c;
+			c.not_build = 0;
+			c.to_compile = static_cast<unsigned int>(data_.size());
+
+			for (unsigned int i = 0; i < c.to_compile; ++i)
+			{
+				const BuildGraph::BuildData& data = data_.at(i);
+
+				if (data.was_build == true)
+				{
+					continue;
+				}
+
+				relative = data.path;
+
+				++c.not_build;
+
+				cmd.src_path = src + '/' + relative;
+				cmd.build_path = bin + '/' + relative;
+
+				ext = relative.c_str() + relative.find_last_of('.');
+				cmd.file_type = GetFileType(ext);
+
+				thread->Queue(cmd);
+			}
+
+			thread->queue_mutex_.unlock();
+
+			return c;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void BuildGraph::OnCompiled(const std::string& relative, const std::string& bin)
+		{
+			for (int i = 0; i < data_.size(); ++i)
+			{
+				BuildGraph::BuildData& data = data_.at(i);
+
+				if (data.path == relative)
+				{
+					data.was_build = true;
+					data.last_build = BuildGraph::GetFileTime(bin + '/' + relative);
+					break;
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -115,9 +208,9 @@ namespace snuffbox
 				return;
 			}
 
-			for (int i = 0; i < graph_.size(); ++i)
+			for (int i = 0; i < data_.size(); ++i)
 			{
-				WriteToFile(fout, graph_.at(i), i == graph_.size() - 1);
+				WriteToFile(fout, data_.at(i), i == data_.size() - 1);
 			}
 
 			fout.close();
@@ -153,7 +246,7 @@ namespace snuffbox
 				return;
 			}
 
-			graph_.clear();
+			data_.clear();
 
 			BuildData data;
 
@@ -179,7 +272,7 @@ namespace snuffbox
 				
 				fin.read(reinterpret_cast<char*>(&data) + BuildGraph::BuildData::BINARY_OFFSET, BuildData::BINARY_SIZE);
 
-				graph_.push_back(data);
+				data_.push_back(data);
 
 				fin.read(reinterpret_cast<char*>(&eof), sizeof(bool));
 			}
@@ -197,6 +290,17 @@ namespace snuffbox
 			localtime(out, &attributes.st_mtime);
 
 			return out;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		BuildGraph::BuildData::FileType BuildGraph::GetFileType(const std::string& ext)
+		{
+			if (ext == ".js")
+			{
+				return BuildData::FileType::kScript;
+			}
+
+			return BuildData::FileType::kSkip;
 		}
 	}
 }

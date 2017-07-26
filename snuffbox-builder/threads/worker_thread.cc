@@ -17,6 +17,8 @@ namespace snuffbox
 			finished_(true)
 		{
 			assert(build_thread_ != nullptr);
+
+			compilers_[static_cast<int>(FileType::kScript)] = new compilers::ScriptCompiler();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -51,12 +53,6 @@ namespace snuffbox
 
 			thread_ = std::thread([=]()
 			{
-				if (command_.file_type == FileType::kSkip)
-				{
-					SetError("Skipping file, as it is not of a content type", command_.src_path);
-					return;
-				}
-
 				size_t file_size;
 				size_t out_size;
 				unsigned char* input = OpenFile(command_.src_path, &file_size);
@@ -71,17 +67,7 @@ namespace snuffbox
 
 				bool compiled = false;
 
-				switch (command_.file_type)
-				{
-				case FileType::kScript:
-				{
-					compiled = script_compiler_.Compile(input, file_size, &out_size, &output);
-				}
-					break;
-
-				default:
-					break;
-				}
+				compiled = compilers_[static_cast<int>(command_.file_type)]->Compile(input, file_size, &out_size, &output);
 				
 				free(input);
 
@@ -166,6 +152,16 @@ namespace snuffbox
 		const bool& WorkerThread::finished() const
 		{
 			return finished_;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		WorkerThread::~WorkerThread()
+		{
+			for (int i = 0; i < static_cast<int>(FileType::kSkip); ++i)
+			{
+				delete compilers_[i];
+				compilers_[i] = nullptr;
+			}
 		}
 	}
 }

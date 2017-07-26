@@ -12,6 +12,7 @@ namespace snuffbox
 	namespace builder
 	{
 		class Builder;
+		class BuildThread;
 
 		/**
 		* @class snuffbox::builder::BuildGraph
@@ -24,7 +25,7 @@ namespace snuffbox
 
 			friend class Builder;
 
-		protected:
+		public:
 
 			/**
 			* @struct snuffbox::builder::BuildGraph::BuildData
@@ -34,6 +35,15 @@ namespace snuffbox
 			*/
 			struct BuildData
 			{
+				/**
+				* @brief The different file types
+				*/
+				enum struct FileType
+				{
+					kScript, //!< A JavaScript file
+					kSkip //!< An unknown file to skip
+				};
+
 				std::string path; //!< The path to the file to build
 				bool is_content; //!< Is this file actual content?
 				bool was_build; //!< Was the file already build before?
@@ -45,17 +55,53 @@ namespace snuffbox
 			};
 
 			/**
+			* @struct snuffbox::builder::BuildGraph::CompileData
+			* @brief Compile data containing how many files have to be build and how many are already built
+			* @author Daniel Konings
+			*/
+			struct CompileData
+			{
+				unsigned int not_build; //!< How many files were not built yet
+				unsigned int to_compile; //!< How many files are there in total to build
+			};
+
+		protected:
+
+			/**
 			* @brief Default constructor, loads any old build data
 			*/
 			BuildGraph();
 
 			/**
 			* @brief Syncs the build graph with the source directory lister
-			* @param[in] lister (const snuffbox::builder::DirectoryLister*) The lister to sync with
 			* @param[in] bin (const std::string&) The path to the binary directory
 			* @return (unsigned int) How many files were already built?
 			*/
-			unsigned int Sync(const DirectoryLister* lister, const std::string& src, const std::string& bin);
+			unsigned int Sync(const std::string& src, const std::string& bin);
+
+			/**
+			* @brief Retrieves the compile data for the current list of files in the graph
+			* @remarks This is how many files have already been build and how many there are to build in total
+			* @return (snuffbox::builder::BuildGraph::CompileData) The compile data
+			*/
+			BuildGraph::CompileData GetCompileData();
+
+			/**
+			* @brief Fills up the build thread queue with build data
+			* @param[in] thread (snuffbox::builder::BuildThread*) The thread to fill the queue of
+			* @param[in] src (const std::string&) The source directory
+			* @param[in] bin (const std::string&) The build directory
+			* @return (snuffbox::builder::BuildGraph::CompileData) The compilation data
+			* @see snuffbox::builder::BuildGraph::GetCompileData
+			*/
+			BuildGraph::CompileData FillQueue(BuildThread* thread, const std::string& src, const std::string& bin);
+
+			/**
+			* @brief Called when a file is compiled, the build graph will adjust the time values and set it to a built state
+			* @param[in] relative (const std::string&) The relative path of the file
+			* @param[in] bin (const std::string&) The binary folder
+			*/
+			void OnCompiled(const std::string& relative, const std::string& bin);
 
 			/**
 			* @brief Saves the current build graph to the binary path
@@ -84,11 +130,19 @@ namespace snuffbox
 			*/
 			static tm GetFileTime(const std::string& path);
 
+			/**
+			* @brief Retrieves a file type from a file extension
+			* @param[in] ext (const std::string&) The file extension as a string
+			* @return (snuffbox::builder::BuildGraph::BuildData::FileType) The file type
+			*/
+			static BuildData::FileType GetFileType(const std::string& ext);
+
 		private:
 
 			typedef std::vector<BuildData> Graph;
 
-			Graph graph_; //!< The full graph of build data
+			Graph data_; //!< The full graph of build data
+			DirectoryLister lister_; //!< The directory lister
 		};
 	}
 }

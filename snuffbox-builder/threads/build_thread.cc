@@ -51,9 +51,11 @@ namespace snuffbox
 				};
 
 				queue_mutex_.lock();
+
 				while (queue_.empty() == false && building_ == true)
 				{
 					const WorkerThread::BuildCommand& front = queue_.front();
+
 					if (static_cast<unsigned int>(current_thread) < MAX_THREADS_)
 					{
 						builder_->Log(std::to_string(current_thread + 1) + "> " + front.src_path);

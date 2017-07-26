@@ -24,6 +24,7 @@ namespace snuffbox
 
 			friend class Builder;
 			friend class WorkerThread;
+			friend class BuildGraph;
 
 		protected:
 

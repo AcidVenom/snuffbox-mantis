@@ -5,12 +5,13 @@
 
 #include <snuffbox-compilers/compilers/script_compiler.h>
 
+#include "../utils/build_graph.h"
+
 namespace snuffbox
 {
 	namespace builder
 	{
 		class BuildThread;
-		class Builder;
 
 		/**
 		* @class snuffbox::builder::WorkerThread
@@ -21,19 +22,9 @@ namespace snuffbox
 		{
 
 			friend class BuildThread;
-			friend class Builder;
+			friend class BuildGraph;
 
 		protected:
-
-			/**
-			* @brief The different file types
-			*/
-			enum struct FileType
-			{
-				kScript, //!< A JavaScript file
-				kSkip, //!< Skip this file
-				kCount //!< The number of different file types
-			};
 
 			/**
 			* @struct snuffbox::builder::WorkerThread::BuildCommand
@@ -44,7 +35,7 @@ namespace snuffbox
 			{
 				std::string src_path; //!< The source path to build from
 				std::string build_path; //!< The build path to build to
-				FileType file_type; //!< The file type to build
+				BuildGraph::BuildData::FileType file_type; //!< The file type to build
 			};
 
 			/**
@@ -103,6 +94,11 @@ namespace snuffbox
 			*/
 			const bool& finished() const;
 
+			/**
+			* @brief Frees up the compilers
+			*/
+			~WorkerThread();
+
 		private:
 
 			BuildThread* build_thread_; //!< The current build thread
@@ -117,7 +113,8 @@ namespace snuffbox
 
 			bool finished_; //!< Has this thread finished?
 
-			compilers::ScriptCompiler script_compiler_; //!< The compiler for scripts
+			typedef BuildGraph::BuildData::FileType FileType;
+			compilers::Compiler* compilers_[static_cast<int>(FileType::kSkip)]; //!< The different compilers per file type
 		};
 	}
 }

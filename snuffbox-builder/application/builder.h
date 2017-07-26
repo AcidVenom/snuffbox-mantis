@@ -2,7 +2,6 @@
 
 #include "../forms/main_window.h"
 #include "../threads/build_thread.h"
-#include "../platform/platform_directory_lister.h"
 #include "../utils/build_graph.h"
 
 namespace snuffbox
@@ -21,6 +20,7 @@ namespace snuffbox
 
 			friend class BuilderApp;
 			friend class BuildThread;
+			friend class BuildGraph;
 
 		protected:
 
@@ -107,11 +107,6 @@ namespace snuffbox
 			void MakeSourceDirectory(const wxString& path);
 
 			/**
-			* @brief List the source directory
-			*/
-			void ListSource();
-
-			/**
 			* @brief Progresses the progress bar by an amount, this function is thread-safe
 			* @param[in] amount (unsigned int) The amount to add as progress
 			*/
@@ -159,21 +154,36 @@ namespace snuffbox
 
 			/**
 			* @brief Called when a file was compiled
-			* @param[in] path (const std::string&) The compiled file
+			* @param[in] src (const std::string&) The compiled file's source directory
 			*/
-			void OnCompiled(const std::string& path);
+			void OnCompiled(const std::string& src);
+
+			/**
+			* @brief Saves the graph
+			*/
+			void SaveGraph();
+
+			/**
+			* @brief Joins the idle thread if possible
+			*/
+			void JoinIdle();
+
+			/**
+			* @brief Saves the build graph and joins the idle thread
+			*/
+			void FinaliseBuild();
+
+			/**
+			* @brief Retrieves the path of a directory type
+			* @param[in] type (DirectoryType) The directory type to retrieve
+			* @return (const wxString&) The path of this directory type
+			*/
+			const wxString& GetPath(DirectoryType type) const;
 
 			/**
 			* @return (wxString) A generated time stamp of the current time point
 			*/
 			static wxString CreateTimeStamp();
-
-			/**
-			* @brief Retrieves a file type from a file extension
-			* @param[in] ext (const std::string&) The file extension as a string
-			* @return (snuffbox::builder::WorkerThread::FileType) The file type
-			*/
-			static WorkerThread::FileType GetFileType(const std::string& ext);
 
 		public:
 
@@ -189,7 +199,6 @@ namespace snuffbox
 			wxString paths_[static_cast<int>(DirectoryType::kCount)]; //!< The directories set by the source/build directory pickers
 			BuildStatus status_; //!< The current status of the builder
 
-			DirectoryLister lister_; //!< The directory lister
 			BuildGraph graph_; //!< The current build graph
 			BuildThread build_thread_; //!< The build thread
 
