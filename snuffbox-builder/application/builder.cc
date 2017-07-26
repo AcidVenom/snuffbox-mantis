@@ -34,6 +34,10 @@ namespace snuffbox
 			Bind(BUILDER_PROGRESS, &Builder::UpdateProgress, this);
 			Bind(BUILDER_STATUS, &Builder::UpdateStatus, this);
 
+#ifdef SNUFF_LINUX
+			SetSizeHints(wxSize(800, 400));
+#endif
+
 			button_start->Disable();
 			button_stop->Disable();
 
@@ -73,6 +77,7 @@ namespace snuffbox
 				remove_backslashes.at(i) = path.at(i);
 			}
 
+			(type == DirectoryType::kSource ? dir_picker_source : dir_picker_build)->SetDirName(remove_backslashes);
 			ctrl->SetValue(remove_backslashes);
 			paths_[static_cast<int>(type)] = remove_backslashes;
 
