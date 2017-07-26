@@ -70,8 +70,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void RC4::Clear()
 		{
-			memset(chunk_, NULL, 256);
-			memset(key_, NULL, 256);
+			memset(chunk_, '\0', 256);
+			memset(key_, '\0', 256);
 		}
 	}
 }

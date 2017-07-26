@@ -3,6 +3,8 @@ FILE(GLOB SNUFF_BUILDER_ROOT
 	"*.h"
 )
 
+SET (SNUFF_BUILDER_ROOT ${SNUFF_BUILDER_ROOT} "../wx_defines.h")
+
 FILE(GLOB SNUFF_BUILDER_FORMS
 	"forms/*.cpp"
 	"forms/*.h"

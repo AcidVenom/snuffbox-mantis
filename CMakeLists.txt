@@ -80,11 +80,18 @@ FIND_PACKAGE(GLFWSource REQUIRED)
 ADD_SUBDIRECTORY("${GLFW_ROOT_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/deps/glfw")
 
 IF (WIN32)
-	SET (wxWidgets_ROOT_DIR "deps/wxWidgets" CACHE PATH "The root directory of wxWidgets")
+        SET(wxWidgets_ROOT_DIR "deps/wxWidgets" CACHE PATH "The root directory of wxWidgets")
 ENDIF ()
 
+SET(wxWidgets_USE_STATIC ON)
 FIND_PACKAGE(wxWidgets REQUIRED COMPONENTS core base richtext html qa xrc propgrid aui adv xml)
-INCLUDE_DIRECTORIES("${wxWidgets_ROOT_DIR}/include")
+INCLUDE_DIRECTORIES("${wxWidgets_INCLUDE_DIRS}")
+
+IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    EXECUTE_PROCESS(COMMAND wx-config --cxxflags OUTPUT_VARIABLE WX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WX_FLAGS}")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WX_FLAGS}")
+ENDIF ()
 
 IF (WIN32)
 	INCLUDE_DIRECTORIES(
@@ -92,13 +99,6 @@ IF (WIN32)
 		$<$<CONFIG:Release>:${wxWidgets_LIB_DIR}/mswu>
 		$<$<CONFIG:RelWithDebInfo>:${wxWidgets_LIB_DIR}/mswu>
 		$<$<CONFIG:MinSizeRel>:${wxWidgets_LIB_DIR}/mswu>
-	)
-ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
-	INCLUDE_DIRECTORIES(
-		$<$<CONFIG:Debug>:${wxWidgets_LIB_DIR}/wx/include/gtk3-unicode-static-${WX_VERSION}>
-		$<$<CONFIG:Release>:${wxWidgets_LIB_DIR}/wx/include/gtk3-unicode-static-${WX_VERSION}>
-		$<$<CONFIG:RelWithDebInfo>:${wxWidgets_LIB_DIR}/wx/include/gtk3-unicode-static-${WX_VERSION}>
-		$<$<CONFIG:MinSizeRel>:${wxWidgets_LIB_DIR}/wx/include/gtk3-unicode-static-${WX_VERSION}>
 	)
 ENDIF ()
 

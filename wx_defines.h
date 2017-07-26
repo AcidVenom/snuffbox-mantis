@@ -9,12 +9,6 @@
 	#define wxUSE_WEBVIEW_WEBKIT 1
 #endif
 
-#if wxUSE_STL == 0
-	#undef wxUSE_STL
-	#define wxUSE_STL 1
-	#define wxUSE_STD_STRING_CONV_IN_WXSTRING wxUSE_STL
-#endif
-
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP

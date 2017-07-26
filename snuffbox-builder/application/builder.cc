@@ -3,6 +3,7 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <cmath>
 
 namespace snuffbox
 {
@@ -212,8 +213,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		unsigned int Builder::Sync()
 		{
-			std::string src_path = GetPath(DirectoryType::kSource);
-			std::string build_path = GetPath(DirectoryType::kBuild);
+			std::string src_path = GetPath(DirectoryType::kSource).ToStdString();
+			std::string build_path = GetPath(DirectoryType::kBuild).ToStdString();
 
 			progress_mutex_.lock();
 			compiled_ = graph_.Sync(src_path, build_path);
@@ -277,7 +278,7 @@ namespace snuffbox
 			float percent = to_compile_ == 0 ? 1.0f : static_cast<float>(compiled_) / static_cast<float>(to_compile_);
 			percent = std::fmaxf(0.0f, std::fminf(percent, 1.0f));
 
-			gauge_progress->SetValue(static_cast<int>(std::floorf(percent * static_cast<float>(gauge_progress->GetRange()) + 0.5f)));
+			gauge_progress->SetValue(static_cast<int>(floorf(percent * static_cast<float>(gauge_progress->GetRange()) + 0.5f)));
 			label_count->SetLabelText(std::to_string(compiled_) + "/" + std::to_string(to_compile_));
 		}
 
@@ -377,7 +378,7 @@ namespace snuffbox
 		void Builder::OnCompiled(const std::string& src)
 		{
 			std::string relative = src.c_str() + GetPath(DirectoryType::kSource).size() + 1;
-			std::string bin = GetPath(DirectoryType::kBuild);
+			std::string bin = GetPath(DirectoryType::kBuild).ToStdString();
 
 			graph_.OnCompiled(relative, bin);
 
