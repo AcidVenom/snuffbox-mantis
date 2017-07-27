@@ -34,7 +34,7 @@ namespace snuffbox
 			RegisterSingletons(ns);
 			RegisterConstructables(ns);
 
-			JSWrapper::RegisterGlobal("snuffbox", ns);
+			JSWrapper::RegisterGlobal("snuff", ns);
 		}
 	}
 }

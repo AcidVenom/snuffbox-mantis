@@ -44,6 +44,8 @@ namespace snuffbox
 
 			started_ = false;
 
+			elapsed = Convert(elapsed_, unit);
+
 			if (echo == true)
 			{
 				String type;
@@ -63,10 +65,10 @@ namespace snuffbox
 					break;
 				}
 
-				Services::Get<LogService>().Log(console::LogSeverity::kDebug, "'{0}' ran for: {1}{2}", name_, Convert(elapsed, unit), type);
+				Services::Get<LogService>().Log(console::LogSeverity::kDebug, "'{0}' ran for: {1}{2}", name_, elapsed, type);
 			}
 
-			return Convert(elapsed_, unit);
+			return elapsed;
 		}
 
 		//-----------------------------------------------------------------------------------------------
