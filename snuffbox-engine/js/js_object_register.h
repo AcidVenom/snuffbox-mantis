@@ -19,16 +19,18 @@ namespace snuffbox
 			friend class JSStateWrapper;
 
 		protected:
-			
+
 			/**
 			* @brief Registers all singletons
+			* @param[in] ns (const v8::Local<v8::Object>&) The namespace to register the object in
 			*/
-			static void RegisterSingletons();
+			static void RegisterSingletons(const v8::Local<v8::Object>& ns);
 
 			/**
 			* @brief Registers all constructables
+			* @param[in] ns (const v8::Local<v8::Object>&) The namespace to register the object in
 			*/
-			static void RegisterConstructables();
+			static void RegisterConstructables(const v8::Local<v8::Object>& ns);
 			
 			/**
 			* @brief Registers both singletons and constructables
@@ -48,13 +50,15 @@ namespace snuffbox
 
 			/**
 			* @brief Registers the T object as a singleton
+			* @param[in] ns (const v8::Local<v8::Object>&) The namespace to register the object in
 			*/
-			static void RegisterSingleton();
+			static void RegisterSingleton(const v8::Local<v8::Object>& ns);
 
 			/**
 			* @brief Registers the T object as a function template
+			* @param[in] ns (const v8::Local<v8::Object>&) The namespace to register the object in
 			*/
-			static void Register();
+			static void Register(const v8::Local<v8::Object>& ns);
 
 			/**
 			* @brief The 'toString' function available to every existing snuffbox class
@@ -65,7 +69,7 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template<typename T>
-		inline void JSObjectRegister<T>::RegisterSingleton()
+		inline void JSObjectRegister<T>::RegisterSingleton(const v8::Local<v8::Object>& ns)
 		{
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
 			v8::Isolate* isolate = wrapper->isolate();
@@ -79,12 +83,12 @@ namespace snuffbox
                         JSWrapper::CreateString("toString"),
                         v8::Function::New(wrapper->Context(), JSObjectRegister<T>::ToString).ToLocalChecked());
 			
-			wrapper->RegisterGlobal(T::js_name(), object);
+			JSWrapper::SetObjectValue(ns, T::js_name(), object);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		template<typename T>
-		inline void JSObjectRegister<T>::Register()
+		inline void JSObjectRegister<T>::Register(const v8::Local<v8::Object>& ns)
 		{
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
 			v8::Isolate* isolate = wrapper->isolate();
@@ -98,7 +102,7 @@ namespace snuffbox
 			object->SetCallHandler(JSStateWrapper::New<T>);
 			object->SetClassName(JSWrapper::CreateString(T::js_name()));
 
-			wrapper->RegisterGlobal(T::js_name(), object->GetFunction(wrapper->Context()).ToLocalChecked());
+			JSWrapper::SetObjectValue(ns, T::js_name(), object->GetFunction(wrapper->Context()).ToLocalChecked());
 		}
 
 		//-----------------------------------------------------------------------------------------------
