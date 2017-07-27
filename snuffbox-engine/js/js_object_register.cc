@@ -3,7 +3,9 @@
 #include "../logging/logger.h"
 #include "../logging/cvar.h"
 #include "../io/content_manager.h"
+
 #include "../core/window.h"
+#include "../core/timer.h"
 
 namespace snuffbox
 {
@@ -66,7 +68,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void JSRegister::RegisterConstructables()
 		{
-			//JSObjectRegister<TestObject>::Register();
+			JSObjectRegister<Timer>::Register();
 		}
 
 		//-----------------------------------------------------------------------------------------------

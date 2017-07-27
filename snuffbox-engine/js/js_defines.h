@@ -24,8 +24,8 @@ const char* type::js_ ## x ## _name_ = #x
 #define JS_REGISTER_DECL_SINGLE static void RegisterJS(const v8::Local<v8::Object>& obj)
 #define JS_REGISTER_IMPL_SINGLE(type, body) void type::RegisterJS(const v8::Local<v8::Object>& obj) body
 
-#define JS_REGISTER_DECL_TMPL static void RegisterJS(const v8::Handle<v8::ObjectTemplate>& obj)
-#define JS_REGISTER_IMPL_TMPL(type, body) void type::RegisterJS(const v8::Local<v8::ObjectTemplate>& obj) body
+#define JS_REGISTER_DECL_TMPL static void RegisterJS(const v8::Local<v8::FunctionTemplate>& func, const v8::Local<v8::ObjectTemplate>& obj)
+#define JS_REGISTER_IMPL_TMPL(type, body) void type::RegisterJS(const v8::Local<v8::FunctionTemplate>& func, const v8::Local<v8::ObjectTemplate>& obj) body
 
 #define JS_NAME(x) static const char* js_name(){ return #x; }
 #define JS_NAME_SINGLE(x) JS_NAME(x); JS_REGISTER_DECL_SINGLE

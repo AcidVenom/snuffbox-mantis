@@ -79,10 +79,8 @@ namespace snuffbox
 		void LoggerClient::IdleNotification()
 		{
 			flush_cv_.notify_all();
-			while (log_queue_.empty() == false) 
-			{ 
-				std::this_thread::sleep_for(std::chrono::milliseconds(1)); 
-			}
+			volatile bool empty = log_queue_.empty();
+			while (empty == false) { empty = log_queue_.empty(); }
 		}
 
 		//-----------------------------------------------------------------------------------------------

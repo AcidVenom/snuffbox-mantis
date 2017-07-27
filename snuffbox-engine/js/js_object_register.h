@@ -92,13 +92,13 @@ namespace snuffbox
 			v8::HandleScope scope(isolate);
 
             v8::Local<v8::FunctionTemplate> object = v8::FunctionTemplate::New(isolate);
-			T::RegisterJS(object->PrototypeTemplate());
+			T::RegisterJS(object, object->PrototypeTemplate());
 			
-			object->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "toString"), v8::FunctionTemplate::New(isolate, JSObjectRegister<T>::ToString));
+			object->PrototypeTemplate()->Set(JSWrapper::CreateString("toString"), v8::FunctionTemplate::New(isolate, JSObjectRegister<T>::ToString));
 			object->SetCallHandler(JSStateWrapper::New<T>);
-			object->SetClassName(v8::String::NewFromUtf8(isolate, T::js_name()));
+			object->SetClassName(JSWrapper::CreateString(T::js_name()));
 
-			wrapper->RegisterGlobal(T::js_name(), object->GetFunction());
+			wrapper->RegisterGlobal(T::js_name(), object->GetFunction(wrapper->Context()).ToLocalChecked());
 		}
 
 		//-----------------------------------------------------------------------------------------------

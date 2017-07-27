@@ -106,6 +106,12 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void JSWrapper::RegisterGlobal(const char* name, const Local<Value>& val)
+		{
+			JSStateWrapper::Instance()->RegisterGlobal(name, val);
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		bool JSWrapper::Check(const char* format, bool force)
 		{
 #ifdef SNUFF_RELEASE

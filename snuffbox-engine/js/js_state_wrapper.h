@@ -235,7 +235,7 @@ namespace snuffbox
             ptr->object().SetWeak(ptr, Destroy<T>, v8::WeakCallbackType::kParameter);
             ptr->object().MarkIndependent();
             obj->SetPrivate(instance_->Context(),
-                v8::Private::ForApi(isolate, v8::String::NewFromUtf8(isolate, "__ptr")),
+                v8::Private::ForApi(isolate, JSWrapper::CreateString("__ptr")),
                 v8::External::New(isolate, static_cast<void*>(ptr)));
 
             int64_t size = static_cast<int64_t>(sizeof(T));

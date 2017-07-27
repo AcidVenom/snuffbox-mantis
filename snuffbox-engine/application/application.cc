@@ -32,7 +32,9 @@ namespace snuffbox
 			log_service_(nullptr),
 			cvar_service_(nullptr),
 			content_service_(nullptr),
-			window_service_(nullptr)
+			window_service_(nullptr),
+			delta_timer_(nullptr),
+			delta_time_(0.0f)
 		{
 			Memory::Initialise<MallocAllocator>(max_memory);
 		}
@@ -51,16 +53,17 @@ namespace snuffbox
 
 			while (window_service_->Closed() == false)
 			{
+				delta_timer_->Start();
 				window_service_->Poll();
 				content_service_->Update();
 
-				OnUpdate(16.0f);
+				OnUpdate(delta_time_);
 
 #ifdef SNUFF_JAVASCRIPT
-				js_on_update_->Call(16.0f);
+				js_on_update_->Call(delta_time_);
 #endif
-
 				log_service_->client_.IdleNotification();
+				delta_time_ = delta_timer_->Stop(Timer::Unit::kSeconds);
 			}
 
 			Shutdown();
@@ -77,6 +80,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void SnuffboxApp::Initialise(int argc, char** argv)
 		{
+			Timer init_time("Initialisation timer");
+			init_time.Start();
 			cvar_service_ = Memory::ConstructUnique<CVar>();
 			log_service_ = Memory::ConstructUnique<Logger>();
 			content_service_ = Memory::ConstructUnique<ContentManager>();
@@ -97,6 +102,8 @@ namespace snuffbox
 			window_service_->Initialise("Snuffbox");
 			Services::Provide<WindowService>(window_service_.get());
 
+			delta_timer_ = Memory::ConstructUnique<Timer>("Delta time");
+
 #ifdef SNUFF_JAVASCRIPT
 			js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
 			js_state_wrapper_->Initialise();
@@ -111,7 +118,7 @@ namespace snuffbox
 
 			BindJSCallbacks();
 #endif
-
+			init_time.Stop(Timer::Unit::kMilliseconds, true);
 			log_service_->Log(console::LogSeverity::kSuccess, "Initialised the application");
 
 			OnInit();

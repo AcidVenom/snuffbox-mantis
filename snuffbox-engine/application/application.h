@@ -4,8 +4,7 @@
 #include <snuffbox-logging/logging_stream.h>
 
 #include "../memory/memory.h"
-
-#include "../core/eastl.h"
+#include "../core/timer.h"
 
 namespace snuffbox
 {
@@ -141,6 +140,9 @@ namespace snuffbox
 			UniquePtr<CVar> cvar_service_; //!< The CVar service
 			UniquePtr<ContentManager> content_service_; //!< The content service
 			UniquePtr<Window> window_service_; //!< The window to render to
+
+			UniquePtr<Timer> delta_timer_; //!< The delta timer
+			float delta_time_; //!< The current delta time of the application
 		};
 	}
 }
