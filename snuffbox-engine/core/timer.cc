@@ -91,9 +91,9 @@ namespace snuffbox
 				JS_FUNCTION_REG_END
 			};
 
-			JSWrapper::SetFunctionTemplateValue<int>(func, "Milliseconds", 0);
-			JSWrapper::SetFunctionTemplateValue<int>(func, "Seconds", 1);
-			JSWrapper::SetFunctionTemplateValue<int>(func, "Minutes", 2);
+			JSWrapper::SetFunctionTemplateValue<int>(func, "Milliseconds", static_cast<int>(Unit::kMilliseconds));
+			JSWrapper::SetFunctionTemplateValue<int>(func, "Seconds", static_cast<int>(Unit::kSeconds));
+			JSWrapper::SetFunctionTemplateValue<int>(func, "Minutes", static_cast<int>(Unit::kMinutes));
 
 			JSFunctionRegister::Register(funcs, obj);
 		}));
