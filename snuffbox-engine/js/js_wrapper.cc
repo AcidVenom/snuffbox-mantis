@@ -18,16 +18,6 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-        Local<Object> JSWrapper::CreateObject()
-		{
-			JSStateWrapper* wrapper = JSStateWrapper::Instance();
-			Isolate* isolate = wrapper->isolate();
-
-			Local<ObjectTemplate> t = ObjectTemplate::New(isolate);
-			return t->NewInstance(wrapper->Context()).ToLocalChecked();
-		}
-
-		//-----------------------------------------------------------------------------------------------
 		JSWrapper::Types JSWrapper::TypeOf(const Local<Value>& value)
 		{
 			if (value->IsFunction())
@@ -103,6 +93,27 @@ namespace snuffbox
 		{
 			Isolate* isolate = JSStateWrapper::Instance()->isolate();
 			return v8::String::NewFromUtf8(isolate, utf8.c_str(), NewStringType::kNormal).ToLocalChecked();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		Local<Object> JSWrapper::CreateObject()
+		{
+			JSStateWrapper* wrapper = JSStateWrapper::Instance();
+			Isolate* isolate = wrapper->isolate();
+
+			Local<ObjectTemplate> t = ObjectTemplate::New(isolate);
+			return t->NewInstance(wrapper->Context()).ToLocalChecked();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void JSWrapper::SetPointer(const v8::Local<v8::Object>& obj, void* ptr)
+		{
+			JSStateWrapper* wrapper = JSStateWrapper::Instance();
+			Isolate* isolate = wrapper->isolate();
+
+			obj->SetPrivate(wrapper->Context(),
+				v8::Private::ForApi(isolate, CreateString("__ptr")),
+				v8::External::New(isolate, ptr));
 		}
 
 		//-----------------------------------------------------------------------------------------------

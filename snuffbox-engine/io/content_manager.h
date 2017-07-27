@@ -87,6 +87,7 @@ namespace snuffbox
 
 			JS_NAME_SINGLE(ContentManager);
 			JS_FUNCTION_DECL(load);
+			JS_FUNCTION_DECL(get);
 			JS_FUNCTION_DECL(unload);
 		};
 	}

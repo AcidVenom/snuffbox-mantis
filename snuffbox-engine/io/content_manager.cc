@@ -188,9 +188,12 @@ namespace snuffbox
 			JSFunctionRegister funcs[] =
 			{
 				JS_FUNCTION_REG(load),
+				JS_FUNCTION_REG(get),
 				JS_FUNCTION_REG(unload),
 				JS_FUNCTION_REG_END
 			};
+
+			JSWrapper::SetObjectValue(obj, "Script", static_cast<int>(ContentBase::Types::kScript));
 
 			JSFunctionRegister::Register(funcs, obj);
 		}));
@@ -198,11 +201,64 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(ContentManager, load, JS_BODY({
 
+			JSWrapper wrapper(args);
+
+			if (wrapper.Check("SN") == true)
+			{
+				ContentBase* ptr = nullptr;
+				String path = wrapper.GetValue<String>(0, "");
+				ContentBase::Types type = static_cast<ContentBase::Types>(wrapper.GetValue<int>(1, static_cast<int>(ContentBase::Types::kCount)));
+				ContentService& cs = Services::Get<ContentService>();
+
+				ContentManager& cm = static_cast<ContentManager&>(cs);
+				
+				ptr = cm.LoadContent(path, type, false);
+
+				v8::Local<v8::Object> ret = JSWrapper::CreateObject();
+				JSWrapper::SetPointer(ret, ptr);
+
+				wrapper.ReturnValue<v8::Local<v8::Object>>(ret);
+			}
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(ContentManager, get, JS_BODY({
+
+			JSWrapper wrapper(args);
+
+			if (wrapper.Check("SN") == true)
+			{
+				ContentBase* ptr = nullptr;
+				String path = wrapper.GetValue<String>(0, "");
+				ContentBase::Types type = static_cast<ContentBase::Types>(wrapper.GetValue<int>(1, static_cast<int>(ContentBase::Types::kCount)));
+				ContentService& cs = Services::Get<ContentService>();
+
+				ContentManager& cm = static_cast<ContentManager&>(cs);
+
+				ptr = cm.GetContent(path, type, false);
+
+				v8::Local<v8::Object> ret = JSWrapper::CreateObject();
+				JSWrapper::SetPointer(ret, ptr);
+
+				wrapper.ReturnValue<v8::Local<v8::Object>>(ret);
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(ContentManager, unload, JS_BODY({
+			
+			JSWrapper wrapper(args);
 
+			if (wrapper.Check("SN") == true)
+			{
+				String path = wrapper.GetValue<String>(0, "");
+				ContentBase::Types type = static_cast<ContentBase::Types>(wrapper.GetValue<int>(1, static_cast<int>(ContentBase::Types::kCount)));
+				ContentService& cs = Services::Get<ContentService>();
+
+				ContentManager& cm = static_cast<ContentManager&>(cs);
+
+				cm.UnloadContent(path, type, false);
+			}
 		}));
 	}
 }

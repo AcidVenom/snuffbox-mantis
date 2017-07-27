@@ -82,7 +82,7 @@ namespace snuffbox
 				return;
 			}
 
-			client_.QueueLog(console::LogSeverity::kDebug, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kDebug, message);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ namespace snuffbox
 				return;
 			}
 
-			client_.QueueLog(console::LogSeverity::kInfo, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kInfo, message);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ namespace snuffbox
 				return;
 			}
 
-			client_.QueueLog(console::LogSeverity::kSuccess, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kSuccess, message);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ namespace snuffbox
 				return;
 			}
 
-			client_.QueueLog(console::LogSeverity::kWarning, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kWarning, message);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ namespace snuffbox
 				return;
 			}
 
-			client_.QueueLog(console::LogSeverity::kError, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kError, message);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ namespace snuffbox
 				return;
 			}
 
-			client_.QueueLog(console::LogSeverity::kFatal, message.c_str(), static_cast<int>(message.size()));
+			client_.QueueLog(console::LogSeverity::kFatal, message);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ namespace snuffbox
 				return;
 			}
 
-			client_.QueueLog(console::LogSeverity::kRGB, message.c_str(), static_cast<int>(message.size()), &colour.background.r, &colour.foreground.r);
+			client_.QueueLog(console::LogSeverity::kRGB, message, colour);
 		}
 
 		//-----------------------------------------------------------------------------------------------

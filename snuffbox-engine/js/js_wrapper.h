@@ -47,12 +47,6 @@ namespace snuffbox
 			JSWrapper(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 			/**
-			* @brief Default destructor
-			* @remarks Exits the isolate of the current JavaScript state
-			*/
-			~JSWrapper();
-
-			/**
 			* @brief Gets a value off of the argument stack
 			* @param[in] arg (int) The argument to retrieve the value of
 			* @param[in] def (const T&) The default value if no value was found
@@ -90,12 +84,6 @@ namespace snuffbox
 			*/
 			template<typename T>
 			void ReturnValue(const T& val);
-
-			/**
-			* @brief Creates a JavaScript object handle and returns it
-            * @return (v8::Local<v8::Object>) The created object handle
-			*/
-            static v8::Local<v8::Object> CreateObject();
 
 			/**
 			* @brief Sets an object value
@@ -137,6 +125,19 @@ namespace snuffbox
 			static v8::Local<v8::String> CreateString(const engine::String& utf8);
 
 			/**
+			* @brief Creates a JavaScript object handle and returns it
+			* @return (v8::Local<v8::Object>) The created object handle
+			*/
+			static v8::Local<v8::Object> CreateObject();
+
+			/**
+			* @brief Sets the private __ptr field of an object to a C++ pointer
+			* @param[in] obj (const v8::Local<v8::Object>&) The object to assign the pointer to
+			* @param[in] ptr (void*) The pointer to assign
+			*/
+			static void SetPointer(const v8::Local<v8::Object>& obj, void* ptr);
+
+			/**
 			* @brief Registers a global value
 			* @param[in] name (const char*) The name to register the value under
 			* @param[in] val (const v8::Local<v8::Value>&) The value to register
@@ -165,6 +166,12 @@ namespace snuffbox
 			* @param[in] value (bool) On/off value for error checking
 			*/
 			void set_error_checks(bool value);
+
+			/**
+			* @brief Default destructor
+			* @remarks Exits the isolate of the current JavaScript state
+			*/
+			~JSWrapper();
 
 		private:
 			const v8::FunctionCallbackInfo<v8::Value>& args_; //!< The cached arguments
@@ -315,6 +322,13 @@ namespace snuffbox
 		}
 
 		//-------------------------------------------------------------------------------------------
+		template<typename T>
+		inline v8::Local<v8::Value> JSWrapper::CastValue(const T& val)
+		{
+			return val;
+		}
+
+		//-------------------------------------------------------------------------------------------
 		template<>
         inline v8::Local<v8::Value> JSWrapper::CastValue<double>(const double& val)
 		{
@@ -353,7 +367,7 @@ namespace snuffbox
 
 		//-------------------------------------------------------------------------------------------
 		template<>
-        inline v8::Local<v8::Value> JSWrapper::CastValue<String>(const String& val)
+        inline v8::Local<v8::Value> JSWrapper::CastValue<engine::String>(const engine::String& val)
 		{
 			v8::Isolate* isolate = JSStateWrapper::Instance()->isolate();
             v8::MaybeLocal<v8::String> str = CreateString(val);
@@ -364,129 +378,17 @@ namespace snuffbox
 		template<typename T>
 		inline void JSWrapper::ReturnValue(const T& val)
 		{
-			args_.GetReturnValue().Set<v8::Value>(JSWrapper::CastValue<T>(val));
+			args_.GetReturnValue().Set<v8::Value>(CastValue<T>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::ReturnValue<v8::Local<v8::Object>>(const v8::Local<v8::Object>& val)
-		{
-			v8::Isolate* isolate = JSStateWrapper::Instance()->isolate();
-			args_.GetReturnValue().Set<v8::Object>(val);
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetObjectValue<double>(const v8::Local<v8::Object>& obj, const engine::String& field, const double& val)
-		{
-            JSStateWrapper* wrapper = JSStateWrapper::Instance();
-            v8::Isolate* isolate = wrapper->isolate();
-
-            obj->Set(wrapper->Context(), CreateString(field),
-                     v8::Number::New(isolate, val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetObjectValue<float>(const v8::Local<v8::Object>& obj, const engine::String& field, const float& val)
-		{
-			JSWrapper::SetObjectValue<double>(obj, field, static_cast<double>(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetObjectValue<int>(const v8::Local<v8::Object>& obj, const engine::String& field, const int& val)
-		{
-			JSWrapper::SetObjectValue<double>(obj, field, static_cast<double>(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-		inline void JSWrapper::SetObjectValue<unsigned int>(const v8::Local<v8::Object>& obj, const engine::String& field, const unsigned int& val)
-		{
-			JSWrapper::SetObjectValue<double>(obj, field, static_cast<double>(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetObjectValue<bool>(const v8::Local<v8::Object>& obj, const engine::String& field, const bool& val)
-		{
-            JSStateWrapper* wrapper = JSStateWrapper::Instance();
-            v8::Isolate* isolate = wrapper->isolate();
-
-            obj->Set(wrapper->Context(), CreateString(field), v8::Boolean::New(isolate, val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-        inline void JSWrapper::SetObjectValue<String>(const v8::Local<v8::Object>& obj, const engine::String& field, const engine::String& val)
-		{
-            JSStateWrapper* wrapper = JSStateWrapper::Instance();
-            v8::Isolate* isolate = wrapper->isolate();
-
-            obj->Set(wrapper->Context(), CreateString(field), CreateString(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-        template<typename T>
+		template<typename T>
         inline void JSWrapper::SetObjectValue(const v8::Local<v8::Object>& obj, const engine::String& field, const T& val)
 		{
             JSStateWrapper* wrapper = JSStateWrapper::Instance();
             v8::Isolate* isolate = wrapper->isolate();
 
-            obj->Set(wrapper->Context(), CreateString(field), val);
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-		inline void JSWrapper::SetFunctionTemplateValue<double>(const v8::Local<v8::FunctionTemplate>& obj, const engine::String& field, const double& val)
-		{
-			JSStateWrapper* wrapper = JSStateWrapper::Instance();
-			v8::Isolate* isolate = wrapper->isolate();
-
-			obj->Set(isolate, field.c_str(),
-				v8::Number::New(isolate, val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-		inline void JSWrapper::SetFunctionTemplateValue<float>(const v8::Local<v8::FunctionTemplate>& obj, const engine::String& field, const float& val)
-		{
-			JSWrapper::SetFunctionTemplateValue<double>(obj, field, static_cast<double>(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-		inline void JSWrapper::SetFunctionTemplateValue<int>(const v8::Local<v8::FunctionTemplate>& obj, const engine::String& field, const int& val)
-		{
-			JSWrapper::SetFunctionTemplateValue<double>(obj, field, static_cast<double>(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-		inline void JSWrapper::SetFunctionTemplateValue<unsigned int>(const v8::Local<v8::FunctionTemplate>& obj, const engine::String& field, const unsigned int& val)
-		{
-			JSWrapper::SetFunctionTemplateValue<double>(obj, field, static_cast<double>(val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-		inline void JSWrapper::SetFunctionTemplateValue<bool>(const v8::Local<v8::FunctionTemplate>& obj, const engine::String& field, const bool& val)
-		{
-			JSStateWrapper* wrapper = JSStateWrapper::Instance();
-			v8::Isolate* isolate = wrapper->isolate();
-
-			obj->Set(isolate, field.c_str(), v8::Boolean::New(isolate, val));
-		}
-
-		//-------------------------------------------------------------------------------------------
-		template<>
-		inline void JSWrapper::SetFunctionTemplateValue<String>(const v8::Local<v8::FunctionTemplate>& obj, const engine::String& field, const engine::String& val)
-		{
-			JSStateWrapper* wrapper = JSStateWrapper::Instance();
-			v8::Isolate* isolate = wrapper->isolate();
-
-			obj->Set(isolate, field.c_str(), CreateString(val));
+            obj->Set(wrapper->Context(), CreateString(field), CastValue<T>(val));
 		}
 
 		//-------------------------------------------------------------------------------------------
@@ -496,7 +398,7 @@ namespace snuffbox
 			JSStateWrapper* wrapper = JSStateWrapper::Instance();
 			v8::Isolate* isolate = wrapper->isolate();
 
-			obj->Set(isolate, field.c_str(), val);
+			obj->Set(isolate, field.c_str(), CastValue<T>(val));
 		}
 	}
 }
