@@ -38,7 +38,7 @@ namespace snuffbox
 			
 			/**
 			* @brief Restarts the timer
-			* @param[in] reset (bool) Should the timer be reset? default = true
+			* @param[in] reset (bool) Should the timer be reset? Default = true
 			*/
 			void Start(bool reset = true);
 
@@ -53,11 +53,12 @@ namespace snuffbox
 		protected:
 
 			/**
-			* @brief Converts the elapsed time into a specific unit
-			* @param[in] unit (snuffbox::engine::Timer::Unit) The unit to represent the time value in, default = snuffbox::engine::Timer::Unit::kMilliseconds
-			* @return (float) The time that has elapsed since the start time in the provided unit
+			* @brief Converts a float time into a specific unit
+			* @param[in] elapsed (float) The elapsed time
+			* @param[in] unit (snuffbox::engine::Timer::Unit) The unit to represent the time value in
+			* @return (float) The converted time
 			*/
-			float Elapsed(Unit unit = Unit::kMilliseconds) const;
+			static float Convert(float elapsed, Unit unit);
 
 		private:
 

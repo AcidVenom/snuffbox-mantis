@@ -32,7 +32,7 @@ namespace snuffbox
 		{
 			if (started_ == false)
 			{
-				return Elapsed(unit);
+				return Convert(elapsed_, unit);
 			}
 
 			std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
@@ -40,34 +40,51 @@ namespace snuffbox
 
 			start_ = now;
 
-			if (echo == true)
-			{
-				Services::Get<LogService>().Log(console::LogSeverity::kDebug, "'{0}' ran for: {1}ms", name_, static_cast<int>(elapsed * 1e3f));
-			}
-
 			elapsed_ += elapsed;
 
 			started_ = false;
 
-			return Elapsed(unit);
+			if (echo == true)
+			{
+				String type;
+
+				switch (unit)
+				{
+				case Unit::kMilliseconds:
+					type = "ms";
+					break;
+
+				case Unit::kSeconds:
+					type = " second(s)";
+					break;
+
+				case Unit::kMinutes:
+					type = " minute(s)";
+					break;
+				}
+
+				Services::Get<LogService>().Log(console::LogSeverity::kDebug, "'{0}' ran for: {1}{2}", name_, Convert(elapsed, unit), type);
+			}
+
+			return Convert(elapsed_, unit);
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		float Timer::Elapsed(Unit unit) const
+		float Timer::Convert(float elapsed, Unit unit)
 		{
 			switch (unit)
 			{
 			case Unit::kMilliseconds:
-				return elapsed_ * 1e3f;
+				return elapsed * 1e3f;
 
 			case Unit::kSeconds:
-				return elapsed_;
+				return elapsed;
 
 			case Unit::kMinutes:
-				return elapsed_ / 60.0f;
+				return elapsed / 60.0f;
 			}
 
-			return elapsed_;
+			return elapsed;
 		}
 
 		//-----------------------------------------------------------------------------------------------

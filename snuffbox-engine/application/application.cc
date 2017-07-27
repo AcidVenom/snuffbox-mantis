@@ -80,7 +80,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void SnuffboxApp::Initialise(int argc, char** argv)
 		{
-			Timer init_time("Initialisation timer");
+			Timer init_time("Initialisation");
 			init_time.Start();
 			cvar_service_ = Memory::ConstructUnique<CVar>();
 			log_service_ = Memory::ConstructUnique<Logger>();
