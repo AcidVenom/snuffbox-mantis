@@ -44,11 +44,23 @@ namespace snuffbox
 
 			/**
 			* @brief Stops the timer
-			* @param[in] unit (snuffbox::engine::Timer::Unit) The unit to represent the time value in, default = snuffbox::engine::Timer::unit::kMilliseconds
+			* @param[in] unit (snuffbox::engine::Timer::Unit) The unit to represent the time value in, default = snuffbox::engine::Timer::Unit::kMilliseconds
 			* @param[in] echo (bool) Should the timer log its result? default = false
-			* @return (float) The time this timer has ran in milliseconds
+			* @return (float) The time this timer has ran in the converted unit
 			*/
 			float Stop(Unit unit = Unit::kMilliseconds, bool echo = false);
+
+			/**
+			* @brief Gets the current elapsed time
+			* @param[in] unit (snuffbox::engine::Timer::Unit) The unit to represent the time value in, default = snuffbox::engine::Timer::Unit::kMilliseconds
+			* @return (float) The time this timer has ran in the converted unit
+			*/
+			float Elapsed(Unit unit = Unit::kMilliseconds);
+
+			/**
+			* @brief Resets the timer
+			*/
+			void Reset();
 
 		protected:
 
@@ -74,6 +86,8 @@ namespace snuffbox
 
 			JS_FUNCTION_DECL(start);
 			JS_FUNCTION_DECL(stop);
+			JS_FUNCTION_DECL(elapsed);
+			JS_FUNCTION_DECL(reset);
         };
     }
 }

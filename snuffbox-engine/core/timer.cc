@@ -20,7 +20,7 @@ namespace snuffbox
 		{
 			if (reset == true)
 			{
-				elapsed_ = 0.0f;
+				Reset();
 			}
 
 			start_ = std::chrono::high_resolution_clock::now();
@@ -70,6 +70,26 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		float Timer::Elapsed(Unit unit)
+		{
+			if (started_ == false)
+			{
+				return Convert(elapsed_, unit);
+			}
+
+			float elapsed = Stop(unit, false);
+			Start(false);
+
+			return elapsed;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Timer::Reset()
+		{
+			elapsed_ = 0.0f;
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		float Timer::Convert(float elapsed, Unit unit)
 		{
 			switch (unit)
@@ -105,6 +125,8 @@ namespace snuffbox
 			{
 				JS_FUNCTION_REG(start),
 				JS_FUNCTION_REG(stop),
+				JS_FUNCTION_REG(elapsed),
+				JS_FUNCTION_REG(reset),
 				JS_FUNCTION_REG_END
 			};
 
@@ -128,9 +150,30 @@ namespace snuffbox
 			
 			JS_SETUP(Timer);
 
-			float elapsed = self->Stop(static_cast<Unit>(wrapper.GetValue<int>(0, 1)), wrapper.GetValue<bool>(1, false));
+			float elapsed = self->Stop(
+				static_cast<Unit>(wrapper.GetValue<int>(0, static_cast<int>(Unit::kMilliseconds))), 
+				wrapper.GetValue<bool>(1, false));
 
 			wrapper.ReturnValue<float>(elapsed);
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Timer, elapsed, JS_BODY({
+
+			JS_SETUP(Timer);
+
+			float elapsed = self->Elapsed(
+				static_cast<Unit>(wrapper.GetValue<int>(0, static_cast<int>(Unit::kMilliseconds))));
+
+			wrapper.ReturnValue<float>(elapsed);
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Timer, reset, JS_BODY({
+
+			JS_SETUP(Timer);
+
+			self->Reset();
 		}));
 	}
 }
