@@ -29,9 +29,9 @@ const char* type::js_ ## x ## _name_ = #x
 
 #define JS_NAME(x) static const char* js_name(){ return #x; }
 #define JS_NAME_SINGLE(x) JS_NAME(x); JS_REGISTER_DECL_SINGLE
-#define JS_NAME_TMPL(x) JS_NAME(x); JS_REGISTER_DECL_TMPL; x ## (const v8::FunctionCallbackInfo<v8::Value>& args)
+#define JS_NAME_TMPL(x) JS_NAME(x); JS_REGISTER_DECL_TMPL; x(const v8::FunctionCallbackInfo<v8::Value>& args)
 
-#define JS_CONSTRUCTOR(type, body) type:: ## type (const v8::FunctionCallbackInfo<v8::Value>& args) body
+#define JS_CONSTRUCTOR(type, body) type::type(const v8::FunctionCallbackInfo<v8::Value>& args) body
 
 #else
 

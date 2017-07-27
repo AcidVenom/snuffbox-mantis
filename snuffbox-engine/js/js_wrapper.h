@@ -266,7 +266,7 @@ namespace snuffbox
 			v8::Local<v8::Context> ctx = wrapper->Context();
 
 			v8::Local<v8::Object> obj;
-			val->ToObject(ctx).ToLocal(&obj);
+			bool maybe = val->ToObject(ctx).ToLocal(&obj);
 
 			if (obj.IsEmpty() || obj->IsUndefined())
 			{
@@ -301,7 +301,6 @@ namespace snuffbox
 				return nullptr;
 			}
 
-			JSStateWrapper* wrapper = JSStateWrapper::Instance();
 			v8::Local<v8::Value> ext = obj->GetPrivate(ctx, 
 				v8::Private::ForApi(wrapper->isolate(), CreateString("__ptr"))).ToLocalChecked();
 
