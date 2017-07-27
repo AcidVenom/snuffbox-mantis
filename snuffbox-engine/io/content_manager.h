@@ -54,17 +54,17 @@ namespace snuffbox
 			/**
 			* @see snuffbox::engine::ContentService::GetContent
 			*/
-			ContentBase* GetContent(const String& path, ContentBase::Types type) override;
+			ContentBase* GetContent(const String& path, ContentBase::Types type, bool quiet) override;
 
 			/**
 			* @see snuffbox::engine::ContentService::LoadContent
 			*/
-			ContentBase* LoadContent(const String& path, ContentBase::Types type) override;
+			ContentBase* LoadContent(const String& path, ContentBase::Types type, bool quiet) override;
 
 			/**
 			* @see snuffbox::engine::ContentService::UnloadContent
 			*/
-			void UnloadContent(const String& path, ContentBase::Types type) override;
+			void UnloadContent(const String& path, ContentBase::Types type, bool quiet) override;
 
 			/**
 			* @brief Concatenates a full path string from a relative path

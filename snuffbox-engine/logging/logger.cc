@@ -157,6 +157,7 @@ namespace snuffbox
 			if (expr == false)
 			{
                 Fatal("Assertion failed: \n\t\t\t" + message);
+				client_.IdleNotification();
 				SNUFF_ASSERT();
 			}
 		}

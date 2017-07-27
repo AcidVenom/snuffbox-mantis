@@ -42,25 +42,28 @@ namespace snuffbox
 			/**
 			* @brief Retrieves a piece of content of type T from a path
 			* @param[in] path (const String&) The path to retrieve the content from
+			* @param[in] quiet (bool) Should this call be quiet and not log anything?
 			* @return (T*) A pointer to the retrieved content, or nullptr if it doesn't exist
 			*/
 			template <typename T>
-			T* Get(const String& path);
+			T* Get(const String& path, bool quiet = false);
 
 			/**
 			* @brief Loads and returns a piece of content of type T from a path
 			* @param[in] path (const String&) The path to load the content from
+			* @param[in] quiet (bool) Should this call be quiet and not log anything?
 			* @return (T*) A pointer to the loaded content, or nullptr if it doesn't exist
 			*/
 			template <typename T>
-			T* Load(const String& path);
+			T* Load(const String& path, bool quiet = false);
 
 			/**
 			* @brief Unloads a piece of content of type T from a path
 			* @param[in] path (const String&) The path to the already loaded content
+			* @param[in] quiet (bool) Should this call be quiet and not log anything?
 			*/
 			template <typename T>
-			void Unload(const String& path);
+			void Unload(const String& path, bool quiet = false);
 
 		protected:
 
@@ -68,45 +71,45 @@ namespace snuffbox
 			* @see snuffbox::ContentService::Get
 			* @remarks param[in] type will be deduced from template argument T
 			*/
-			virtual ContentBase* GetContent(const String& path, ContentBase::Types type);
+			virtual ContentBase* GetContent(const String& path, ContentBase::Types type, bool quiet);
 
 			/**
 			* @see snuffbox::ContentService::Load
 			* @remarks param[in] type will be deduced from template argument T
 			*/
-			virtual ContentBase* LoadContent(const String& path, ContentBase::Types type);
+			virtual ContentBase* LoadContent(const String& path, ContentBase::Types type, bool quiet);
 
 			/**
 			* @see snuffbox::ContentService::Unload
 			* @remarks param[in] type will be deduced from template argument T
 			*/
-			virtual void UnloadContent(const String& path, ContentBase::Types type);
+			virtual void UnloadContent(const String& path, ContentBase::Types type, bool quiet);
 		};
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T>
-		inline T* ContentService::Get(const String& path)
+		inline T* ContentService::Get(const String& path, bool quiet)
 		{
 			static_assert(is_content<T>::value, "Attempted to Get content of a non-content type T");
-			ContentBase* ptr = GetContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID));
+			ContentBase* ptr = GetContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID), quiet);
 			return static_cast<T*>(ptr);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T>
-		inline T* ContentService::Load(const String& path)
+		inline T* ContentService::Load(const String& path, bool quiet)
 		{
 			static_assert(is_content<T>::value, "Attempted to Load content of a non-content type T");
-			ContentBase* ptr = LoadContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID));
+			ContentBase* ptr = LoadContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID), quiet);
 			return static_cast<T*>(ptr);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T>
-		inline void ContentService::Unload(const String& path)
+		inline void ContentService::Unload(const String& path, bool quiet)
 		{
 			static_assert(is_content<T>::value, "Attempted to Unload content of a non-content type T");
-			UnloadContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID));
+			UnloadContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID), quiet);
 		}
 	}
 }

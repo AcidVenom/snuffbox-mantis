@@ -204,6 +204,6 @@ Booleans are set by 'true' and 'false'
 |console_ip        |String       |The IP of the external console to connect with  |127.0.0.1                              |
 |console_port      |Number       |The port of the external console to connect on  |**SNUFF_DEFAULT_PORT** in CMake        |
 |reload            |Boolean      |Should files be hot-reloaded?                   |false                                  |
-|reload_freq       |Number       |The number of frames to wait for a reload check |**SNUFF_RELOAD_AFTER** in CMake        |
+|reload_freq       |Number       |The milliseconds to wait for a reload check     |**SNUFF_RELOAD_AFTER** in CMake        |
 |src_directory     |String       |The working directory to load content from      |No value, the target root will be used |
 

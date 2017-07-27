@@ -11,19 +11,19 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentBase* ContentService::GetContent(const String& path, ContentBase::Types type)
+		ContentBase* ContentService::GetContent(const String& path, ContentBase::Types type, bool quiet)
 		{
 			return nullptr;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentBase* ContentService::LoadContent(const String& path, ContentBase::Types type)
+		ContentBase* ContentService::LoadContent(const String& path, ContentBase::Types type, bool quiet)
 		{
 			return nullptr;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ContentService::UnloadContent(const String& path, ContentBase::Types type)
+		void ContentService::UnloadContent(const String& path, ContentBase::Types type, bool quiet)
 		{
 			
 		}

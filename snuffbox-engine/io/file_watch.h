@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include "../memory/memory.h"
+#include "../core/timer.h"
 
 namespace snuffbox
 {
@@ -67,7 +68,7 @@ namespace snuffbox
 			FileTimeMap file_times_; //!< The last modified times of all loaded files
 			ContentManager* content_manager_; //!< The current content manager that owns this file watch
 
-			unsigned int frame_count_; //!< The current frame count
+			Timer reload_timer_; //!< The timer to reload with
 		};
 	}
 }

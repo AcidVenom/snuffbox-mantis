@@ -323,7 +323,7 @@ namespace snuffbox
 			if (wrapper.Check("S") == true)
 			{
 				engine::String path = wrapper.GetValue<engine::String>(0, "");
-				Services::Get<ContentService>().Load<engine::Script>(path);
+				Services::Get<ContentService>().Load<engine::Script>(path, true);
 			}
 		}));
 

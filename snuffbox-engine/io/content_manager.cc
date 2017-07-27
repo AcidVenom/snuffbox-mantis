@@ -80,7 +80,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentBase* ContentManager::GetContent(const String& path, ContentBase::Types type)
+		ContentBase* ContentManager::GetContent(const String& path, ContentBase::Types type, bool quiet)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -94,25 +94,32 @@ namespace snuffbox
 				return it->second.get();
 			}
 
-			log.Log(console::LogSeverity::kError, "Content with path '{0}' could not be found\nAre you sure it has been loaded correctly and the type is correct?", path);
+			if (quiet == false)
+			{
+				log.Log(console::LogSeverity::kError, "Content with path '{0}' could not be found\nAre you sure it has been loaded correctly and the type is correct?", path);
+			}
+			
 			return nullptr;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentBase* ContentManager::LoadContent(const String& path, ContentBase::Types type)
+		ContentBase* ContentManager::LoadContent(const String& path, ContentBase::Types type, bool quiet)
 		{
 			LogService& log = Services::Get<LogService>();
 
+			String full_path = FullPath(path);
+
 			ContentMap& map = loaded_content_[type];
-			ContentMap::iterator it = map.find(path);
+			ContentMap::iterator it = map.find(full_path);
 
 			if (it != map.end())
 			{
-				log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was already loaded, skipping load", path);
+				if (quiet == false)
+				{
+					log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was already loaded, skipping load", path);
+				}
 				return it->second.get();
 			}
-
-			String full_path = FullPath(path);
 
 			ContentBase* content = nullptr;
 			
@@ -146,7 +153,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ContentManager::UnloadContent(const String& path, ContentBase::Types type)
+		void ContentManager::UnloadContent(const String& path, ContentBase::Types type, bool quiet)
 		{
 			String full_path = FullPath(path);
 
@@ -163,7 +170,10 @@ namespace snuffbox
 				return;
 			}
 
-			log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was never loaded, skipping unload", path);
+			if (quiet == false)
+			{
+				log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was never loaded, skipping unload", path);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -65,11 +65,13 @@ namespace snuffbox
 			RC4 rc4;
 
 			const size_t s = header.file_size;
-			data_ = Allocate(s);
+			data_ = Allocate(s + 1);
 
 			memcpy(data_, input + sizeof(FileHeader), s);
 
 			rc4.Decrypt(reinterpret_cast<char*>(data_), s, SNUFF_ENCRYPTION_KEY);
+
+			memset(data_ + s, '\0', sizeof(unsigned char));
 
 			return true;
 		}

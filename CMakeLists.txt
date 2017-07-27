@@ -16,7 +16,7 @@ SET(SNUFF_DIRECTX_VERSION "11" CACHE STRING "Specifies the DirectX version to us
 SET(SNUFF_OGL_VERSION "ogl" CACHE STRING "Specifies whether to use OpenGL or Vulkan")
 SET_PROPERTY(CACHE "SNUFF_DIRECTX_VERSION" PROPERTY STRINGS "11" "12")
 SET_PROPERTY(CACHE "SNUFF_OGL_VERSION" PROPERTY STRINGS "ogl" "vulkan")
-SET(SNUFF_RELOAD_AFTER "50" CACHE STRING "Specifies after how many frames the file watcher should reload")
+SET(SNUFF_RELOAD_AFTER "100" CACHE STRING "Specifies after how many milliseconds the file watcher should reload")
 OPTION(SNUFF_BUILD_TEST "Build the test environment project 'snuffbox-test'")
 
 OPTION(SNUFF_JAVASCRIPT "Should V8 (JavaScript) be enabled for this build?")

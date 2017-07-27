@@ -19,9 +19,9 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		FileWatch::FileWatch(ContentManager* cm) :
 			content_manager_(cm),
-			frame_count_(0)
+			reload_timer_("Reload timer")
 		{
-
+			reload_timer_.Start();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -78,8 +78,6 @@ namespace snuffbox
 				return;
 			}
 
-			++frame_count_;
-
 			unsigned int reload_after = SNUFF_RELOAD_AFTER;
 
 			CVarNumber* freq = Services::Get<CVarService>().Get<CVarNumber>("reload_freq");
@@ -88,7 +86,8 @@ namespace snuffbox
 				reload_after = freq->As<unsigned int>();
 			}
 
-			if (frame_count_ > reload_after)
+			unsigned int elapsed = static_cast<unsigned int>(reload_timer_.Elapsed());
+			if (elapsed > reload_after)
 			{
 				tm last, now;
 				String path;
@@ -107,7 +106,8 @@ namespace snuffbox
 					}
 				}
 
-				frame_count_ = 0;
+				reload_timer_.Stop();
+				reload_timer_.Start(true);
 			}
 		}
 	}
