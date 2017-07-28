@@ -124,7 +124,11 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void BuildThread::OnFinished(unsigned int num_compiled)
 		{
-			builder_->Log(building_ == true ? "Done compiling " + std::to_string(num_compiled) + " file(s)" : "Error occurred, aborting");
+			builder_->Log(building_ == true ? 
+				"Done compiling " + std::to_string(num_compiled) + " file(s)" : "Error occurred, aborting",
+				true,
+				building_ == false);
+
 			builder_->SwitchStatus(Builder::BuildStatus::kIdle);
 		}
 

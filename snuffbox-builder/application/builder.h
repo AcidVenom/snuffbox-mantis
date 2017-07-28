@@ -47,6 +47,15 @@ namespace snuffbox
 			};
 
 			/**
+			* @brief Used to push different notifications to the OS
+			*/
+			enum struct NotificationType
+			{
+				kInfo, //!< An info notification
+				kError //!< An error notification
+			};
+
+			/**
 			* @brief Construct through specifying the window parent
 			* @param[in] parent (wxWindow*) The parent of this window
 			*/
@@ -131,14 +140,24 @@ namespace snuffbox
 			/**
 			* @brief Logs a message with a timestamp and a newline character
 			* @param[in] message (const wxString&) The message to log
+			* @param[in] notification (bool) Should a notification be pushed?
+			* @param[in] error (bool) Is it an error message?
 			*/
-			void Log(const wxString& message);
+			void Log(const wxString& message, bool notification = false, bool error = false);
 
 			/**
 			* @brief Actually adds the line to the output after thread-to-thread data transfer
 			* @param[in] evt (const wxCommandEvent& evt) The event received from wxWidgets
 			*/
 			void AddLine(const wxCommandEvent& evt);
+
+			/**
+			* @brief Sends a notification to the OS
+			* @param[in] message (const wxString&) The notification to send
+			* @param[in] type (snuffbox::builder::Builder::NotificationType) The notification type to send, default = snuffbox::builder::Builder::NotificationType::kInfo
+			* @param[in] title (const wxString&) The title of the notification, default = "Snuffbox builder"
+			*/
+			void Notification(const wxString& message, NotificationType type = NotificationType::kInfo, const wxString& title = "Snuffbox builder");
 
 			/**
 			* @brief Switches the current build status

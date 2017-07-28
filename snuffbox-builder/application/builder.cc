@@ -5,6 +5,8 @@
 #include <fstream>
 #include <cmath>
 
+#include <wx/notifmsg.h>
+
 namespace snuffbox
 {
 	namespace builder
@@ -191,7 +193,7 @@ namespace snuffbox
 			if (build_thread_.building_ == false)
 			{
 				wxCommandEvent evt(BUILDER_REBUILD);
-				evt.SetString("stop");
+				evt.SetInt(1);
 				wxPostEvent(this, evt);
 				return;
 			}
@@ -209,7 +211,7 @@ namespace snuffbox
 				if (count > 0)
 				{
 					wxCommandEvent evt(BUILDER_REBUILD);
-					evt.SetString("build");
+					evt.SetInt(0);
 					wxPostEvent(this, evt);
 				}
 			});
@@ -246,9 +248,9 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::Rebuild(const wxCommandEvent& evt)
 		{
-			wxString str = evt.GetString();
+			int stop = evt.GetInt();
 
-			if (str == "stop")
+			if (stop == 1)
 			{
 				SwitchStatus(BuildStatus::kStopped);
 				SetStatusText("Check the output for errors");
@@ -325,10 +327,13 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Builder::Log(const wxString& message)
+		void Builder::Log(const wxString& message, bool notification, bool error)
 		{
 			wxCommandEvent evt(BUILDER_MESSAGE, 0);
 			evt.SetString(CreateTimeStamp() + " " + message + "\n");
+
+			evt.SetId(notification == true ? 1 : 0);
+			evt.SetInt(error == true ? 1 : 0);
 
 			wxPostEvent(this, evt);
 		}
@@ -336,7 +341,26 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void Builder::AddLine(const wxCommandEvent& evt)
 		{
-			output_text->AppendText(evt.GetString());
+			wxString msg = evt.GetString();
+
+			output_text->AppendText(msg);
+
+			if (evt.GetId() == 1)
+			{
+				Notification(msg, evt.GetInt() == 1 ? NotificationType::kError : NotificationType::kInfo);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Builder::Notification(const wxString& message, NotificationType type, const wxString& title)
+		{
+			wxNotificationMessage msg;
+			msg.SetTitle(title);
+			msg.SetParent(this);
+			msg.SetMessage(message);
+			msg.SetFlags(type == NotificationType::kInfo ? wxICON_INFORMATION : wxICON_ERROR);
+
+			msg.Show();
 		}
 
 		//-----------------------------------------------------------------------------------------------
