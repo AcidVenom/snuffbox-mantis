@@ -45,8 +45,9 @@ namespace snuffbox
 
 			/**
 			* @brief Reads all the file data into this class' buffer
+			* @param[in] null_terminated (bool) Should the buffer be null-terminated?
 			*/
-			void Read();
+			void Read(bool null_terminated);
 
 		public:
 
@@ -64,10 +65,11 @@ namespace snuffbox
 			* @brief Opens the file for use with specified access flags
 			* @param[in] path (const snuffbox::engine::String&) The path to load the file from
 			* @param[in] flags (unsigned int) The access flags to open the file with
+			* @param[in] relative (bool) Should the path be relative to the current 'src_directory' CVar?
 			* @param[in] opened (snuffbox::engine::File*) If there's a file to be re-opened, use this file instead, default = nullptr
 			* @return (snuffbox::engine::File*) The opened file, File::file_ will be nullptr if opening failed
 			*/
-			static File* Open(const engine::String& path, unsigned int flags, File* opened = nullptr);
+			static File* Open(const engine::String& path, unsigned int flags, bool relative = false, File* opened = nullptr);
 
 			/**
 			* @brief Closes the file and deallocates all used memory
@@ -105,8 +107,10 @@ namespace snuffbox
 
 		private:
 
-			engine::String path_; //!< The path this file originates from
 			FILE* file_; //!< The actual file handle
+
+			engine::String path_; //!< The path this file originates from
+			bool relative_; //!< Was the file loaded relatively to the source directory?
 
 			unsigned char* buffer_; //!< The buffer to allocate the file data in
 

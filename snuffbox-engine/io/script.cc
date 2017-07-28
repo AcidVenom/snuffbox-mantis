@@ -19,7 +19,7 @@ namespace snuffbox
 			LogService& log = Services::Get<LogService>();
 
 #ifdef SNUFF_JAVASCRIPT
-			const unsigned char* buffer = file->Binary();
+			const unsigned char* buffer = reinterpret_cast<const unsigned char*>(file->String());
 			if (buffer == nullptr)
 			{
 				return false;

@@ -15,6 +15,7 @@ namespace snuffbox
 			kCVarService, //!< The ID for the CVar service
 			kContentService, //!< The ID for the content service
 			kWindowService, //!< The ID for the window service
+			kInputService, //!< The ID for the input service
 			kCount //!< The total number of different services
 		};
 

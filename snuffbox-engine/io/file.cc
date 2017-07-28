@@ -1,6 +1,8 @@
 #include "file.h"
 
 #include "../services/log_service.h"
+#include "../services/cvar_service.h"
+
 #include "../memory/memory.h"
 
 namespace snuffbox
@@ -11,13 +13,14 @@ namespace snuffbox
 		File::File() :
 			file_(nullptr),
 			path_(""),
+			relative_(false),
 			buffer_(nullptr)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void File::Read()
+		void File::Read(bool null_terminated)
 		{
 			if (file_ == nullptr)
 			{
@@ -39,16 +42,20 @@ namespace snuffbox
 				return;
 			}
 
-			buffer_ = reinterpret_cast<unsigned char*>(Memory::default_allocator().Malloc(size + 1));
+			size_t new_size = null_terminated == true ? size + 1 : size;
+			buffer_ = reinterpret_cast<unsigned char*>(Memory::default_allocator().Malloc(new_size));
 
             fseek(file_, 0, SEEK_SET);
 			fread(buffer_, size, file_);
 
-			memset(buffer_ + size, '\0', sizeof(char));
+			if (null_terminated == true)
+			{
+				memset(buffer_ + size, '\0', sizeof(char));
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		File* File::Open(const engine::String& path, unsigned int flags, File* opened)
+		File* File::Open(const engine::String& path, unsigned int flags, bool relative, File* opened)
 		{
 			File* file = opened == nullptr ? Memory::default_allocator().Construct<File>() : opened;
 
@@ -58,6 +65,9 @@ namespace snuffbox
 			mode += (flags & AccessFlags::kWrite) == AccessFlags::kWrite ? "w" : "";
 			mode += (flags & AccessFlags::kBinary) == AccessFlags::kBinary ? "b" : "";
 
+			CVarString* src = Services::Get<CVarService>().Get<CVarString>("src_directory");
+			engine::String full_path = relative == false ? path : (src == nullptr || src->value() == "" ? path : src->value() + '/' + path);
+
 			fopen(file->file_, path.c_str(), mode.c_str());
 
 			if (file->file_ == nullptr)
@@ -66,6 +76,7 @@ namespace snuffbox
 			}
 
 			file->path_ = path;
+			file->relative_ = relative;
 
 			return file;
 		}
@@ -79,14 +90,14 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		const unsigned char* File::Binary()
 		{
-			Read();
+			Read(false);
 			return buffer_;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		const char* File::String()
 		{
-			Read();
+			Read(true);
 			return reinterpret_cast<const char*>(buffer_);
 		}
 
@@ -101,7 +112,7 @@ namespace snuffbox
 			fclose(file_);
 			remove(path_.c_str());
 
-			Open(path_.c_str(), File::AccessFlags::kWrite | File::AccessFlags::kBinary, this);
+			Open(path_.c_str(), File::AccessFlags::kWrite | File::AccessFlags::kBinary, relative_, this);
 
 			if (file_ == nullptr)
 			{
@@ -160,6 +171,7 @@ namespace snuffbox
 			file_ = nullptr;
 			path_ = "";
 			buffer_ = nullptr;
+			relative_ = false;
 
 		}));
 
@@ -173,7 +185,7 @@ namespace snuffbox
 				engine::String path = wrapper.GetValue<engine::String>(0, "");
 				unsigned int flags = wrapper.GetValue<unsigned int>(1, static_cast<unsigned int>(File::AccessFlags::kRead));
 
-				File::Open(path, flags, self);
+				File::Open(path, flags, wrapper.GetValue<bool>(2, false), self);
 			}
 		}));
 
