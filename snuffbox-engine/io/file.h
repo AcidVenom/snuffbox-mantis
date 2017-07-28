@@ -5,6 +5,8 @@
 #include "../core/eastl.h"
 #include <time.h>
 
+#include "../js./js_defines.h"
+
 #ifdef SNUFF_WIN32
 #define fopen(out, path, flags) fopen_s(&out, path, flags);
 #define fread(out, size, file) fread_s(out, size, size, 1, file)
@@ -20,11 +22,11 @@ namespace snuffbox
 		class Allocator;
 
 		/**
-		* @class snuffbox::engine::File
+		* @class snuffbox::engine::File : [JSObject]
 		* @brief A helper class for cross-platform file reading/writing
 		* @author Daniel Konings
 		*/
-		class File
+		class File : JS_OBJECT
 		{
 
 			friend class Allocator;
@@ -107,6 +109,15 @@ namespace snuffbox
 			FILE* file_; //!< The actual file handle
 
 			unsigned char* buffer_; //!< The buffer to allocate the file data in
+
+		public:
+
+			JS_NAME_TMPL(File);
+
+			JS_FUNCTION_DECL(open);
+			JS_FUNCTION_DECL(read);
+			JS_FUNCTION_DECL(write);
+			JS_FUNCTION_DECL(close);
 		};
 	}
 }

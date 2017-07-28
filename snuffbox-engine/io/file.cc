@@ -132,5 +132,86 @@ namespace snuffbox
 				Memory::default_allocator().Free(buffer_);
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------
+		JS_REGISTER_IMPL_TMPL(File, JS_BODY(
+		{
+			JSFunctionRegister funcs[] = 
+			{
+				JS_FUNCTION_REG(open),
+				JS_FUNCTION_REG(read),
+				JS_FUNCTION_REG(write),
+				JS_FUNCTION_REG(close),
+				JS_FUNCTION_REG_END
+			};
+
+			JSWrapper::SetFunctionTemplateValue(func, "Read", static_cast<unsigned int>(File::AccessFlags::kRead));
+			JSWrapper::SetFunctionTemplateValue(func, "Write", static_cast<unsigned int>(File::AccessFlags::kWrite));
+			JSWrapper::SetFunctionTemplateValue(func, "ReadWrite", static_cast<unsigned int>(File::AccessFlags::kRead | File::AccessFlags::kWrite));
+
+			JSFunctionRegister::Register(funcs, obj);
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_CONSTRUCTOR(File, JS_BODY(
+		{
+			JSWrapper wrapper(args);
+
+			file_ = nullptr;
+			path_ = "";
+			buffer_ = nullptr;
+
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(File, open, JS_BODY(
+		{
+			JS_SETUP(File);
+
+			if (wrapper.Check("SN") == true)
+			{
+				engine::String path = wrapper.GetValue<engine::String>(0, "");
+				unsigned int flags = wrapper.GetValue<unsigned int>(1, static_cast<unsigned int>(File::AccessFlags::kRead));
+
+				File::Open(path, flags, self);
+			}
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(File, read, JS_BODY(
+		{
+			JS_SETUP(File);
+
+			const char* buffer = self->String();
+			engine::String contents = buffer;
+
+			if (buffer == nullptr)
+			{
+				wrapper.ReturnValue<bool>(false);
+				return;
+			}
+
+			wrapper.ReturnValue<engine::String>(contents);
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(File, write, JS_BODY(
+		{
+			JS_SETUP(File);
+
+			if (wrapper.Check("S") == true)
+			{
+				engine::String to_write = wrapper.GetValue<engine::String>(0, "");
+				self->Write(reinterpret_cast<const unsigned char*>(to_write.c_str()), to_write.size());
+			}
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(File, close, JS_BODY(
+		{
+			JS_SETUP(File);
+
+			self->~File();
+		}));
 	}
 }

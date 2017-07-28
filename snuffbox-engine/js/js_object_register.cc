@@ -2,6 +2,8 @@
 
 #include "../logging/logger.h"
 #include "../logging/cvar.h"
+
+#include "../io/file.h"
 #include "../io/content_manager.h"
 
 #include "../core/window.h"
@@ -23,6 +25,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void JSRegister::RegisterConstructables(const v8::Local<v8::Object>& ns)
 		{
+			JSObjectRegister<File>::Register(ns);
 			JSObjectRegister<Timer>::Register(ns);
 		}
 
