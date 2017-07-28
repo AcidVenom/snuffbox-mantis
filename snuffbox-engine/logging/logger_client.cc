@@ -80,7 +80,7 @@ namespace snuffbox
 		{
 			flush_cv_.notify_all();
 			volatile bool empty = log_queue_.empty();
-			while (empty == false) { empty = log_queue_.empty(); }
+			while (empty == false && connected_ == true) { empty = log_queue_.empty(); }
 		}
 
 		//-----------------------------------------------------------------------------------------------

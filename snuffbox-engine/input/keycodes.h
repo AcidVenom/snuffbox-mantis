@@ -1,9 +1,12 @@
 #pragma once
 
 #include "../core/eastl.h"
+#include <GLFW/glfw3.h>
+
+#define KEYCODE_TYPE unsigned short
 
 #define SNUFF_DECL_KEY_CODE(key, val)				\
-static const unsigned char k ## key = val;			\
+static const KEYCODE_TYPE k ## key = val;			\
 template <>											\
 struct Key<val>										\
 {													\
@@ -22,15 +25,15 @@ namespace snuffbox
 		*/
 		struct KeyCodes
 		{
-
-			typedef void(*LoopCallback)(unsigned char, const char*);
+			typedef KEYCODE_TYPE KeyCode;
+			typedef void(*LoopCallback)(KeyCode, const char*);
 
 			/**
-			* @struct snuffbox::engine::KeyCodes::Key<unsigned char>
+			* @struct snuffbox::engine::KeyCodes::Key<KEYCODE_TYPE>
 			* @brief Used to create a keycode definition along with a string value per keycode value
 			* @author Daniel Konings
 			*/
-			template <unsigned char T>
+			template <KEYCODE_TYPE T>
 			struct Key 
 			{
 				/**
@@ -44,163 +47,126 @@ namespace snuffbox
 				static const bool is_valid = false; //!< Validity of this keycode
 			};
 
-			SNUFF_DECL_KEY_CODE(Any, 0x00);
-			SNUFF_DECL_KEY_CODE(Backspace, 0x08);
-			SNUFF_DECL_KEY_CODE(Tab, 0x09);
-			SNUFF_DECL_KEY_CODE(Clear, 0x0C);
-			SNUFF_DECL_KEY_CODE(Enter, 0x0D);
-			SNUFF_DECL_KEY_CODE(Shift, 0x10);
-			SNUFF_DECL_KEY_CODE(Control, 0x11);
-			SNUFF_DECL_KEY_CODE(Alt, 0x12);
-			SNUFF_DECL_KEY_CODE(Pause, 0x13);
-			SNUFF_DECL_KEY_CODE(CapsLock, 0x14);
-			SNUFF_DECL_KEY_CODE(Escape, 0x1B);
-			SNUFF_DECL_KEY_CODE(Space, 0x20);
-			SNUFF_DECL_KEY_CODE(PageUp, 0x21);
-			SNUFF_DECL_KEY_CODE(PageDown, 0x22);
-			SNUFF_DECL_KEY_CODE(End, 0x23);
-			SNUFF_DECL_KEY_CODE(Home, 0x24);
-			SNUFF_DECL_KEY_CODE(Left, 0x25);
-			SNUFF_DECL_KEY_CODE(Up, 0x26);
-			SNUFF_DECL_KEY_CODE(Right, 0x27);
-			SNUFF_DECL_KEY_CODE(Down, 0x28);
-			SNUFF_DECL_KEY_CODE(Select, 0x29);
-			SNUFF_DECL_KEY_CODE(Print, 0x2A);
-			SNUFF_DECL_KEY_CODE(Execute, 0x2B);
-			SNUFF_DECL_KEY_CODE(PrintScreen, 0x2C);
-			SNUFF_DECL_KEY_CODE(Insert, 0x2D);
-			SNUFF_DECL_KEY_CODE(Delete, 0x2E);
-			SNUFF_DECL_KEY_CODE(Help, 0x2F);
-			SNUFF_DECL_KEY_CODE(Zero, 0x30);
-			SNUFF_DECL_KEY_CODE(One, 0x31);
-			SNUFF_DECL_KEY_CODE(Two, 0x32);
-			SNUFF_DECL_KEY_CODE(Three, 0x33);
-			SNUFF_DECL_KEY_CODE(Four, 0x34);
-			SNUFF_DECL_KEY_CODE(Five, 0x35);
-			SNUFF_DECL_KEY_CODE(Six, 0x36);
-			SNUFF_DECL_KEY_CODE(Seven, 0x37);
-			SNUFF_DECL_KEY_CODE(Eight, 0x38);
-			SNUFF_DECL_KEY_CODE(Nine, 0x39);
-			SNUFF_DECL_KEY_CODE(A, 0x41);
-			SNUFF_DECL_KEY_CODE(B, 0x42);
-			SNUFF_DECL_KEY_CODE(C, 0x43);
-			SNUFF_DECL_KEY_CODE(D, 0x44);
-			SNUFF_DECL_KEY_CODE(E, 0x45);
-			SNUFF_DECL_KEY_CODE(F, 0x46);
-			SNUFF_DECL_KEY_CODE(G, 0x47);
-			SNUFF_DECL_KEY_CODE(H, 0x48);
-			SNUFF_DECL_KEY_CODE(I, 0x49);
-			SNUFF_DECL_KEY_CODE(J, 0x4A);
-			SNUFF_DECL_KEY_CODE(K, 0x4B);
-			SNUFF_DECL_KEY_CODE(L, 0x4C);
-			SNUFF_DECL_KEY_CODE(M, 0x4D);
-			SNUFF_DECL_KEY_CODE(N, 0x4E);
-			SNUFF_DECL_KEY_CODE(O, 0x4F);
-			SNUFF_DECL_KEY_CODE(P, 0x50);
-			SNUFF_DECL_KEY_CODE(Q, 0x51);
-			SNUFF_DECL_KEY_CODE(R, 0x52);
-			SNUFF_DECL_KEY_CODE(S, 0x53);
-			SNUFF_DECL_KEY_CODE(T, 0x54);
-			SNUFF_DECL_KEY_CODE(U, 0x55);
-			SNUFF_DECL_KEY_CODE(V, 0x56);
-			SNUFF_DECL_KEY_CODE(W, 0x57);
-			SNUFF_DECL_KEY_CODE(X, 0x58);
-			SNUFF_DECL_KEY_CODE(Y, 0x59);
-			SNUFF_DECL_KEY_CODE(Z, 0x5A);
-			SNUFF_DECL_KEY_CODE(LeftWindowsKey, 0x5B);
-			SNUFF_DECL_KEY_CODE(RightWindowsKey, 0x5C);
-			SNUFF_DECL_KEY_CODE(ApplicationsKey, 0x5D);
-			SNUFF_DECL_KEY_CODE(Sleep, 0x5F);
-			SNUFF_DECL_KEY_CODE(NumPad0, 0x60);
-			SNUFF_DECL_KEY_CODE(NumPad1, 0x61);
-			SNUFF_DECL_KEY_CODE(NumPad2, 0x62);
-			SNUFF_DECL_KEY_CODE(NumPad3, 0x63);
-			SNUFF_DECL_KEY_CODE(NumPad4, 0x64);
-			SNUFF_DECL_KEY_CODE(NumPad5, 0x65);
-			SNUFF_DECL_KEY_CODE(NumPad6, 0x66);
-			SNUFF_DECL_KEY_CODE(NumPad7, 0x67);
-			SNUFF_DECL_KEY_CODE(NumPad8, 0x68);
-			SNUFF_DECL_KEY_CODE(NumPad9, 0x69);
-			SNUFF_DECL_KEY_CODE(Multiply, 0x6A);
-			SNUFF_DECL_KEY_CODE(Plus, 0x6B);
-			SNUFF_DECL_KEY_CODE(Seperator, 0x6C);
-			SNUFF_DECL_KEY_CODE(Minus, 0x6D);
-			SNUFF_DECL_KEY_CODE(Decimal, 0x6E);
-			SNUFF_DECL_KEY_CODE(Divide, 0x6F);
-			SNUFF_DECL_KEY_CODE(F1, 0x70);
-			SNUFF_DECL_KEY_CODE(F2, 0x71);
-			SNUFF_DECL_KEY_CODE(F3, 0x72);
-			SNUFF_DECL_KEY_CODE(F4, 0x73);
-			SNUFF_DECL_KEY_CODE(F5, 0x74);
-			SNUFF_DECL_KEY_CODE(F6, 0x75);
-			SNUFF_DECL_KEY_CODE(F7, 0x76);
-			SNUFF_DECL_KEY_CODE(F8, 0x77);
-			SNUFF_DECL_KEY_CODE(F9, 0x78);
-			SNUFF_DECL_KEY_CODE(F10, 0x79);
-			SNUFF_DECL_KEY_CODE(F11, 0x7A);
-			SNUFF_DECL_KEY_CODE(F12, 0x7B);
-			SNUFF_DECL_KEY_CODE(F13, 0x7C);
-			SNUFF_DECL_KEY_CODE(F14, 0x7D);
-			SNUFF_DECL_KEY_CODE(F15, 0x7E);
-			SNUFF_DECL_KEY_CODE(F16, 0x7F);
-			SNUFF_DECL_KEY_CODE(F17, 0x80);
-			SNUFF_DECL_KEY_CODE(F18, 0x81);
-			SNUFF_DECL_KEY_CODE(F19, 0x82);
-			SNUFF_DECL_KEY_CODE(F20, 0x83);
-			SNUFF_DECL_KEY_CODE(F21, 0x84);
-			SNUFF_DECL_KEY_CODE(F22, 0x85);
-			SNUFF_DECL_KEY_CODE(F23, 0x86);
-			SNUFF_DECL_KEY_CODE(F24, 0x87);
-			SNUFF_DECL_KEY_CODE(Numlock, 0x90);
-			SNUFF_DECL_KEY_CODE(ScrollLock, 0x91);
-			SNUFF_DECL_KEY_CODE(LeftShift, 0xA0);
-			SNUFF_DECL_KEY_CODE(RightShift, 0xA1);
-			SNUFF_DECL_KEY_CODE(LeftControl, 0xA2);
-			SNUFF_DECL_KEY_CODE(RightControl, 0xA3);
-			SNUFF_DECL_KEY_CODE(LeftMenu, 0xA4);
-			SNUFF_DECL_KEY_CODE(RightMenu, 0xA5);
-			SNUFF_DECL_KEY_CODE(BrowserBack, 0xA6);
-			SNUFF_DECL_KEY_CODE(BrowserForward, 0xA7);
-			SNUFF_DECL_KEY_CODE(BrowserRefresh, 0xA8);
-			SNUFF_DECL_KEY_CODE(BrowserStop, 0xA9);
-			SNUFF_DECL_KEY_CODE(BrowserSearch, 0xAA);
-			SNUFF_DECL_KEY_CODE(BrowserFavorites, 0xAB);
-			SNUFF_DECL_KEY_CODE(BrowserHome, 0xAC);
-			SNUFF_DECL_KEY_CODE(VolumeMute, 0xAD);
-			SNUFF_DECL_KEY_CODE(VolumeDown, 0xAE);
-			SNUFF_DECL_KEY_CODE(VolumeUp, 0xAF);
-			SNUFF_DECL_KEY_CODE(NextTrack, 0xB0);
-			SNUFF_DECL_KEY_CODE(PreviousTrack, 0xB1);
-			SNUFF_DECL_KEY_CODE(StopMedia, 0xB2);
-			SNUFF_DECL_KEY_CODE(PlayPause, 0xB3);
-			SNUFF_DECL_KEY_CODE(LaunchMail, 0xB4);
-			SNUFF_DECL_KEY_CODE(SelectMedia, 0xB5);
-			SNUFF_DECL_KEY_CODE(LaunchApp1, 0xB6);
-			SNUFF_DECL_KEY_CODE(LaunchApp2, 0xB7);
-			SNUFF_DECL_KEY_CODE(OEM1, 0xBA);
-			SNUFF_DECL_KEY_CODE(OEMPlus, 0xB8);
-			SNUFF_DECL_KEY_CODE(OEMComma, 0xBC);
-			SNUFF_DECL_KEY_CODE(OEMMinus, 0xBD);
-			SNUFF_DECL_KEY_CODE(OEMPeriod, 0xBE);
-			SNUFF_DECL_KEY_CODE(OEM2, 0xBF);
-			SNUFF_DECL_KEY_CODE(OEM3, 0xC0);
-			SNUFF_DECL_KEY_CODE(OEM4, 0xDB);
-			SNUFF_DECL_KEY_CODE(OEM5, 0xDC);
-			SNUFF_DECL_KEY_CODE(OEM6, 0xDD);
-			SNUFF_DECL_KEY_CODE(OEM7, 0xDE);
-			SNUFF_DECL_KEY_CODE(OEM8, 0xDF);
-			SNUFF_DECL_KEY_CODE(OEM102, 0xE2);
-			SNUFF_DECL_KEY_CODE(Process, 0xE5);
-			SNUFF_DECL_KEY_CODE(Packet, 0xE7);
-			SNUFF_DECL_KEY_CODE(Attn, 0xF6);
-			SNUFF_DECL_KEY_CODE(CrSel, 0xF7);
-			SNUFF_DECL_KEY_CODE(ExSel, 0xF8);
-			SNUFF_DECL_KEY_CODE(EraseEOF, 0xF9);
-			SNUFF_DECL_KEY_CODE(Play, 0xFA);
-			SNUFF_DECL_KEY_CODE(Zoom, 0xFB);
-			SNUFF_DECL_KEY_CODE(PA1, 0xFD);
-			SNUFF_DECL_KEY_CODE(OEMClear, 0xFE);
-			SNUFF_DECL_KEY_CODE(None, 0xFF);
+			SNUFF_DECL_KEY_CODE(Any,				GLFW_KEY_SPACE - 1);
+			SNUFF_DECL_KEY_CODE(Space,				GLFW_KEY_SPACE);
+			SNUFF_DECL_KEY_CODE(Apostrophe,			GLFW_KEY_APOSTROPHE);
+			SNUFF_DECL_KEY_CODE(Comma,				GLFW_KEY_COMMA);
+			SNUFF_DECL_KEY_CODE(Minus,				GLFW_KEY_MINUS);
+			SNUFF_DECL_KEY_CODE(Period,				GLFW_KEY_PERIOD);
+			SNUFF_DECL_KEY_CODE(Slash,				GLFW_KEY_SLASH);
+			SNUFF_DECL_KEY_CODE(0,					GLFW_KEY_0);
+			SNUFF_DECL_KEY_CODE(1,					GLFW_KEY_1);
+			SNUFF_DECL_KEY_CODE(2,					GLFW_KEY_2);
+			SNUFF_DECL_KEY_CODE(3,					GLFW_KEY_3);
+			SNUFF_DECL_KEY_CODE(4,					GLFW_KEY_4);
+			SNUFF_DECL_KEY_CODE(5,					GLFW_KEY_5);
+			SNUFF_DECL_KEY_CODE(6,					GLFW_KEY_6);
+			SNUFF_DECL_KEY_CODE(7,					GLFW_KEY_7);
+			SNUFF_DECL_KEY_CODE(8,					GLFW_KEY_8);
+			SNUFF_DECL_KEY_CODE(9,					GLFW_KEY_9);
+			SNUFF_DECL_KEY_CODE(Semicolon,			GLFW_KEY_SEMICOLON);
+			SNUFF_DECL_KEY_CODE(Equal,				GLFW_KEY_EQUAL);
+			SNUFF_DECL_KEY_CODE(A,					GLFW_KEY_A);
+			SNUFF_DECL_KEY_CODE(B,					GLFW_KEY_B);
+			SNUFF_DECL_KEY_CODE(C,					GLFW_KEY_C);
+			SNUFF_DECL_KEY_CODE(D,					GLFW_KEY_D);
+			SNUFF_DECL_KEY_CODE(E,					GLFW_KEY_E);
+			SNUFF_DECL_KEY_CODE(F,					GLFW_KEY_F);
+			SNUFF_DECL_KEY_CODE(G,					GLFW_KEY_G);
+			SNUFF_DECL_KEY_CODE(H,					GLFW_KEY_H);
+			SNUFF_DECL_KEY_CODE(I,					GLFW_KEY_I);
+			SNUFF_DECL_KEY_CODE(J,					GLFW_KEY_J);
+			SNUFF_DECL_KEY_CODE(K,					GLFW_KEY_K);
+			SNUFF_DECL_KEY_CODE(L,					GLFW_KEY_L);
+			SNUFF_DECL_KEY_CODE(M,					GLFW_KEY_M);
+			SNUFF_DECL_KEY_CODE(N,					GLFW_KEY_N);
+			SNUFF_DECL_KEY_CODE(O,					GLFW_KEY_O);
+			SNUFF_DECL_KEY_CODE(P,					GLFW_KEY_P);
+			SNUFF_DECL_KEY_CODE(Q,					GLFW_KEY_Q);
+			SNUFF_DECL_KEY_CODE(R,					GLFW_KEY_R);
+			SNUFF_DECL_KEY_CODE(S,					GLFW_KEY_S);
+			SNUFF_DECL_KEY_CODE(T,					GLFW_KEY_T);
+			SNUFF_DECL_KEY_CODE(U,					GLFW_KEY_U);
+			SNUFF_DECL_KEY_CODE(V,					GLFW_KEY_V);
+			SNUFF_DECL_KEY_CODE(W,					GLFW_KEY_W);
+			SNUFF_DECL_KEY_CODE(X,					GLFW_KEY_X);
+			SNUFF_DECL_KEY_CODE(Y,					GLFW_KEY_Y);
+			SNUFF_DECL_KEY_CODE(Z,					GLFW_KEY_Z);
+			SNUFF_DECL_KEY_CODE(LeftBracket,		GLFW_KEY_LEFT_BRACKET);
+			SNUFF_DECL_KEY_CODE(Backslash,			GLFW_KEY_BACKSLASH);
+			SNUFF_DECL_KEY_CODE(RightBracket,		GLFW_KEY_RIGHT_BRACKET);
+			SNUFF_DECL_KEY_CODE(GraveAccent,		GLFW_KEY_GRAVE_ACCENT);
+			SNUFF_DECL_KEY_CODE(World1,				GLFW_KEY_WORLD_1);
+			SNUFF_DECL_KEY_CODE(World2,				GLFW_KEY_WORLD_2);
+			SNUFF_DECL_KEY_CODE(Escape,				GLFW_KEY_ESCAPE);
+			SNUFF_DECL_KEY_CODE(Enter,				GLFW_KEY_ENTER);
+			SNUFF_DECL_KEY_CODE(Tab,				GLFW_KEY_TAB);
+			SNUFF_DECL_KEY_CODE(Backspace,			GLFW_KEY_BACKSPACE);
+			SNUFF_DECL_KEY_CODE(Insert,				GLFW_KEY_INSERT);
+			SNUFF_DECL_KEY_CODE(Delete,				GLFW_KEY_DELETE);
+			SNUFF_DECL_KEY_CODE(Right,				GLFW_KEY_RIGHT);
+			SNUFF_DECL_KEY_CODE(Down,				GLFW_KEY_DOWN);
+			SNUFF_DECL_KEY_CODE(Left,				GLFW_KEY_LEFT);
+			SNUFF_DECL_KEY_CODE(Up,					GLFW_KEY_UP);
+			SNUFF_DECL_KEY_CODE(PageUp,				GLFW_KEY_PAGE_UP);
+			SNUFF_DECL_KEY_CODE(PageDown,			GLFW_KEY_PAGE_DOWN);
+			SNUFF_DECL_KEY_CODE(Home,				GLFW_KEY_HOME);
+			SNUFF_DECL_KEY_CODE(End,				GLFW_KEY_END);
+			SNUFF_DECL_KEY_CODE(CapsLock,			GLFW_KEY_CAPS_LOCK);
+			SNUFF_DECL_KEY_CODE(ScrollLock,			GLFW_KEY_SCROLL_LOCK);
+			SNUFF_DECL_KEY_CODE(NumLock,			GLFW_KEY_NUM_LOCK);
+			SNUFF_DECL_KEY_CODE(Pause,				GLFW_KEY_PAUSE);
+			SNUFF_DECL_KEY_CODE(F1,					GLFW_KEY_F1);
+			SNUFF_DECL_KEY_CODE(F2,					GLFW_KEY_F2);
+			SNUFF_DECL_KEY_CODE(F3,					GLFW_KEY_F3);
+			SNUFF_DECL_KEY_CODE(F4,					GLFW_KEY_F4);
+			SNUFF_DECL_KEY_CODE(F5,					GLFW_KEY_F5);
+			SNUFF_DECL_KEY_CODE(F6,					GLFW_KEY_F6);
+			SNUFF_DECL_KEY_CODE(F7,					GLFW_KEY_F7);
+			SNUFF_DECL_KEY_CODE(F8,					GLFW_KEY_F8);
+			SNUFF_DECL_KEY_CODE(F9,					GLFW_KEY_F9);
+			SNUFF_DECL_KEY_CODE(F10,				GLFW_KEY_F10);
+			SNUFF_DECL_KEY_CODE(F11,				GLFW_KEY_F11);
+			SNUFF_DECL_KEY_CODE(F12,				GLFW_KEY_F12);
+			SNUFF_DECL_KEY_CODE(F13,				GLFW_KEY_F13);
+			SNUFF_DECL_KEY_CODE(F14,				GLFW_KEY_F14);
+			SNUFF_DECL_KEY_CODE(F15,				GLFW_KEY_F15);
+			SNUFF_DECL_KEY_CODE(F16,				GLFW_KEY_F16);
+			SNUFF_DECL_KEY_CODE(F17,				GLFW_KEY_F17);
+			SNUFF_DECL_KEY_CODE(F18,				GLFW_KEY_F18);
+			SNUFF_DECL_KEY_CODE(F19,				GLFW_KEY_F19);
+			SNUFF_DECL_KEY_CODE(F20,				GLFW_KEY_F20);
+			SNUFF_DECL_KEY_CODE(F21,				GLFW_KEY_F21);
+			SNUFF_DECL_KEY_CODE(F22,				GLFW_KEY_F22);
+			SNUFF_DECL_KEY_CODE(F23,				GLFW_KEY_F23);
+			SNUFF_DECL_KEY_CODE(F24,				GLFW_KEY_F24);
+			SNUFF_DECL_KEY_CODE(NumPad0,			GLFW_KEY_KP_0);
+			SNUFF_DECL_KEY_CODE(NumPad1,			GLFW_KEY_KP_1);
+			SNUFF_DECL_KEY_CODE(NumPad2,			GLFW_KEY_KP_2);
+			SNUFF_DECL_KEY_CODE(NumPad3,			GLFW_KEY_KP_3);
+			SNUFF_DECL_KEY_CODE(NumPad4,			GLFW_KEY_KP_4);
+			SNUFF_DECL_KEY_CODE(NumPad5,			GLFW_KEY_KP_5);
+			SNUFF_DECL_KEY_CODE(NumPad6,			GLFW_KEY_KP_6);
+			SNUFF_DECL_KEY_CODE(NumPad7,			GLFW_KEY_KP_7);
+			SNUFF_DECL_KEY_CODE(NumPad8,			GLFW_KEY_KP_8);
+			SNUFF_DECL_KEY_CODE(NumPad9,			GLFW_KEY_KP_9);
+			SNUFF_DECL_KEY_CODE(NumPadDecimal,		GLFW_KEY_KP_DECIMAL);
+			SNUFF_DECL_KEY_CODE(NumPadDivide,		GLFW_KEY_KP_DIVIDE);
+			SNUFF_DECL_KEY_CODE(NumPadMultiply,		GLFW_KEY_KP_MULTIPLY);
+			SNUFF_DECL_KEY_CODE(NumPadSubtract,		GLFW_KEY_KP_SUBTRACT);
+			SNUFF_DECL_KEY_CODE(NumPadAdd,			GLFW_KEY_KP_ADD);
+			SNUFF_DECL_KEY_CODE(NumPadEnter,		GLFW_KEY_KP_ENTER);
+			SNUFF_DECL_KEY_CODE(NumPadEqual,		GLFW_KEY_KP_EQUAL);
+			SNUFF_DECL_KEY_CODE(LeftShift,			GLFW_KEY_LEFT_SHIFT);
+			SNUFF_DECL_KEY_CODE(LeftAlt,			GLFW_KEY_LEFT_ALT);
+			SNUFF_DECL_KEY_CODE(LeftControl,		GLFW_KEY_LEFT_CONTROL);
+			SNUFF_DECL_KEY_CODE(LeftSuper,			GLFW_KEY_LEFT_SUPER);
+			SNUFF_DECL_KEY_CODE(RightShift,			GLFW_KEY_RIGHT_SHIFT);
+			SNUFF_DECL_KEY_CODE(RightAlt,			GLFW_KEY_RIGHT_ALT);
+			SNUFF_DECL_KEY_CODE(RightControl,		GLFW_KEY_RIGHT_CONTROL);
+			SNUFF_DECL_KEY_CODE(RightSuper,			GLFW_KEY_RIGHT_SUPER);
+			SNUFF_DECL_KEY_CODE(Menu,				GLFW_KEY_MENU);
+			SNUFF_DECL_KEY_CODE(None,				GLFW_KEY_MENU + 1);
 
 			/**
 			* @brief Convenience function to start the unrolling loop
@@ -209,13 +175,12 @@ namespace snuffbox
 			static void KeyCodeLoop(KeyCodes::LoopCallback to_call);
 		};
 
-
 		/**
 		* @struct snuffbox::engine::KeyLoop<i, valid>
 		* @brief Used to iterate over the declared keycodes and call a function per keycode/string combination
 		* @author Daniel Konings
 		*/
-		template <unsigned char i, bool valid>
+		template <KEYCODE_TYPE i, bool valid>
 		struct KeyCodeLoop {};
 
 		/**
@@ -223,14 +188,14 @@ namespace snuffbox
 		* @brief Invalid keycode iteration, it was never declared in snuffbox::engine::KeyCodes
 		* @author Daniel Konings
 		*/
-		template <unsigned char i>
+		template <KEYCODE_TYPE i>
 		struct KeyCodeLoop<i, false>
 		{
 			/**
 			* @brief The unroll function, continues the loop
-			* @param[in] void(*to_call)(unsigned char, const char*) The function pointer to call
+			* @param[in] to_call (snuffbox::engine::KeyCodes::LoopCallback) The function pointer to call
 			*/
-			static void loop(void(*to_call)(unsigned char, const char*))
+			static void loop(KeyCodes::LoopCallback to_call)
 			{
 				KeyCodeLoop<i + 1, KeyCodes::Key<i + 1>::is_valid>::loop(to_call);
 			}
@@ -241,7 +206,7 @@ namespace snuffbox
 		* @brief Valid keycode iteration, it was declared in snuffbox::engine::KeyCodes
 		* @author Daniel Konings
 		*/
-		template <unsigned char i>
+		template <KEYCODE_TYPE i>
 		struct KeyCodeLoop<i, true>
 		{
 			/**
@@ -256,12 +221,12 @@ namespace snuffbox
 		};
 
 		/**
-		* @struct snuffbox::engine::KeyLoop<255, true>
+		* @struct snuffbox::engine::KeyLoop<GLFW_KEY_LAST, true>
 		* @brief The final iteration of the key loop if the key is valid, this finalises the unroll
 		* @author Daniel Konings
 		*/
 		template <>
-		struct KeyCodeLoop<255, true>
+		struct KeyCodeLoop<GLFW_KEY_LAST, true>
 		{
 			/**
 			* @brief Final unroll, does the final call with the provided function pointer
@@ -269,17 +234,17 @@ namespace snuffbox
 			*/
 			static void loop(KeyCodes::LoopCallback to_call)
 			{
-				to_call(255, KeyCodes::Key<255>::to_string());
+				to_call(GLFW_KEY_LAST, KeyCodes::Key<GLFW_KEY_LAST>::to_string());
 			}
 		};
 
 		/**
-		* @struct snuffbox::engine::KeyLoop<255, false>
+		* @struct snuffbox::engine::KeyLoop<GLFW_KEY_LAST, false>
 		* @brief The final iteration of the key loop if the key is invalid, this finalises the unroll
 		* @author Daniel Konings
 		*/
 		template <>
-		struct KeyCodeLoop<255, false>
+		struct KeyCodeLoop<GLFW_KEY_LAST, false>
 		{
 			/**
 			* @brief Final unroll, do nothing
