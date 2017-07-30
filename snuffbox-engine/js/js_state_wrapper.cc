@@ -258,6 +258,12 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		Local<Object> JSStateWrapper::Namespace() const
+		{
+			return Local<Object>::New(isolate_, namespace_);
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		Isolate* JSStateWrapper::isolate() const
 		{
 			return isolate_;
@@ -315,10 +321,14 @@ namespace snuffbox
 			};
 
 			JSFunctionRegister::Register(funcs);
+
+			instance_->namespace_.Reset(instance_->isolate_, JSWrapper::CreateObject());
+			JSWrapper::RegisterGlobal("snuff", instance_->Namespace());
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(JSStateWrapper, require, JS_BODY({
+		JS_FUNCTION_IMPL(JSStateWrapper, require, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -328,7 +338,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(JSStateWrapper, assert, JS_BODY({
+		JS_FUNCTION_IMPL(JSStateWrapper, assert, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("BS") == true)
 			{

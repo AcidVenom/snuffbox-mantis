@@ -9,6 +9,8 @@
 #include "../core/window.h"
 #include "../core/timer.h"
 
+#include "../input/input.h"
+
 namespace snuffbox
 {
 	namespace engine
@@ -20,6 +22,7 @@ namespace snuffbox
 			JSObjectRegister<CVar>::RegisterSingleton(ns);
 			JSObjectRegister<ContentManager>::RegisterSingleton(ns);
 			JSObjectRegister<Window>::RegisterSingleton(ns);
+			JSObjectRegister<Input>::RegisterSingleton(ns);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -32,12 +35,9 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void JSRegister::Register()
 		{
-			v8::Local<v8::Object> ns = JSWrapper::CreateObject();
-
+			v8::Local<v8::Object> ns = JSStateWrapper::Instance()->Namespace();
 			RegisterSingletons(ns);
 			RegisterConstructables(ns);
-
-			JSWrapper::RegisterGlobal("snuff", ns);
 		}
 	}
 }

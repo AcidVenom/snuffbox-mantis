@@ -163,8 +163,8 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		JS_REGISTER_IMPL_SINGLE(Logger, JS_BODY({
-			
+		JS_REGISTER_IMPL_SINGLE(Logger, JS_BODY(
+		{
 			JSFunctionRegister funcs[] =
 			{
 				JS_FUNCTION_REG(debug),
@@ -181,7 +181,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Logger, debug, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, debug, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -190,7 +191,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Logger, info, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, info, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -199,7 +201,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Logger, success, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, success, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -208,7 +211,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Logger, warning, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, warning, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -217,7 +221,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Logger, error, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, error, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -226,7 +231,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Logger, fatal, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, fatal, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{
@@ -235,7 +241,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Logger, rgb, JS_BODY({
+		JS_FUNCTION_IMPL(Logger, rgb, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			if (wrapper.Check("S") == true)
 			{

@@ -183,8 +183,8 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		JS_REGISTER_IMPL_SINGLE(ContentManager, JS_BODY({
-			
+		JS_REGISTER_IMPL_SINGLE(ContentManager, JS_BODY(
+		{
 			JSFunctionRegister funcs[] =
 			{
 				JS_FUNCTION_REG(load),
@@ -199,8 +199,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(ContentManager, load, JS_BODY({
-
+		JS_FUNCTION_IMPL(ContentManager, load, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 
 			if (wrapper.Check("SN") == true)
@@ -222,8 +222,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(ContentManager, get, JS_BODY({
-
+		JS_FUNCTION_IMPL(ContentManager, get, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 
 			if (wrapper.Check("SN") == true)
@@ -245,8 +245,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(ContentManager, unload, JS_BODY({
-			
+		JS_FUNCTION_IMPL(ContentManager, unload, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 
 			if (wrapper.Check("SN") == true)

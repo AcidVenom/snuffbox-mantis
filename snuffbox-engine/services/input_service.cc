@@ -11,43 +11,43 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetKeyboardPressed(KeyCodes::KeyCode ch) const
+		bool InputService::KeyboardPressed(KeyCodes::KeyCode ch) const
 		{
 			return false;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetKeyboardDown(KeyCodes::KeyCode ch) const
+		bool InputService::KeyboardDown(KeyCodes::KeyCode ch) const
 		{
 			return false;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetKeyboardReleased(KeyCodes::KeyCode ch) const
+		bool InputService::KeyboardReleased(KeyCodes::KeyCode ch) const
 		{
 			return false;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastKeyboardPressed() const
+		KeyCodes::KeyCode InputService::LastKeyboardPressed() const
 		{
 			return KeyCodes::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastKeyboardDown() const
+		KeyCodes::KeyCode InputService::LastKeyboardDown() const
 		{
 			return KeyCodes::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastKeyboardReleased() const
+		KeyCodes::KeyCode InputService::LastKeyboardReleased() const
 		{
 			return KeyCodes::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void InputService::GetMousePosition(int* px, int* py) const
+		void InputService::MousePosition(int* px, int* py) const
 		{
 			if (px != nullptr)
 			{
@@ -61,7 +61,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void InputService::GetMouseMovement(int* px, int* py) const
+		void InputService::MouseMovement(int* px, int* py) const
 		{
 			if (px != nullptr)
 			{
@@ -75,49 +75,49 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		int InputService::GetMouseWheelDelta() const
+		int InputService::MouseWheelDelta() const
 		{
 			return 0;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetMousePressed(KeyCodes::KeyCode button) const
+		bool InputService::MousePressed(KeyCodes::KeyCode button) const
 		{
 			return MouseButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetMouseDown(KeyCodes::KeyCode button) const
+		bool InputService::MouseDown(KeyCodes::KeyCode button) const
 		{
 			return MouseButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetMouseReleased(KeyCodes::KeyCode button) const
+		bool InputService::MouseReleased(KeyCodes::KeyCode button) const
 		{
 			return MouseButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastMousePressed() const
+		KeyCodes::KeyCode InputService::LastMousePressed() const
 		{
 			return MouseButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastMouseDown() const
+		KeyCodes::KeyCode InputService::LastMouseDown() const
 		{
 			return MouseButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastMouseReleased() const
+		KeyCodes::KeyCode InputService::LastMouseReleased() const
 		{
 			return MouseButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetControllerConnected(int id) const
+		bool InputService::IsControllerConnected(int id) const
 		{
 			return false;
 		}
@@ -129,55 +129,43 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void InputService::SetControllerConnectedCallback(ControllerButtons::ConnectedCallback cb)
-		{
-			
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void InputService::SetControllerDisconnectedCallback(ControllerButtons::DisconnectedCallback cb)
-		{
-
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		float InputService::GetControllerAxis(int id, ControllerButtons::Axes axis) const
+		float InputService::ControllerAxis(int id, ControllerButtons::Axes axis) const
 		{
 			return 0.0f;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetControllerPressed(int id, KeyCodes::KeyCode button) const
+		bool InputService::ControllerPressed(int id, KeyCodes::KeyCode button) const
 		{
 			return ControllerButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetControllerDown(int id, KeyCodes::KeyCode button) const
+		bool InputService::ControllerDown(int id, KeyCodes::KeyCode button) const
 		{
 			return ControllerButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool InputService::GetControllerReleased(int id, KeyCodes::KeyCode button) const
+		bool InputService::ControllerReleased(int id, KeyCodes::KeyCode button) const
 		{
 			return ControllerButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastControllerPressed() const
+		KeyCodes::KeyCode InputService::LastControllerPressed() const
 		{
 			return ControllerButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastControllerDown() const
+		KeyCodes::KeyCode InputService::LastControllerDown() const
 		{
 			return ControllerButtons::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::GetLastControllerReleased() const
+		KeyCodes::KeyCode InputService::LastControllerReleased() const
 		{
 			return ControllerButtons::kNone;
 		}

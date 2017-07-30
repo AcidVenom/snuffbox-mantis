@@ -141,8 +141,9 @@ namespace snuffbox
 			* @brief Registers a global value
 			* @param[in] name (const char*) The name to register the value under
 			* @param[in] val (const v8::Local<v8::Value>&) The value to register
+			* @param[in] in_namespace (bool) Should the global be registed in the 'snuff' namespace?
 			*/
-			static void RegisterGlobal(const char* name, const v8::Local<v8::Value>& val);
+			static void RegisterGlobal(const char* name, const v8::Local<v8::Value>& val, bool in_namespace = false);
 
 			/**
 			* @brief Constructs an argument error and logs it

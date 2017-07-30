@@ -3,6 +3,8 @@
 #include "../core/eastl.h"
 #include <GLFW/glfw3.h>
 
+#include <functional>
+
 #define SNUFF_BEGIN_KEY_CODES							\
 template <KeyCodes::KeyCode T>							\
 struct Key												\
@@ -32,7 +34,7 @@ namespace snuffbox
 		struct KeyCodes
 		{
 			typedef unsigned short KeyCode;
-			typedef void(*LoopCallback)(KeyCode, const char*);
+			typedef std::function<void(KeyCode, const char*)> LoopCallback;
 
 			SNUFF_BEGIN_KEY_CODES;
 

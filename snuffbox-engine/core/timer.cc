@@ -110,8 +110,8 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		JS_CONSTRUCTOR(Timer, JS_BODY({
-			
+		JS_CONSTRUCTOR(Timer, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			
 			name_ = wrapper.GetValue<String>(0, "");
@@ -121,8 +121,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_REGISTER_IMPL_TMPL(Timer, JS_BODY({
-
+		JS_REGISTER_IMPL_TMPL(Timer, JS_BODY(
+		{
 			JSFunctionRegister funcs[] =
 			{
 				JS_FUNCTION_REG(start),
@@ -140,16 +140,16 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Timer, start, JS_BODY({
-			
+		JS_FUNCTION_IMPL(Timer, start, JS_BODY(
+		{
 			JS_SETUP(Timer);
 
 			self->Start(wrapper.GetValue<bool>(0, true));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Timer, stop, JS_BODY({
-			
+		JS_FUNCTION_IMPL(Timer, stop, JS_BODY(
+		{
 			JS_SETUP(Timer);
 
 			float elapsed = self->Stop(
@@ -160,8 +160,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Timer, elapsed, JS_BODY({
-
+		JS_FUNCTION_IMPL(Timer, elapsed, JS_BODY(
+		{
 			JS_SETUP(Timer);
 
 			float elapsed = self->Elapsed(
@@ -171,8 +171,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(Timer, reset, JS_BODY({
-
+		JS_FUNCTION_IMPL(Timer, reset, JS_BODY(
+		{
 			JS_SETUP(Timer);
 
 			self->Reset();

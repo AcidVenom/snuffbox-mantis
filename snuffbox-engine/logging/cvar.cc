@@ -91,8 +91,8 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		JS_REGISTER_IMPL_SINGLE(CVar, JS_BODY({
-
+		JS_REGISTER_IMPL_SINGLE(CVar, JS_BODY(
+		{
 			JSFunctionRegister funcs[] =
 			{
 				JS_FUNCTION_REG(set),
@@ -104,8 +104,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(CVar, set, JS_BODY({
-			
+		JS_FUNCTION_IMPL(CVar, set, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 			CVarService& cvar = Services::Get<CVarService>();
 			LogService& log = Services::Get<LogService>();
@@ -138,8 +138,8 @@ namespace snuffbox
 		}));
 
 		//-----------------------------------------------------------------------------------------------
-		JS_FUNCTION_IMPL(CVar, get, JS_BODY({
-			
+		JS_FUNCTION_IMPL(CVar, get, JS_BODY(
+		{
 			JSWrapper wrapper(args);
 
 			if (wrapper.Check("S") == true)

@@ -20,6 +20,8 @@ namespace snuffbox
         template <typename T>
         struct JSObjectRegister;
 
+		struct JSRegister;
+
 		template <typename ... Args>
 		class JSCallback;
 
@@ -41,6 +43,8 @@ namespace snuffbox
 
             template <typename T>
             friend struct JSObjectRegister;
+
+			friend struct JSRegister;
 
 			template <typename ... Args>
 			friend class JSCallback;
@@ -159,6 +163,11 @@ namespace snuffbox
             */
             v8::Local<v8::Context> Context() const;
 
+			/**
+			* @return (v8::Local<v8::Object>) The 'snuff' namespace
+			*/
+			v8::Local<v8::Object> Namespace() const;
+
             /**
             * @return (v8::Isolate*) The isolated memory heap for this JavaScript state
             */
@@ -204,6 +213,7 @@ namespace snuffbox
             v8::Isolate* isolate_; //!< The isolated memory heap for this JavaScript state
             v8::Persistent<v8::Context> context_; //!< The context we will use for this JavaScript state
             v8::Persistent<v8::ObjectTemplate> global_; //!< The global scope for use with the JavaScript state
+			v8::Persistent<v8::Object> namespace_; //!< The 'snuff' namespace
             v8::Platform* platform_; //!< The V8 platform
 
             static JSStateWrapper* instance_; //!< The current instance

@@ -117,9 +117,16 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void JSWrapper::RegisterGlobal(const char* name, const Local<Value>& val)
+		void JSWrapper::RegisterGlobal(const char* name, const Local<Value>& val, bool in_namespace)
 		{
-			JSStateWrapper::Instance()->RegisterGlobal(name, val);
+			JSStateWrapper* wrapper = JSStateWrapper::Instance();
+			if (in_namespace == false)
+			{
+				wrapper->RegisterGlobal(name, val);
+				return;
+			}
+
+			SetObjectValue<v8::Local<v8::Value>>(wrapper->Namespace(), name, val);
 		}
 
 		//-----------------------------------------------------------------------------------------------

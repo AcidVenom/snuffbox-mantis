@@ -72,9 +72,6 @@ namespace snuffbox
 				kRT //!< The right trigger axis
 			};
 
-			typedef void(*ConnectedCallback)(void);
-			typedef void(*DisconnectedCallback)(int);
-
 			/**
 			* @brief Convenience function to start the unrolling loop
 			* @param[in] to_call (snuffbox::engine::KeyCodes::LoopCallback) The function to call each loop unroll
