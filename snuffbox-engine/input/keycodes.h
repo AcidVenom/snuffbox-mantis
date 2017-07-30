@@ -3,10 +3,16 @@
 #include "../core/eastl.h"
 #include <GLFW/glfw3.h>
 
-#define KEYCODE_TYPE unsigned short
+#define SNUFF_BEGIN_KEY_CODES							\
+template <KeyCodes::KeyCode T>							\
+struct Key												\
+{														\
+	static const char* to_string(){ return "unused"; }	\
+	static const bool is_valid = false;					\
+}
 
 #define SNUFF_DECL_KEY_CODE(key, val)				\
-static const KEYCODE_TYPE k ## key = val;			\
+static const KeyCodes::KeyCode k ## key = val;		\
 template <>											\
 struct Key<val>										\
 {													\
@@ -25,27 +31,10 @@ namespace snuffbox
 		*/
 		struct KeyCodes
 		{
-			typedef KEYCODE_TYPE KeyCode;
+			typedef unsigned short KeyCode;
 			typedef void(*LoopCallback)(KeyCode, const char*);
 
-			/**
-			* @struct snuffbox::engine::KeyCodes::Key<KEYCODE_TYPE>
-			* @brief Used to create a keycode definition along with a string value per keycode value
-			* @author Daniel Konings
-			*/
-			template <KEYCODE_TYPE T>
-			struct Key 
-			{
-				/**
-				* @return (const char*) Any unused keycode will return 'unused' as its string value
-				*/
-				static const char* to_string()
-				{
-					return "unused";
-				}
-
-				static const bool is_valid = false; //!< Validity of this keycode
-			};
+			SNUFF_BEGIN_KEY_CODES;
 
 			SNUFF_DECL_KEY_CODE(Any,				GLFW_KEY_SPACE - 1);
 			SNUFF_DECL_KEY_CODE(Space,				GLFW_KEY_SPACE);
@@ -176,20 +165,20 @@ namespace snuffbox
 		};
 
 		/**
-		* @struct snuffbox::engine::KeyLoop<i, valid>
+		* @struct snuffbox::engine::KeyLoop<T, i, valid, max>
 		* @brief Used to iterate over the declared keycodes and call a function per keycode/string combination
 		* @author Daniel Konings
 		*/
-		template <KEYCODE_TYPE i, bool valid>
+		template <typename T, KeyCodes::KeyCode i, bool valid, KeyCodes::KeyCode max>
 		struct KeyCodeLoop {};
 
 		/**
-		* @struct snuffbox::engine::KeyLoop<i, false>
+		* @struct snuffbox::engine::KeyLoop<T, i, false, max>
 		* @brief Invalid keycode iteration, it was never declared in snuffbox::engine::KeyCodes
 		* @author Daniel Konings
 		*/
-		template <KEYCODE_TYPE i>
-		struct KeyCodeLoop<i, false>
+		template <typename T, KeyCodes::KeyCode i, KeyCodes::KeyCode max>
+		struct KeyCodeLoop<T, i, false, max>
 		{
 			/**
 			* @brief The unroll function, continues the loop
@@ -197,17 +186,17 @@ namespace snuffbox
 			*/
 			static void loop(KeyCodes::LoopCallback to_call)
 			{
-				KeyCodeLoop<i + 1, KeyCodes::Key<i + 1>::is_valid>::loop(to_call);
+				KeyCodeLoop<T, i + 1, T::Key<i + 1>::is_valid, max>::loop(to_call);
 			}
 		};
 
 		/**
-		* @struct snuffbox::engine::KeyLoop<i, valid>
+		* @struct snuffbox::engine::KeyLoop<T, i, true, max>
 		* @brief Valid keycode iteration, it was declared in snuffbox::engine::KeyCodes
 		* @author Daniel Konings
 		*/
-		template <KEYCODE_TYPE i>
-		struct KeyCodeLoop<i, true>
+		template <typename T, KeyCodes::KeyCode i, KeyCodes::KeyCode max>
+		struct KeyCodeLoop<T, i, true, max>
 		{
 			/**
 			* @brief The unroll function, does the a call for each keycode in the loop with the provided function pointer
@@ -215,18 +204,18 @@ namespace snuffbox
 			*/
 			static void loop(KeyCodes::LoopCallback to_call)
 			{
-				to_call(i, KeyCodes::Key<i>::to_string());
-				KeyCodeLoop<i + 1, KeyCodes::Key<i + 1>::is_valid>::loop(to_call);
+				to_call(i, T::Key<i>::to_string());
+				KeyCodeLoop<T, i + 1, T::Key<i + 1>::is_valid, max>::loop(to_call);
 			}
 		};
 
 		/**
-		* @struct snuffbox::engine::KeyLoop<GLFW_KEY_LAST, true>
+		* @struct snuffbox::engine::KeyLoop<T, max, true, max>
 		* @brief The final iteration of the key loop if the key is valid, this finalises the unroll
 		* @author Daniel Konings
 		*/
-		template <>
-		struct KeyCodeLoop<GLFW_KEY_LAST, true>
+		template <typename T, KeyCodes::KeyCode max>
+		struct KeyCodeLoop<T, max, true, max>
 		{
 			/**
 			* @brief Final unroll, does the final call with the provided function pointer
@@ -234,17 +223,17 @@ namespace snuffbox
 			*/
 			static void loop(KeyCodes::LoopCallback to_call)
 			{
-				to_call(GLFW_KEY_LAST, KeyCodes::Key<GLFW_KEY_LAST>::to_string());
+				to_call(max, T::Key<max>::to_string());
 			}
 		};
 
 		/**
-		* @struct snuffbox::engine::KeyLoop<GLFW_KEY_LAST, false>
+		* @struct snuffbox::engine::KeyLoop<T, max, false, max>
 		* @brief The final iteration of the key loop if the key is invalid, this finalises the unroll
 		* @author Daniel Konings
 		*/
-		template <>
-		struct KeyCodeLoop<GLFW_KEY_LAST, false>
+		template <typename T, KeyCodes::KeyCode max>
+		struct KeyCodeLoop<T, max, false, max>
 		{
 			/**
 			* @brief Final unroll, do nothing

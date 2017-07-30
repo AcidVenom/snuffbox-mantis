@@ -14,7 +14,6 @@
 #endif
 
 #include "../core/window.h"
-#include "../input/keycodes.h"
 
 namespace snuffbox
 {
