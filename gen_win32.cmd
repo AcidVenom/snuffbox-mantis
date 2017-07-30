@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 echo [92msnuffbox-mantis generation tool, please make sure 'git' is installed and accessible from the command line[0m & echo.
 
 if not exist .\deps (
-	mkdir .\deps /s /q
+	mkdir .\deps
 	echo Created 'deps' folder & echo.
 )
 
