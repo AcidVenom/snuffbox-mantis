@@ -202,16 +202,12 @@ namespace snuffbox
 			Isolate* isolate = args_.GetIsolate();
             Local<Context> ctx = JSStateWrapper::Instance()->Context();
 
-			engine::String error = "(";
-
-            error += *v8::String::Utf8Value(args_.This()->ToString(ctx).ToLocalChecked());
-			error += ".";
-            error += *v8::String::Utf8Value(args_.Callee()->GetName()->ToString(ctx).ToLocalChecked());
-			error += ") ";
-
-			error += "Expected '" + TypeToString(expected) + "', but got '" + TypeToString(got) + "' for argument " + std::to_string(arg + 1).c_str() + "\n\t";
-
-			Services::Get<LogService>().Log(console::LogSeverity::kError, "{0}", error);
+			Services::Get<LogService>().Log(console::LogSeverity::kError, "\n\n({0}.{1}) Expected '{2}' but got '{3}' for argument {4}\n\t", 
+				*v8::String::Utf8Value(args_.This()->ToString(ctx).ToLocalChecked()),
+				*v8::String::Utf8Value(args_.Callee()->GetName()->ToString(ctx).ToLocalChecked()),
+				TypeToString(expected),
+				TypeToString(got),
+				std::to_string(arg + 1).c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
