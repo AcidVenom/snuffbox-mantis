@@ -7,19 +7,19 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void MouseButtons::MouseButtonsLoop(KeyCodes::LoopCallback to_call)
 		{
-			const KeyCodes::KeyCode start = MouseButtons::kLeft;
-			const KeyCodes::KeyCode max = MouseButtons::kNone;
+            const KeyCodes::KeyCode start = MouseButtonsEnum::kLeft;
+            const KeyCodes::KeyCode max = MouseButtonsEnum::kNone;
 
-			KeyCodeLoop<MouseButtons, start, MouseButtons::Key<start>::is_valid, max>::loop(to_call);
+            KeyCodeLoop<MouseButtons, start, MouseButtons::Key<start>::is_valid, max>::loop(to_call);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void ControllerButtons::ControllerButtonsLoop(KeyCodes::LoopCallback to_call)
 		{
-			const KeyCodes::KeyCode start = ControllerButtons::kA;
-			const KeyCodes::KeyCode max = ControllerButtons::kNone;
+            const KeyCodes::KeyCode start = ControllerButtonsEnum::kA;
+            const KeyCodes::KeyCode max = ControllerButtonsEnum::kNone;
 
-			KeyCodeLoop<ControllerButtons, start, ControllerButtons::Key<start>::is_valid, max>::loop(to_call);
+            KeyCodeLoop<ControllerButtons, start, ControllerButtons::Key<start>::is_valid, max>::loop(to_call);
 		}
 	}
 }

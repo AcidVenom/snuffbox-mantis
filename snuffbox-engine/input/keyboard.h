@@ -88,7 +88,7 @@ namespace snuffbox
 
 		private:
 
-			static const KeyCodes::KeyCode KEY_LENGTH_ = KeyCodes::kNone + 1; //!< The total length of the key array
+            static const KeyCodes::KeyCode KEY_LENGTH_ = KeyCodesEnum::kNone + 1; //!< The total length of the key array
 
 			Queue<Event> queue_; //!< The event queue
 			KeyState states_[KEY_LENGTH_]; //!< The different keystates

@@ -31,19 +31,19 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastKeyboardPressed() const
 		{
-			return KeyCodes::kNone;
+            return KeyCodesEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastKeyboardDown() const
 		{
-			return KeyCodes::kNone;
+            return KeyCodesEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastKeyboardReleased() const
 		{
-			return KeyCodes::kNone;
+            return KeyCodesEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -83,37 +83,37 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool InputService::MousePressed(KeyCodes::KeyCode button) const
 		{
-			return MouseButtons::kNone;
+            return MouseButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool InputService::MouseDown(KeyCodes::KeyCode button) const
 		{
-			return MouseButtons::kNone;
+            return MouseButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool InputService::MouseReleased(KeyCodes::KeyCode button) const
 		{
-			return MouseButtons::kNone;
+            return MouseButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastMousePressed() const
 		{
-			return MouseButtons::kNone;
+            return MouseButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastMouseDown() const
 		{
-			return MouseButtons::kNone;
+            return MouseButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastMouseReleased() const
 		{
-			return MouseButtons::kNone;
+            return MouseButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -137,37 +137,37 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool InputService::ControllerPressed(int id, KeyCodes::KeyCode button) const
 		{
-			return ControllerButtons::kNone;
+            return ControllerButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool InputService::ControllerDown(int id, KeyCodes::KeyCode button) const
 		{
-			return ControllerButtons::kNone;
+            return ControllerButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool InputService::ControllerReleased(int id, KeyCodes::KeyCode button) const
 		{
-			return ControllerButtons::kNone;
+            return ControllerButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastControllerPressed() const
 		{
-			return ControllerButtons::kNone;
+            return ControllerButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastControllerDown() const
 		{
-			return ControllerButtons::kNone;
+            return ControllerButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode InputService::LastControllerReleased() const
 		{
-			return ControllerButtons::kNone;
+            return ControllerButtonsEnum::kNone;
 		}
 	}
 }

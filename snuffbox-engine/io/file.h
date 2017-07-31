@@ -5,7 +5,7 @@
 #include "../core/eastl.h"
 #include <time.h>
 
-#include "../js./js_defines.h"
+#include "../js/js_defines.h"
 
 #ifdef SNUFF_WIN32
 #define fopen(out, path, flags) fopen_s(&out, path, flags);

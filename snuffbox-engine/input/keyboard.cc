@@ -14,7 +14,7 @@ namespace snuffbox
 
 			for (int i = 0; i < static_cast<int>(KeyState::kCount); ++i)
 			{
-				last_[i] = KeyCodes::kNone;
+                last_[i] = KeyCodesEnum::kNone;
 			}
 		}
 

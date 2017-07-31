@@ -35,7 +35,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool Input::KeyboardPressed(KeyCodes::KeyCode key) const
 		{
-			if (key == KeyCodes::kAny)
+            if (key == KeyCodesEnum::kAny)
 			{
 				return KeyboardAny(Keyboard::KeyState::kPressed);
 			}
@@ -47,7 +47,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool Input::KeyboardDown(KeyCodes::KeyCode key) const
 		{
-			if (key == KeyCodes::kAny)
+            if (key == KeyCodesEnum::kAny)
 			{
 				return KeyboardAny(Keyboard::KeyState::kDown);
 			}
@@ -59,7 +59,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool Input::KeyboardReleased(KeyCodes::KeyCode key) const
 		{
-			if (key == KeyCodes::kAny)
+            if (key == KeyCodesEnum::kAny)
 			{
 				return KeyboardAny(Keyboard::KeyState::kReleased);
 			}
@@ -186,7 +186,7 @@ namespace snuffbox
 			
 			if (wrapper.Check("N", false) == true)
 			{
-				int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodes::kNone));
+                int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodesEnum::kNone));
 				wrapper.ReturnValue<bool>(Services::Get<InputService>().KeyboardPressed(static_cast<KeyCodes::KeyCode>(key)));
 			}
 		}));
@@ -198,7 +198,7 @@ namespace snuffbox
 
 			if (wrapper.Check("N", false) == true)
 			{
-				int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodes::kNone));
+                int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodesEnum::kNone));
 				wrapper.ReturnValue<bool>(Services::Get<InputService>().KeyboardDown(static_cast<KeyCodes::KeyCode>(key)));
 			}
 		}));
@@ -210,7 +210,7 @@ namespace snuffbox
 
 			if (wrapper.Check("N", false) == true)
 			{
-				int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodes::kNone));
+                int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodesEnum::kNone));
 				wrapper.ReturnValue<bool>(Services::Get<InputService>().KeyboardReleased(static_cast<KeyCodes::KeyCode>(key)));
 			}
 		}));
