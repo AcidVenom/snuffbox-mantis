@@ -29,13 +29,23 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void KeyQueue::OnPressed(KeyCodes::KeyCode key)
 		{
-			states_[key] = KeyState::kPressed;
+			if (key >= states_.size())
+			{
+				return;
+			}
+
+			states_.at(key) = KeyState::kPressed;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void KeyQueue::OnReleased(KeyCodes::KeyCode key)
 		{
-			states_[key] = KeyState::kReleased;
+			if (key >= states_.size())
+			{
+				return;
+			}
+
+			states_.at(key) = KeyState::kReleased;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -103,6 +113,11 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool KeyQueue::KeyPressed(KeyCodes::KeyCode key) const
 		{
+			if (key >= states_.size())
+			{
+				return false;
+			}
+
 			const KeyState& state = states_.at(key);
 			return state == KeyState::kPressed;
 		}
@@ -110,6 +125,11 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool KeyQueue::KeyDown(KeyCodes::KeyCode key) const
 		{
+			if (key >= states_.size())
+			{
+				return false;
+			}
+
 			const KeyState& state = states_.at(key);
 			return state == KeyState::kPressed || state == KeyState::kDown;
 		}
@@ -117,6 +137,11 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool KeyQueue::KeyReleased(KeyCodes::KeyCode key) const
 		{
+			if (key >= states_.size())
+			{
+				return false;
+			}
+
 			const KeyState& state = states_.at(key);
 			return state == KeyState::kReleased;
 		}
