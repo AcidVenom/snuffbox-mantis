@@ -75,9 +75,17 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		int InputService::MouseWheelDelta() const
+		void InputService::MouseWheelDelta(int* sx, int* sy) const
 		{
-			return 0;
+			if (sx != nullptr)
+			{
+				*sx = 0;
+			}
+
+			if (sy != nullptr)
+			{
+				*sy = 0;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------

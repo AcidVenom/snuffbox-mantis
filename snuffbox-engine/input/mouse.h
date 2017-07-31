@@ -37,11 +37,25 @@ namespace snuffbox
 			void MouseMovement(int* mx, int* my) const;
 
 			/**
+			* @brief Retrieves the mouse scroll delta of this frame
+			* @param[out] sx (int*) The horizontal scroll delta
+			* @param[out] sy (int*) The vertical scroll delta
+			*/
+			void MouseWheelDelta(int* sx, int* sy) const;
+
+			/**
 			* @brief Sets the mouse position
 			* @param[in] x (int) The x coordinate, in pixels
 			* @param[in] y (int) The y coordinate, in pixels
 			*/
 			void SetPosition(int x, int y);
+
+			/**
+			* @brief Sets the current scroll delta
+			* @param[in] x (int) The horizontal scroll of the scroll wheel
+			* @param[in] y (int) The vertical scroll of the scroll wheel
+			*/
+			void SetScrollDelta(int x, int y);
 
 			/**
 			* @brief Updates the mouse
@@ -53,6 +67,7 @@ namespace snuffbox
 
 			int position_[2]; //!< The current position of the mouse within the client area
 			int delta_[2]; //!< The current movement of the mouse
+			int scroll_[2]; //!< The current scroll delta of the mouse
 		};
 	}
 }

@@ -101,8 +101,10 @@ namespace snuffbox
 
 			/**
 			* @return (int) The delta of the scroll wheel
+			* @param[out] sx (int*) The horizontal delta
+			* @param[out] sy (int*) The vertical delta
 			*/
-			virtual int MouseWheelDelta() const;
+			virtual void MouseWheelDelta(int* sx, int* sy) const;
 
 			/**
 			* @brief Retrieves the pressed state for a mouse keycode

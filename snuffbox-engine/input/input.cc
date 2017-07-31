@@ -113,6 +113,12 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void Input::MouseWheelDelta(int* sx, int* sy) const
+		{
+			mouse_.MouseWheelDelta(sx, sy);
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		bool Input::MousePressed(KeyCodes::KeyCode key) const
 		{
 			if (key == MouseButtonsEnum::kAny)
@@ -179,6 +185,12 @@ namespace snuffbox
 		void Input::MousePositionCallback(GLFWwindow* window, double xpos, double ypos)
 		{
 			Self()->mouse_.SetPosition(static_cast<int>(xpos + 0.5f), static_cast<int>(ypos + 0.5f));
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+		{
+			Self()->mouse_.SetScrollDelta(static_cast<int>(xoffset + 0.5f), static_cast<int>(yoffset + 0.5f));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -339,7 +351,18 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, mouseWheelDelta, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			int sx, sy;
+
+			Services::Get<InputService>().MouseWheelDelta(&sx, &sy);
+
+			v8::Local<v8::Object> to_return = JSWrapper::CreateObject();
+
+			JSWrapper::SetObjectValue(to_return, "x", sx);
+			JSWrapper::SetObjectValue(to_return, "y", sy);
+
+			wrapper.ReturnValue<v8::Local<v8::Object>>(to_return);
 		}));
 
 		//-----------------------------------------------------------------------------------------------

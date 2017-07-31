@@ -94,6 +94,11 @@ namespace snuffbox
 			void MouseMovement(int* mx, int* my) const override;
 
 			/**
+			* @see snuffbox::engine::InputService::MouseWheelDelta
+			*/
+			void MouseWheelDelta(int* sx, int* sy) const override;
+
+			/**
 			* @see snuffbox::engine::InputService::MousePressed
 			*/
 			bool MousePressed(KeyCodes::KeyCode ch) const override;
@@ -139,6 +144,12 @@ namespace snuffbox
 			* @see http://www.glfw.org/docs/latest/input_guide.html
 			*/
 			static void MousePositionCallback(GLFWwindow* window, double xpos, double ypos);
+
+			/**
+			* @see http://www.glfw.org/docs/latest/input_guide.html
+			*/
+			static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
 
 		private:
 
