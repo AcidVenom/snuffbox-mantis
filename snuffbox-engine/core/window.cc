@@ -47,6 +47,7 @@ namespace snuffbox
 			{
 				glfwSetKeyCallback(window_, Input::KeyboardCallback);
 				glfwSetMouseButtonCallback(window_, Input::MouseButtonCallback);
+				glfwSetCursorPosCallback(window_, Input::MousePositionCallback);
 			}
 		}
 

@@ -61,16 +61,16 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void InputService::MouseMovement(int* px, int* py) const
+		void InputService::MouseMovement(int* mx, int* my) const
 		{
-			if (px != nullptr)
+			if (mx != nullptr)
 			{
-				*px = 0;
+				*mx = 0;
 			}
 
-			if (py != nullptr)
+			if (my != nullptr)
 			{
-				*py = 0;
+				*my = 0;
 			}
 		}
 

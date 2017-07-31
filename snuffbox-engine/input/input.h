@@ -84,6 +84,16 @@ namespace snuffbox
 			KeyCodes::KeyCode LastKeyboardReleased() const override;
 
 			/**
+			* @see snuffbox::engine::InputService::MousePosition
+			*/
+			void MousePosition(int* px, int* py) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::MouseMovement
+			*/
+			void MouseMovement(int* mx, int* my) const override;
+
+			/**
 			* @see snuffbox::engine::InputService::MousePressed
 			*/
 			bool MousePressed(KeyCodes::KeyCode ch) const override;
@@ -124,6 +134,11 @@ namespace snuffbox
 			* @see http://www.glfw.org/docs/latest/input_guide.html
 			*/
 			static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+
+			/**
+			* @see http://www.glfw.org/docs/latest/input_guide.html
+			*/
+			static void MousePositionCallback(GLFWwindow* window, double xpos, double ypos);
 
 		private:
 

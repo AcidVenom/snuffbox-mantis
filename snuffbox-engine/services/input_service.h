@@ -94,10 +94,10 @@ namespace snuffbox
 
 			/**
 			* @brief Retrieves the current mouse movement delta
-			* @param[out] px (int*) The x delta in pixels
-			* @param[out] py (int*) The y delta in pixels
+			* @param[out] mx (int*) The x delta in pixels
+			* @param[out] my (int*) The y delta in pixels
 			*/
-			virtual void MouseMovement(int* px, int* py) const;
+			virtual void MouseMovement(int* mx, int* my) const;
 
 			/**
 			* @return (int) The delta of the scroll wheel

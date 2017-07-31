@@ -46,8 +46,7 @@ namespace snuffbox
 		{
 			unsigned int count = keyboard_.Flush();
 			last_type_ = count > 0 ? InputType::kKeyboard : last_type_;
-
-			mouse_.Flush();
+			last_type_ = mouse_.Update() == true ? InputType::kKeyboard : last_type_;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -99,6 +98,18 @@ namespace snuffbox
 		KeyCodes::KeyCode Input::LastKeyboardReleased() const
 		{
 			return keyboard_.LastReleased();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::MousePosition(int* px, int* py) const
+		{
+			mouse_.MousePosition(px, py);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::MouseMovement(int* mx, int* my) const
+		{
+			mouse_.MouseMovement(mx, my);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -162,6 +173,12 @@ namespace snuffbox
 		void Input::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 		{
 			Self()->mouse_.PostEvent(CreateKeyEvent(button, action));
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::MousePositionCallback(GLFWwindow* window, double xpos, double ypos)
+		{
+			Self()->mouse_.SetPosition(static_cast<int>(xpos + 0.5f), static_cast<int>(ypos + 0.5f));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -290,12 +307,34 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, mousePosition, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			int px, py;
+
+			Services::Get<InputService>().MousePosition(&px, &py);
+
+			v8::Local<v8::Object> to_return = JSWrapper::CreateObject();
+
+			JSWrapper::SetObjectValue(to_return, "x", px);
+			JSWrapper::SetObjectValue(to_return, "y", py);
+
+			wrapper.ReturnValue<v8::Local<v8::Object>>(to_return);
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, mouseMovement, JS_BODY({
 		
+			JSWrapper wrapper(args);
+			int mx, my;
+
+			Services::Get<InputService>().MouseMovement(&mx, &my);
+
+			v8::Local<v8::Object> to_return = JSWrapper::CreateObject();
+
+			JSWrapper::SetObjectValue(to_return, "x", mx);
+			JSWrapper::SetObjectValue(to_return, "y", my);
+
+			wrapper.ReturnValue<v8::Local<v8::Object>>(to_return);
 		}));
 
 		//-----------------------------------------------------------------------------------------------

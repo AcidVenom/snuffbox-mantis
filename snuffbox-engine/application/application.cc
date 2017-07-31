@@ -55,8 +55,8 @@ namespace snuffbox
 			while (window_service_->Closed() == false)
 			{
 				delta_timer_->Start();
-				window_service_->Poll();
 				input_service_->Update();
+				window_service_->Poll();
 				content_service_->Update();
 
 				OnUpdate(delta_time_);
