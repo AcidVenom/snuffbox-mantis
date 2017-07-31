@@ -13,6 +13,7 @@
 #include "../io/script.h"
 #endif
 
+#include "../input/input.h"
 #include "../core/window.h"
 
 namespace snuffbox
@@ -55,6 +56,7 @@ namespace snuffbox
 			{
 				delta_timer_->Start();
 				window_service_->Poll();
+				input_service_->Update();
 				content_service_->Update();
 
 				OnUpdate(delta_time_);
@@ -85,6 +87,7 @@ namespace snuffbox
 			cvar_service_ = Memory::ConstructUnique<CVar>();
 			log_service_ = Memory::ConstructUnique<Logger>();
 			content_service_ = Memory::ConstructUnique<ContentManager>();
+			input_service_ = Memory::ConstructUnique<Input>();
 			window_service_ = Memory::ConstructUnique<Window>();
 
 			cvar_service_->ParseCommandLine(argc, argv);
@@ -92,6 +95,7 @@ namespace snuffbox
 
 			Services::Provide<CVarService>(cvar_service_.get());
 			Services::Provide<LogService>(log_service_.get());
+			Services::Provide<InputService>(input_service_.get());
 
 			content_service_->Initialise(cvar_service_.get(), this);
 
@@ -99,7 +103,7 @@ namespace snuffbox
 
 			cvar_service_->LogAll();
 
-			window_service_->Initialise("Snuffbox");
+			window_service_->Initialise("Snuffbox", input_service_.get());
 			Services::Provide<WindowService>(window_service_.get());
 
 			delta_timer_ = Memory::ConstructUnique<Timer>("Delta time");

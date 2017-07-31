@@ -11,7 +11,7 @@ namespace snuffbox
 		const uint32_t Compiler::FileHeader::MAGIC = 0x46554E53;
 
 		//-----------------------------------------------------------------------------------------------
-		Compiler::Compiler(void*(*allocation)(size_t), void(*deallocation)(void*)) :
+		Compiler::Compiler(Allocation allocation, Deallocation deallocation) :
 			allocator_(allocation),
 			deallocator_(deallocation),
 			data_(nullptr)

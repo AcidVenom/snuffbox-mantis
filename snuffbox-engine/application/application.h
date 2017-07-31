@@ -13,6 +13,7 @@ namespace snuffbox
 		class Logger;
 		class CVar;
 		class ContentManager;
+		class Input;
 
 #ifdef SNUFF_JAVASCRIPT
 		class JSStateWrapper;
@@ -139,6 +140,7 @@ namespace snuffbox
 			UniquePtr<Logger> log_service_; //!< The logging service
 			UniquePtr<CVar> cvar_service_; //!< The CVar service
 			UniquePtr<ContentManager> content_service_; //!< The content service
+			UniquePtr<Input> input_service_; //!< The input service
 			UniquePtr<Window> window_service_; //!< The window to render to
 
 			UniquePtr<Timer> delta_timer_; //!< The delta timer

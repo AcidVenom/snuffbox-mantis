@@ -5,6 +5,106 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
+		void Input::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+		{
+			Input* input = static_cast<Input*>(&Services::Get<InputService>());
+
+			Keyboard::Event evt;
+			switch (action)
+			{
+			case GLFW_PRESS:
+				evt.type = Keyboard::Event::Type::kPressed;
+				break;
+
+			case GLFW_REPEAT:
+				evt.type = Keyboard::Event::Type::kRepeat;
+				break;
+
+			case GLFW_RELEASE:
+				evt.type = Keyboard::Event::Type::kReleased;
+				break;
+			}
+
+			evt.key = static_cast<KeyCodes::KeyCode>(key);
+
+			input->keyboard_.PostEvent(evt);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::KeyboardPressed(KeyCodes::KeyCode key) const
+		{
+			if (key == KeyCodes::kAny)
+			{
+				return KeyboardAny(Keyboard::KeyState::kPressed);
+			}
+
+			Keyboard::KeyState state = keyboard_.states_[key];
+			return state == Keyboard::KeyState::kPressed;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::KeyboardDown(KeyCodes::KeyCode key) const
+		{
+			if (key == KeyCodes::kAny)
+			{
+				return KeyboardAny(Keyboard::KeyState::kDown);
+			}
+
+			Keyboard::KeyState state = keyboard_.states_[key];
+			return state == Keyboard::KeyState::kDown || state == Keyboard::KeyState::kPressed;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::KeyboardReleased(KeyCodes::KeyCode key) const
+		{
+			if (key == KeyCodes::kAny)
+			{
+				return KeyboardAny(Keyboard::KeyState::kReleased);
+			}
+
+			Keyboard::KeyState state = keyboard_.states_[key];
+			return state == Keyboard::KeyState::kReleased;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastKeyboardPressed() const
+		{
+			return keyboard_.last_[static_cast<int>(Keyboard::KeyState::kPressed)];
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastKeyboardDown() const
+		{
+			return keyboard_.last_[static_cast<int>(Keyboard::KeyState::kDown)];
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastKeyboardReleased() const
+		{
+			return keyboard_.last_[static_cast<int>(Keyboard::KeyState::kReleased)];
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::KeyboardAny(Keyboard::KeyState state) const
+		{
+			for (KeyCodes::KeyCode i = 0; i < Keyboard::KEY_LENGTH_; ++i)
+			{
+				if (keyboard_.states_[i] == state || (state == Keyboard::KeyState::kDown && keyboard_.states_[i] == Keyboard::KeyState::kPressed))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::Update()
+		{
+			keyboard_.Flush();
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		JS_REGISTER_IMPL_SINGLE(Input, JS_BODY(
 		{
 			JSFunctionRegister funcs[] = {
@@ -54,6 +154,11 @@ namespace snuffbox
 				JSWrapper::SetObjectValue(control_enum, name, static_cast<unsigned int>(ch)); 
 			});
 
+			JSWrapper::SetObjectValue(control_enum, "LeftAxis", static_cast<unsigned int>(ControllerButtons::Axes::kLeftAxis));
+			JSWrapper::SetObjectValue(control_enum, "RightAxis", static_cast<unsigned int>(ControllerButtons::Axes::kRightAxis));
+			JSWrapper::SetObjectValue(control_enum, "LT", static_cast<unsigned int>(ControllerButtons::Axes::kLT));
+			JSWrapper::SetObjectValue(control_enum, "RT", static_cast<unsigned int>(ControllerButtons::Axes::kRT));
+
 			JSWrapper::RegisterGlobal("Keyboard", key_enum, true);
 			JSWrapper::RegisterGlobal("Mouse", mb_enum, true);
 			JSWrapper::RegisterGlobal("Controller", control_enum, true);
@@ -63,32 +168,59 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, keyboardPressed, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			
+			if (wrapper.Check("N", false) == true)
+			{
+				int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodes::kNone));
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().KeyboardPressed(static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, keyboardDown, JS_BODY({
 		
+			JSWrapper wrapper(args);
+
+			if (wrapper.Check("N", false) == true)
+			{
+				int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodes::kNone));
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().KeyboardDown(static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, keyboardReleased, JS_BODY({
 		
+			JSWrapper wrapper(args);
+
+			if (wrapper.Check("N", false) == true)
+			{
+				int key = wrapper.GetValue<int>(0, static_cast<int>(KeyCodes::kNone));
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().KeyboardReleased(static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastKeyboardPressed, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastKeyboardPressed()));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastKeyboardDown, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastKeyboardDown()));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastKeyboardReleased, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastKeyboardReleased()));
 		}));
 
 		//-----------------------------------------------------------------------------------------------

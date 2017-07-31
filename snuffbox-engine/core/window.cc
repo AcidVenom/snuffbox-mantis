@@ -1,8 +1,9 @@
 #include "window.h"
 
 #include "../services/log_service.h"
+#include "../input/input.h"
 
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 
 namespace snuffbox
 {
@@ -24,7 +25,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Window::Initialise(const String& title, unsigned int width, unsigned int height)
+		void Window::Initialise(const String& title, const Input* input, unsigned int width, unsigned int height)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -41,6 +42,11 @@ namespace snuffbox
 			title_ = title;
 			width_ = width;
 			height_ = height;
+
+			if (input != nullptr)
+			{
+				glfwSetKeyCallback(window_, Input::KeyboardCallback);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------

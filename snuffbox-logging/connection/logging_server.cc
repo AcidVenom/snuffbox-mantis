@@ -110,6 +110,11 @@ namespace snuffbox
 			const int size = sizeof(LoggingStream::Packet);
 			bool connected = ReceivePacket(other_, size, quit);
 
+			if (connected == false)
+			{
+				return LoggingSocket::ConnectionStatus::kDisconnected;
+			}
+
 			LoggingStream::Packet* packet = reinterpret_cast<LoggingStream::Packet*>(buffer_);
 			if (packet->command == LoggingStream::Commands::kLog)
 			{

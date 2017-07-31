@@ -13,6 +13,7 @@ namespace snuffbox
 	{
 		class SnuffboxApp;
 		class CVar;
+		class Input;
 
 		/**
 		* @class snuffbox::engine::Window : [JSObject]
@@ -49,18 +50,16 @@ namespace snuffbox
 				unsigned int size[2]; //!< If we have a kSetSize flag, this is the value to set
 			};
 
-			/**
-			* @brief Default constructor
-			*/
 			Window();
 
 			/**
 			* @brief Initialises the window with a width and height
 			* @param[in] title (const snuffbox::engine::String&) The title of the window
+			* @param[in] input (const snuffbox::engine::Input*) Used to check if the input callback from GLFW should be set
 			* @param[in] width (unsigned int) The width of the window, default = snuffbox::engine::Window::DEFAULT_WIDTH_
 			* @param[in] height (unsigned int) The height of the window, default = snuffbox::engine::Window::DEFAULT_HEIGHT_
 			*/
-			void Initialise(const String& title, unsigned int width = DEFAULT_WIDTH_, unsigned int height = DEFAULT_HEIGHT_);
+			void Initialise(const String& title, const Input* input, unsigned int width = DEFAULT_WIDTH_, unsigned int height = DEFAULT_HEIGHT_);
 
 			/**
 			* @see snuffbox::engine::WindowService::SetTitle

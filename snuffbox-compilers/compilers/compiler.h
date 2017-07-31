@@ -2,6 +2,7 @@
 
 #include <inttypes.h>
 #include <cstdio>
+#include <functional>
 
 namespace snuffbox
 {
@@ -33,8 +34,8 @@ namespace snuffbox
 
 		public:
 
-			typedef void*(*Allocation)(size_t);
-			typedef void(*Deallocation)(void*);
+			typedef std::function<void*(size_t)> Allocation;
+			typedef std::function<void(void*)> Deallocation;
 
 			/**
 			* @brief Setup the compiler with its allocation function
