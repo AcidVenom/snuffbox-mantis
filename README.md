@@ -134,7 +134,7 @@ Get depot_tools from the chromium git
 Prepend depot_tools to $PATH, preferably in .bashrc
 
 ```bash
--  export PATH=`pwd`/path/to/depot_tools:"$PATH"
+-  export PATH=/path/to/depot_tools:"$PATH"
 ```
 
 #### Generation & compilation
