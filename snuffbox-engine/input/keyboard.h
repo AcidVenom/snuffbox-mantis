@@ -82,8 +82,9 @@ namespace snuffbox
 
 			/**
 			* @brief Processes the event queue
+			* @return (unsigned int) The number of processed events
 			*/
-			void Flush();
+			unsigned int Flush();
 
 		private:
 

@@ -46,8 +46,10 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Keyboard::Flush()
+		unsigned int Keyboard::Flush()
 		{
+			unsigned int count = 0;
+
 			ResetStates();
 
 			KeyCodes::KeyCode key;
@@ -82,7 +84,11 @@ namespace snuffbox
 				last_[static_cast<int>(state)] = key;
 
 				queue_.pop();
+
+				++count;
 			}
+
+			return count;
 		}
 	}
 }

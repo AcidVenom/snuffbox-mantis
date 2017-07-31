@@ -11,6 +11,7 @@ namespace snuffbox
 	{
 		class SnuffboxApp;
 		class Window;
+		class Allocator;
 
 		/**
 		* @class snuffbox::engine::Input : [JSObject] public snuffbox::engine::InputService
@@ -21,6 +22,26 @@ namespace snuffbox
 		{
 			friend class SnuffboxApp;
 			friend class Window;
+			friend class Allocator;
+
+		protected:
+
+			/**
+			* @brief Default constructor
+			*/
+			Input();
+
+			/**
+			* @brief Checks if any keyboard key has a specified state
+			* @param[in] state (snuffbox::engine::Keyboard::KeyState) The state to check for
+			* @return (bool) Was any key found with the specified state?
+			*/
+			bool KeyboardAny(Keyboard::KeyState state) const;
+
+			/**
+			* @brief Updates all queues of every input type
+			*/
+			void Update();
 
 		public:
 
@@ -57,18 +78,6 @@ namespace snuffbox
 		protected:
 
 			/**
-			* @brief Checks if any keyboard key has a specified state
-			* @param[in] state (snuffbox::engine::Keyboard::KeyState) The state to check for
-			* @return (bool) Was any key found with the specified state?
-			*/
-			bool KeyboardAny(Keyboard::KeyState state) const;
-
-			/**
-			* @brief Updates all queues of every input type
-			*/
-			void Update();
-
-			/**
 			* @see http://www.glfw.org/docs/latest/input_guide.html
 			*/
 			static void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -76,6 +85,7 @@ namespace snuffbox
 		private:
 
 			Keyboard keyboard_; //!< The keyboard
+			InputType last_type_; //!< The last input type
 
 		public:
 

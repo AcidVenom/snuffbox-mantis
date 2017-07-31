@@ -5,29 +5,31 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		void Input::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+		Input::Input() :
+			last_type_(InputType::kKeyboard)
 		{
-			Input* input = static_cast<Input*>(&Services::Get<InputService>());
 
-			Keyboard::Event evt;
-			switch (action)
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::KeyboardAny(Keyboard::KeyState state) const
+		{
+			for (KeyCodes::KeyCode i = 0; i < Keyboard::KEY_LENGTH_; ++i)
 			{
-			case GLFW_PRESS:
-				evt.type = Keyboard::Event::Type::kPressed;
-				break;
-
-			case GLFW_REPEAT:
-				evt.type = Keyboard::Event::Type::kRepeat;
-				break;
-
-			case GLFW_RELEASE:
-				evt.type = Keyboard::Event::Type::kReleased;
-				break;
+				if (keyboard_.states_[i] == state || (state == Keyboard::KeyState::kDown && keyboard_.states_[i] == Keyboard::KeyState::kPressed))
+				{
+					return true;
+				}
 			}
 
-			evt.key = static_cast<KeyCodes::KeyCode>(key);
+			return false;
+		}
 
-			input->keyboard_.PostEvent(evt);
+		//-----------------------------------------------------------------------------------------------
+		void Input::Update()
+		{
+			unsigned int count = keyboard_.Flush();
+			last_type_ = count > 0 ? InputType::kKeyboard : last_type_;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -85,23 +87,29 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool Input::KeyboardAny(Keyboard::KeyState state) const
+		void Input::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
-			for (KeyCodes::KeyCode i = 0; i < Keyboard::KEY_LENGTH_; ++i)
+			Input* input = static_cast<Input*>(&Services::Get<InputService>());
+
+			Keyboard::Event evt;
+			switch (action)
 			{
-				if (keyboard_.states_[i] == state || (state == Keyboard::KeyState::kDown && keyboard_.states_[i] == Keyboard::KeyState::kPressed))
-				{
-					return true;
-				}
+			case GLFW_PRESS:
+				evt.type = Keyboard::Event::Type::kPressed;
+				break;
+
+			case GLFW_REPEAT:
+				evt.type = Keyboard::Event::Type::kRepeat;
+				break;
+
+			case GLFW_RELEASE:
+				evt.type = Keyboard::Event::Type::kReleased;
+				break;
 			}
 
-			return false;
-		}
+			evt.key = static_cast<KeyCodes::KeyCode>(key);
 
-		//-----------------------------------------------------------------------------------------------
-		void Input::Update()
-		{
-			keyboard_.Flush();
+			input->keyboard_.PostEvent(evt);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -138,6 +146,7 @@ namespace snuffbox
 			v8::Local<v8::Object> key_enum = JSWrapper::CreateObject();
 			v8::Local<v8::Object> mb_enum = JSWrapper::CreateObject();
 			v8::Local<v8::Object> control_enum = JSWrapper::CreateObject();
+			v8::Local<v8::Object> input_type_enum = JSWrapper::CreateObject();
 
 			KeyCodes::KeyCodeLoop([=](KeyCodes::KeyCode ch, const char* name) 
 			{ 
@@ -159,9 +168,13 @@ namespace snuffbox
 			JSWrapper::SetObjectValue(control_enum, "LT", static_cast<unsigned int>(ControllerButtons::Axes::kLT));
 			JSWrapper::SetObjectValue(control_enum, "RT", static_cast<unsigned int>(ControllerButtons::Axes::kRT));
 
+			JSWrapper::SetObjectValue(input_type_enum, "Keyboard", static_cast<unsigned int>(InputType::kKeyboard));
+			JSWrapper::SetObjectValue(input_type_enum, "Controller", static_cast<unsigned int>(InputType::kController));
+
 			JSWrapper::RegisterGlobal("Keyboard", key_enum, true);
 			JSWrapper::RegisterGlobal("Mouse", mb_enum, true);
 			JSWrapper::RegisterGlobal("Controller", control_enum, true);
+			JSWrapper::RegisterGlobal("InputType", input_type_enum, true);
 
 			JSFunctionRegister::Register(funcs, obj);
 		}));
