@@ -4,6 +4,7 @@
 #include "../services/input_service.h"
 
 #include "keyboard.h"
+#include "mouse.h"
 
 namespace snuffbox
 {
@@ -32,11 +33,18 @@ namespace snuffbox
 			Input();
 
 			/**
-			* @brief Checks if any keyboard key has a specified state
-			* @param[in] state (snuffbox::engine::Keyboard::KeyState) The state to check for
-			* @return (bool) Was any key found with the specified state?
+			* @brief Used to create a key event from a GLFW window event
+			* @param[in] key (int) The GLFW key that was received from a callback
+			* @param[in] action (int) The GLFW action that was received from a callback
+			* @return (snuffbox::engine::KeyQueue::Event) The constructed event
 			*/
-			bool KeyboardAny(Keyboard::KeyState state) const;
+			static KeyQueue::Event CreateKeyEvent(int key, int action);
+
+			/**
+			* @return (snuffbox::engine::Input*) The pointer to the singleton service, used within the callbacks of GLFW
+			* @remarks This is done this way, because GLFW still uses C-styled function pointers that do not contain state
+			*/
+			static Input* Self();
 
 			/**
 			* @brief Updates all queues of every input type
@@ -75,6 +83,36 @@ namespace snuffbox
 			*/
 			KeyCodes::KeyCode LastKeyboardReleased() const override;
 
+			/**
+			* @see snuffbox::engine::InputService::MousePressed
+			*/
+			bool MousePressed(KeyCodes::KeyCode ch) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::MouseDown
+			*/
+			bool MouseDown(KeyCodes::KeyCode ch) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::MouseReleased
+			*/
+			bool MouseReleased(KeyCodes::KeyCode ch) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::LastMousePressed
+			*/
+			KeyCodes::KeyCode LastMousePressed() const override;
+
+			/**
+			* @see snuffbox::engine::InputService::LastMouseDown
+			*/
+			KeyCodes::KeyCode LastMouseDown() const override;
+
+			/**
+			* @see snuffbox::engine::InputService::LastMouseReleased
+			*/
+			KeyCodes::KeyCode LastMouseReleased() const override;
+
 		protected:
 
 			/**
@@ -82,9 +120,15 @@ namespace snuffbox
 			*/
 			static void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+			/**
+			* @see http://www.glfw.org/docs/latest/input_guide.html
+			*/
+			static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+
 		private:
 
 			Keyboard keyboard_; //!< The keyboard
+			Mouse mouse_; //!< The mouse
 			InputType last_type_; //!< The last input type
 
 		public:

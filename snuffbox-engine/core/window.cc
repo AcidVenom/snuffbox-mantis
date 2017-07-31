@@ -46,6 +46,7 @@ namespace snuffbox
 			if (input != nullptr)
 			{
 				glfwSetKeyCallback(window_, Input::KeyboardCallback);
+				glfwSetMouseButtonCallback(window_, Input::MouseButtonCallback);
 			}
 		}
 

@@ -12,85 +12,8 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool Input::KeyboardAny(Keyboard::KeyState state) const
+		KeyQueue::Event Input::CreateKeyEvent(int key, int action)
 		{
-			for (KeyCodes::KeyCode i = 0; i < Keyboard::KEY_LENGTH_; ++i)
-			{
-				if (keyboard_.states_[i] == state || (state == Keyboard::KeyState::kDown && keyboard_.states_[i] == Keyboard::KeyState::kPressed))
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void Input::Update()
-		{
-			unsigned int count = keyboard_.Flush();
-			last_type_ = count > 0 ? InputType::kKeyboard : last_type_;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool Input::KeyboardPressed(KeyCodes::KeyCode key) const
-		{
-            if (key == KeyCodesEnum::kAny)
-			{
-				return KeyboardAny(Keyboard::KeyState::kPressed);
-			}
-
-			Keyboard::KeyState state = keyboard_.states_[key];
-			return state == Keyboard::KeyState::kPressed;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool Input::KeyboardDown(KeyCodes::KeyCode key) const
-		{
-            if (key == KeyCodesEnum::kAny)
-			{
-				return KeyboardAny(Keyboard::KeyState::kDown);
-			}
-
-			Keyboard::KeyState state = keyboard_.states_[key];
-			return state == Keyboard::KeyState::kDown || state == Keyboard::KeyState::kPressed;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool Input::KeyboardReleased(KeyCodes::KeyCode key) const
-		{
-            if (key == KeyCodesEnum::kAny)
-			{
-				return KeyboardAny(Keyboard::KeyState::kReleased);
-			}
-
-			Keyboard::KeyState state = keyboard_.states_[key];
-			return state == Keyboard::KeyState::kReleased;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode Input::LastKeyboardPressed() const
-		{
-			return keyboard_.last_[static_cast<int>(Keyboard::KeyState::kPressed)];
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode Input::LastKeyboardDown() const
-		{
-			return keyboard_.last_[static_cast<int>(Keyboard::KeyState::kDown)];
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode Input::LastKeyboardReleased() const
-		{
-			return keyboard_.last_[static_cast<int>(Keyboard::KeyState::kReleased)];
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void Input::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-		{
-			Input* input = static_cast<Input*>(&Services::Get<InputService>());
-
 			Keyboard::Event evt;
 			switch (action)
 			{
@@ -109,7 +32,136 @@ namespace snuffbox
 
 			evt.key = static_cast<KeyCodes::KeyCode>(key);
 
-			input->keyboard_.PostEvent(evt);
+			return evt;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		Input* Input::Self()
+		{
+			return static_cast<Input*>(&Services::Get<InputService>());
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::Update()
+		{
+			unsigned int count = keyboard_.Flush();
+			last_type_ = count > 0 ? InputType::kKeyboard : last_type_;
+
+			mouse_.Flush();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::KeyboardPressed(KeyCodes::KeyCode key) const
+		{
+            if (key == KeyCodesEnum::kAny)
+			{
+				return keyboard_.AnyKey(Keyboard::KeyState::kPressed);
+			}
+
+			return keyboard_.KeyPressed(key);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::KeyboardDown(KeyCodes::KeyCode key) const
+		{
+			if (key == KeyCodesEnum::kAny)
+			{
+				return keyboard_.AnyKey(Keyboard::KeyState::kDown);
+			}
+
+			return keyboard_.KeyDown(key);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::KeyboardReleased(KeyCodes::KeyCode key) const
+		{
+			if (key == KeyCodesEnum::kAny)
+			{
+				return keyboard_.AnyKey(Keyboard::KeyState::kReleased);
+			}
+
+			return keyboard_.KeyReleased(key);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastKeyboardPressed() const
+		{
+			return keyboard_.LastPressed();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastKeyboardDown() const
+		{
+			return keyboard_.LastDown();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastKeyboardReleased() const
+		{
+			return keyboard_.LastReleased();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::MousePressed(KeyCodes::KeyCode key) const
+		{
+			if (key == MouseButtonsEnum::kAny)
+			{
+				return mouse_.AnyKey(Keyboard::KeyState::kPressed);
+			}
+
+			return mouse_.KeyPressed(key);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::MouseDown(KeyCodes::KeyCode key) const
+		{
+			if (key == MouseButtonsEnum::kAny)
+			{
+				return mouse_.AnyKey(Keyboard::KeyState::kDown);
+			}
+
+			return mouse_.KeyDown(key);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::MouseReleased(KeyCodes::KeyCode key) const
+		{
+			if (key == MouseButtonsEnum::kAny)
+			{
+				return mouse_.AnyKey(Keyboard::KeyState::kReleased);
+			}
+
+			return mouse_.KeyReleased(key);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastMousePressed() const
+		{
+			return mouse_.LastPressed();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastMouseDown() const
+		{
+			return mouse_.LastDown();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastMouseReleased() const
+		{
+			return mouse_.LastReleased();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+		{
+			Self()->keyboard_.PostEvent(CreateKeyEvent(key, action));
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+		{
+			Self()->mouse_.PostEvent(CreateKeyEvent(button, action));
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -254,31 +306,58 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, mousePressed, JS_BODY({
 		
+			JSWrapper wrapper(args);
+
+			if (wrapper.Check("N", false) == true)
+			{
+				int key = wrapper.GetValue<int>(0, static_cast<int>(MouseButtonsEnum::kNone));
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().MousePressed(static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, mouseDown, JS_BODY({
 		
+			JSWrapper wrapper(args);
+
+			if (wrapper.Check("N", false) == true)
+			{
+				int key = wrapper.GetValue<int>(0, static_cast<int>(MouseButtonsEnum::kNone));
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().MouseDown(static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, mouseReleased, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+
+			if (wrapper.Check("N", false) == true)
+			{
+				int key = wrapper.GetValue<int>(0, static_cast<int>(MouseButtonsEnum::kNone));
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().MouseReleased(static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastMousePressed, JS_BODY({
 		
+			JSWrapper wrapper(args);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastMousePressed()));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastMouseDown, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastMouseDown()));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastMouseReleased, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastMouseReleased()));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
