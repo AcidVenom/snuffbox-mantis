@@ -81,11 +81,11 @@ namespace snuffbox
 		{
 			unsigned int count = Flush();
 
-			float adx = std::fabsf(static_cast<float>(delta_[0]));
-			float ady = std::fabsf(static_cast<float>(delta_[1]));
+            float adx = std::fabs(static_cast<float>(delta_[0]));
+            float ady = std::fabs(static_cast<float>(delta_[1]));
 
-			float sx = std::fabsf(static_cast<float>(scroll_[0]));
-			float sy = std::fabsf(static_cast<float>(scroll_[1]));
+            float sx = std::fabs(static_cast<float>(scroll_[0]));
+            float sy = std::fabs(static_cast<float>(scroll_[1]));
 
 			bool used = count > 0 || adx > 0.0f || ady > 0.0f || sx > 0.0f || sy > 0.0f;
 

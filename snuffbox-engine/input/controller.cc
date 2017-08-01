@@ -2,6 +2,8 @@
 #include "controller.h"
 #include "input.h"
 
+#include <cmath>
+
 namespace snuffbox
 {
 	namespace engine
@@ -103,8 +105,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		float Controller::DeadZone(float val) const
 		{
-			float sign = val == 0.0f ? 0.0f : val / std::fabsf(val);
-			float abs_val = std::fabsf(val);
+            float abs_val = std::fabs(val);
+            float sign = val == 0.0f ? 0.0f : val / abs_val;
 
 			abs_val = std::fmaxf(0.0f, abs_val - dead_zone_);
 			float axis = abs_val / (1.0f - dead_zone_);
