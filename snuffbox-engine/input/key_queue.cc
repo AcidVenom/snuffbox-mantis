@@ -5,7 +5,8 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		KeyQueue::KeyQueue(KeyCodes::KeyCode size)
+		KeyQueue::KeyQueue(KeyCodes::KeyCode size, KeyCodes::KeyCode any) :
+			any_(any)
 		{
 			states_.resize(size);
 
@@ -111,39 +112,20 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool KeyQueue::KeyPressed(KeyCodes::KeyCode key) const
+		bool KeyQueue::HasKeyState(KeyCodes::KeyCode key, KeyState state) const
 		{
 			if (key >= states_.size())
 			{
 				return false;
 			}
 
-			const KeyState& state = states_.at(key);
-			return state == KeyState::kPressed;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool KeyQueue::KeyDown(KeyCodes::KeyCode key) const
-		{
-			if (key >= states_.size())
+			if (key == any_)
 			{
-				return false;
+				return AnyKey(state);
 			}
 
-			const KeyState& state = states_.at(key);
-			return state == KeyState::kPressed || state == KeyState::kDown;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool KeyQueue::KeyReleased(KeyCodes::KeyCode key) const
-		{
-			if (key >= states_.size())
-			{
-				return false;
-			}
-
-			const KeyState& state = states_.at(key);
-			return state == KeyState::kReleased;
+			const KeyState& key_state = states_.at(key);
+			return key_state == state || (state == KeyState::kDown && key_state == KeyState::kPressed);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -162,21 +144,9 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode KeyQueue::LastPressed() const
+		KeyCodes::KeyCode KeyQueue::Last(KeyState state) const
 		{
-			return last_[static_cast<int>(KeyState::kPressed)];
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode KeyQueue::LastDown() const
-		{
-			return last_[static_cast<int>(KeyState::kDown)];
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode KeyQueue::LastReleased() const
-		{
-			return last_[static_cast<int>(KeyState::kReleased)];
+			return last_[static_cast<int>(state)];
 		}
 	}
 }

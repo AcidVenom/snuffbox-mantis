@@ -137,6 +137,12 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void InputService::SetControllerDeadZone(int id, float dz)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		float InputService::ControllerAxis(int id, ControllerButtons::Axes axis) const
 		{
 			return 0.0f;
@@ -161,19 +167,19 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::LastControllerPressed() const
+		KeyCodes::KeyCode InputService::LastControllerPressed(int id) const
 		{
             return ControllerButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::LastControllerDown() const
+		KeyCodes::KeyCode InputService::LastControllerDown(int id) const
 		{
             return ControllerButtonsEnum::kNone;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		KeyCodes::KeyCode InputService::LastControllerReleased() const
+		KeyCodes::KeyCode InputService::LastControllerReleased(int id) const
 		{
             return ControllerButtonsEnum::kNone;
 		}

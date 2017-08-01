@@ -5,6 +5,7 @@
 
 #include "keyboard.h"
 #include "mouse.h"
+#include "controller.h"
 
 namespace snuffbox
 {
@@ -24,6 +25,7 @@ namespace snuffbox
 			friend class SnuffboxApp;
 			friend class Window;
 			friend class Allocator;
+			friend class Controller;
 
 		protected:
 
@@ -50,6 +52,22 @@ namespace snuffbox
 			* @brief Updates all queues of every input type
 			*/
 			void Update();
+
+			/**
+			* @brief Handles a specified key queue
+			* @param[in] queue (const snuffbox::engine::KeyQueue&) The key queue to handle
+			* @param[in] key (snuffbox::engine::KeyCodes::KeyCode) The key code to handle the queue with
+			* @param[in] state (snuffbox::engine::KeyQueue::KeyState) The state to check for during handling
+			* @return (bool) Was the specified key in the specified state?
+			*/
+			bool HandleKeyQueue(const KeyQueue& queue, KeyCodes::KeyCode key, KeyQueue::KeyState state) const;
+
+			/**
+			* @brief Special handle case for controllers, makes sure the controller is connected
+			* @param[in] id (int) The ID of the controller
+			* @see snuffbox::engine::Input::HandleKeyQueue
+			*/
+			bool HandleController(int id, KeyCodes::KeyCode key, KeyQueue::KeyState state) const;
 
 		public:
 
@@ -128,6 +146,56 @@ namespace snuffbox
 			*/
 			KeyCodes::KeyCode LastMouseReleased() const override;
 
+			/**
+			* @see snuffbox::engine::InputService::IsControllerConnected
+			*/
+			bool IsControllerConnected(int id) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::ConnectedControllers
+			*/
+			unsigned int ConnectedControllers() const override;
+
+			/**
+			* @see snuffbox::engine::InputService::ConnectedControllers
+			*/
+			void SetControllerDeadZone(int id, float dz) override;
+
+			/**
+			* @see snuffbox::engine::InputService::ControllerAxis
+			*/
+			float ControllerAxis(int id, ControllerButtons::Axes axis) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::ControllerPressed
+			*/
+			bool ControllerPressed(int id, KeyCodes::KeyCode key) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::ControllerDown
+			*/
+			bool ControllerDown(int id, KeyCodes::KeyCode key) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::ControllerReleased
+			*/
+			bool ControllerReleased(int id, KeyCodes::KeyCode key) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::LastControllerPressed
+			*/
+			KeyCodes::KeyCode LastControllerPressed(int id) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::LastControllerDown
+			*/
+			KeyCodes::KeyCode LastControllerDown(int id) const override;
+
+			/**
+			* @see snuffbox::engine::InputService::LastControllerReleased
+			*/
+			KeyCodes::KeyCode LastControllerReleased(int id) const override;
+
 		protected:
 
 			/**
@@ -150,12 +218,12 @@ namespace snuffbox
 			*/
 			static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
-
 		private:
 
 			Keyboard keyboard_; //!< The keyboard
 			Mouse mouse_; //!< The mouse
 			InputType last_type_; //!< The last input type
+			Controller controllers_[4]; //!< The controllers, with a maximum of 4
 
 		public:
 
@@ -178,6 +246,7 @@ namespace snuffbox
 			JS_FUNCTION_DECL(lastMouseReleased);
 			JS_FUNCTION_DECL(isControllerConnected);
 			JS_FUNCTION_DECL(connectedControllers);
+			JS_FUNCTION_DECL(setControllerDeadZone);
 			JS_FUNCTION_DECL(controllerAxis);
 			JS_FUNCTION_DECL(controllerPressed);
 			JS_FUNCTION_DECL(controllerDown);

@@ -6,7 +6,8 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		Input::Input() :
-			last_type_(InputType::kKeyboard)
+			last_type_(InputType::kKeyboard),
+			controllers_{ 0, 1, 2, 3 }
 		{
 
 		}
@@ -47,57 +48,64 @@ namespace snuffbox
 			unsigned int count = keyboard_.Flush();
 			last_type_ = count > 0 ? InputType::kKeyboard : last_type_;
 			last_type_ = mouse_.Update() == true ? InputType::kKeyboard : last_type_;
+
+			for (int i = 0; i < 4; ++i)
+			{
+				controllers_[i].Poll();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::HandleKeyQueue(const KeyQueue& queue, KeyCodes::KeyCode key, KeyQueue::KeyState state) const
+		{
+			return queue.HasKeyState(key, state);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::HandleController(int id, KeyCodes::KeyCode key, KeyQueue::KeyState state) const
+		{
+			if ((id < 0 || id >= 4) || controllers_[id].connected() == false)
+			{
+				return false;
+			}
+
+			return HandleKeyQueue(controllers_[id], key, state);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool Input::KeyboardPressed(KeyCodes::KeyCode key) const
 		{
-            if (key == KeyCodesEnum::kAny)
-			{
-				return keyboard_.AnyKey(Keyboard::KeyState::kPressed);
-			}
-
-			return keyboard_.KeyPressed(key);
+			return HandleKeyQueue(keyboard_, key, KeyQueue::KeyState::kPressed);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool Input::KeyboardDown(KeyCodes::KeyCode key) const
 		{
-			if (key == KeyCodesEnum::kAny)
-			{
-				return keyboard_.AnyKey(Keyboard::KeyState::kDown);
-			}
-
-			return keyboard_.KeyDown(key);
+			return HandleKeyQueue(keyboard_, key, KeyQueue::KeyState::kDown);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool Input::KeyboardReleased(KeyCodes::KeyCode key) const
 		{
-			if (key == KeyCodesEnum::kAny)
-			{
-				return keyboard_.AnyKey(Keyboard::KeyState::kReleased);
-			}
-
-			return keyboard_.KeyReleased(key);
+			return HandleKeyQueue(keyboard_, key, KeyQueue::KeyState::kReleased);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode Input::LastKeyboardPressed() const
 		{
-			return keyboard_.LastPressed();
+			return keyboard_.Last(KeyQueue::KeyState::kPressed);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode Input::LastKeyboardDown() const
 		{
-			return keyboard_.LastDown();
+			return keyboard_.Last(KeyQueue::KeyState::kDown);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode Input::LastKeyboardReleased() const
 		{
-			return keyboard_.LastReleased();
+			return keyboard_.Last(KeyQueue::KeyState::kReleased);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -121,52 +129,118 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool Input::MousePressed(KeyCodes::KeyCode key) const
 		{
-			if (key == MouseButtonsEnum::kAny)
-			{
-				return mouse_.AnyKey(Keyboard::KeyState::kPressed);
-			}
-
-			return mouse_.KeyPressed(key);
+			return HandleKeyQueue(mouse_, key, KeyQueue::KeyState::kPressed);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool Input::MouseDown(KeyCodes::KeyCode key) const
 		{
-			if (key == MouseButtonsEnum::kAny)
-			{
-				return mouse_.AnyKey(Keyboard::KeyState::kDown);
-			}
-
-			return mouse_.KeyDown(key);
+			return HandleKeyQueue(mouse_, key, KeyQueue::KeyState::kDown);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool Input::MouseReleased(KeyCodes::KeyCode key) const
 		{
-			if (key == MouseButtonsEnum::kAny)
-			{
-				return mouse_.AnyKey(Keyboard::KeyState::kReleased);
-			}
-
-			return mouse_.KeyReleased(key);
+			return HandleKeyQueue(mouse_, key, KeyQueue::KeyState::kReleased);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode Input::LastMousePressed() const
 		{
-			return mouse_.LastPressed();
+			return mouse_.Last(KeyQueue::KeyState::kPressed);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode Input::LastMouseDown() const
 		{
-			return mouse_.LastDown();
+			return mouse_.Last(KeyQueue::KeyState::kDown);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		KeyCodes::KeyCode Input::LastMouseReleased() const
 		{
-			return mouse_.LastReleased();
+			return mouse_.Last(KeyQueue::KeyState::kReleased);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::IsControllerConnected(int id) const
+		{
+			if (id < 0 || id >= 4)
+			{
+				return false;
+			}
+
+			return controllers_[id].connected();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		unsigned int Input::ConnectedControllers() const
+		{
+			int count = 0;
+			for (int i = 0; i < 4; ++i)
+			{
+				count += controllers_[i].connected() == true ? 1 : 0;
+			}
+			
+			return count;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Input::SetControllerDeadZone(int id, float dz)
+		{
+			if (id < 0 || id >= 4)
+			{
+				return;
+			}
+
+			controllers_[id].set_dead_zone(dz);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		float Input::ControllerAxis(int id, ControllerButtons::Axes axis) const
+		{
+			if (id < 0 || id >= 4)
+			{
+				return 0.0f;
+			}
+
+			return controllers_[id].Axis(axis);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::ControllerPressed(int id, KeyCodes::KeyCode key) const
+		{
+			return HandleController(id, key, KeyQueue::KeyState::kPressed);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::ControllerDown(int id, KeyCodes::KeyCode key) const
+		{
+			return HandleController(id, key, KeyQueue::KeyState::kDown);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Input::ControllerReleased(int id, KeyCodes::KeyCode key) const
+		{
+			return HandleController(id, key, KeyQueue::KeyState::kReleased);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastControllerPressed(int id) const
+		{
+			return (id < 0 || id >= 4 || IsControllerConnected(id) == false) ? false : controllers_[id].Last(KeyQueue::KeyState::kPressed);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastControllerDown(int id) const
+		{
+			return (id < 0 || id >= 4 || IsControllerConnected(id) == false) ? false : controllers_[id].Last(KeyQueue::KeyState::kDown);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		KeyCodes::KeyCode Input::LastControllerReleased(int id) const
+		{
+			return (id < 0 || id >= 4 || IsControllerConnected(id) == false) ? false : controllers_[id].Last(KeyQueue::KeyState::kReleased);
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -214,6 +288,7 @@ namespace snuffbox
 				JS_FUNCTION_REG(lastMouseReleased),
 				JS_FUNCTION_REG(isControllerConnected),
 				JS_FUNCTION_REG(connectedControllers),
+				JS_FUNCTION_REG(setControllerDeadZone),
 				JS_FUNCTION_REG(controllerAxis),
 				JS_FUNCTION_REG(controllerPressed),
 				JS_FUNCTION_REG(controllerDown),
@@ -244,10 +319,13 @@ namespace snuffbox
 				JSWrapper::SetObjectValue(control_enum, name, static_cast<unsigned int>(ch)); 
 			});
 
-			JSWrapper::SetObjectValue(control_enum, "LeftAxis", static_cast<unsigned int>(ControllerButtons::Axes::kLeftAxis));
-			JSWrapper::SetObjectValue(control_enum, "RightAxis", static_cast<unsigned int>(ControllerButtons::Axes::kRightAxis));
-			JSWrapper::SetObjectValue(control_enum, "LT", static_cast<unsigned int>(ControllerButtons::Axes::kLT));
-			JSWrapper::SetObjectValue(control_enum, "RT", static_cast<unsigned int>(ControllerButtons::Axes::kRT));
+			v8::Local<v8::Object> axes = JSWrapper::CreateObject();
+			JSWrapper::SetObjectValue(axes, "LeftStickX", static_cast<unsigned int>(ControllerButtons::Axes::kLeftStickX));
+			JSWrapper::SetObjectValue(axes, "LeftStickY", static_cast<unsigned int>(ControllerButtons::Axes::kLeftStickY));
+			JSWrapper::SetObjectValue(axes, "RightStickX", static_cast<unsigned int>(ControllerButtons::Axes::kRightStickX));
+			JSWrapper::SetObjectValue(axes, "RightStickY", static_cast<unsigned int>(ControllerButtons::Axes::kRightStickY));
+			JSWrapper::SetObjectValue(axes, "LT", static_cast<unsigned int>(ControllerButtons::Axes::kLT));
+			JSWrapper::SetObjectValue(axes, "RT", static_cast<unsigned int>(ControllerButtons::Axes::kRT));
 
 			JSWrapper::SetObjectValue(input_type_enum, "Keyboard", static_cast<unsigned int>(InputType::kKeyboard));
 			JSWrapper::SetObjectValue(input_type_enum, "Controller", static_cast<unsigned int>(InputType::kController));
@@ -255,6 +333,7 @@ namespace snuffbox
 			JSWrapper::RegisterGlobal("Keyboard", key_enum, true);
 			JSWrapper::RegisterGlobal("Mouse", mb_enum, true);
 			JSWrapper::RegisterGlobal("Controller", control_enum, true);
+			JSWrapper::RegisterGlobal("Axes", axes, true);
 			JSWrapper::RegisterGlobal("InputType", input_type_enum, true);
 
 			JSFunctionRegister::Register(funcs, obj);
@@ -424,47 +503,108 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, isControllerConnected, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+
+			int id = wrapper.GetValue<int>(0, 0);
+			wrapper.ReturnValue<bool>(Services::Get<InputService>().IsControllerConnected(id));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, connectedControllers, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			wrapper.ReturnValue<int>(Services::Get<InputService>().ConnectedControllers());
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(Input, setControllerDeadZone, JS_BODY({
+			
+			JSWrapper wrapper(args);
+
+			if (wrapper.Check("NN", false) == true)
+			{
+				int id = wrapper.GetValue<int>(0, 0);
+				float dz = wrapper.GetValue<float>(1, Controller::DEFAULT_DEAD_ZONE_);
+
+				Services::Get<InputService>().SetControllerDeadZone(id, dz);
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, controllerAxis, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			if (wrapper.Check("NN", false) == true)
+			{
+				int id = wrapper.GetValue<int>(0, 0);
+				int axis = wrapper.GetValue<int>(1, static_cast<int>(ControllerButtons::Axes::kLeftStickX));
+
+				wrapper.ReturnValue<float>(Services::Get<InputService>().ControllerAxis(id, static_cast<ControllerButtons::Axes>(axis)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, controllerPressed, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			if (wrapper.Check("NN", false) == true)
+			{
+				int id = wrapper.GetValue<int>(0, 0);
+				int key = wrapper.GetValue<int>(1, static_cast<int>(ControllerButtonsEnum::kNone));
+
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().ControllerPressed(id, static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, controllerDown, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			if (wrapper.Check("NN", false) == true)
+			{
+				int id = wrapper.GetValue<int>(0, 0);
+				int key = wrapper.GetValue<int>(1, static_cast<int>(ControllerButtonsEnum::kNone));
+
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().ControllerDown(id, static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, controllerReleased, JS_BODY({
 		
+			JSWrapper wrapper(args);
+			if (wrapper.Check("NN", false) == true)
+			{
+				int id = wrapper.GetValue<int>(0, 0);
+				int key = wrapper.GetValue<int>(1, static_cast<int>(ControllerButtonsEnum::kNone));
+
+				wrapper.ReturnValue<bool>(Services::Get<InputService>().ControllerReleased(id, static_cast<KeyCodes::KeyCode>(key)));
+			}
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastControllerPressed, JS_BODY({
-		
+			
+			JSWrapper wrapper(args);
+			int id = wrapper.GetValue<int>(0, 0);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastControllerPressed(id)));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastControllerDown, JS_BODY({
-		
+
+			JSWrapper wrapper(args);
+			int id = wrapper.GetValue<int>(0, 0);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastControllerDown(id)));
 		}));
 
 		//-----------------------------------------------------------------------------------------------
 		JS_FUNCTION_IMPL(Input, lastControllerReleased, JS_BODY({
-		
+
+			JSWrapper wrapper(args);
+			int id = wrapper.GetValue<int>(0, 0);
+			wrapper.ReturnValue<int>(static_cast<int>(Services::Get<InputService>().LastControllerReleased(id)));
 		}));
 	}
 }

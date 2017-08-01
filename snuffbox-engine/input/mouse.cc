@@ -9,7 +9,7 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		Mouse::Mouse() :
-			KeyQueue(MouseButtonsEnum::kNone + 1)
+			KeyQueue(MouseButtonsEnum::kNone + 1, MouseButtonsEnum::kAny)
 		{
 			position_[0] = position_[1] = delta_[0] = delta_[1] = scroll_[0] = scroll_[1] = 0;
 		}

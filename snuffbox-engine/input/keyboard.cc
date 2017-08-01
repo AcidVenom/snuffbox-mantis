@@ -6,7 +6,7 @@ namespace snuffbox
 	{
 		//-----------------------------------------------------------------------------------------------
 		Keyboard::Keyboard() :
-			KeyQueue(KeyCodesEnum::kNone + 1)
+			KeyQueue(KeyCodesEnum::kNone + 1, KeyCodesEnum::kAny)
 		{
 
 		}

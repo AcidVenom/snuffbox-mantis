@@ -57,8 +57,9 @@ namespace snuffbox
 			/**
 			* @brief Constructs the key queue with a specified size
 			* @param[in] size (snuffbox::engine::KeyCodes::KeyCode) The size of the key queue
+			* @param[in] any (snuffbox::engine::KeyCodes::KeyCode) The keycode for the 'any' key
 			*/
-			KeyQueue(KeyCodes::KeyCode size);
+			KeyQueue(KeyCodes::KeyCode size, KeyCodes::KeyCode any);
 
 			/**
 			* @brief Queues a key or event
@@ -90,25 +91,11 @@ namespace snuffbox
 			unsigned int Flush();
 
 			/**
-			* @brief Is a specified key or button pressed this frame?
+			* @brief Is a specified key or button in a specified state this frame?
 			* @param[in] key (snuffbox::engine::KeyCodes::KeyCode) The keycode to check for
-			* @return (bool) Was it pressed?
+			* @return (bool) Was it in the specified state?
 			*/
-			bool KeyPressed(KeyCodes::KeyCode key) const;
-
-			/**
-			* @brief Is a specified key or button down this frame?
-			* @param[in] key (snuffbox::engine::KeyCodes::KeyCode) The keycode to check for
-			* @return (bool) Was it down?
-			*/
-			bool KeyDown(KeyCodes::KeyCode key) const;
-
-			/**
-			* @brief Is a specified key or button released this frame?
-			* @param[in] key (snuffbox::engine::KeyCodes::KeyCode) The keycode to check for
-			* @return (bool) Was it released?
-			*/
-			bool KeyReleased(KeyCodes::KeyCode key) const;
+			bool HasKeyState(KeyCodes::KeyCode key, KeyState state) const;
 
 			/**
 			* @brief Checks if any key is in a specified state
@@ -118,21 +105,13 @@ namespace snuffbox
 			bool AnyKey(KeyState state) const;
 
 			/**
-			* @return (snuffbox::engine::KeyCodes::KeyCode) The last key or button that was pressed
+			* @return (snuffbox::engine::KeyCodes::KeyCode) The last key or button that was in the specified state
 			*/
-			KeyCodes::KeyCode LastPressed() const;
-
-			/**
-			* @return (snuffbox::engine::KeyCodes::KeyCode) The last key or button that was down
-			*/
-			KeyCodes::KeyCode LastDown() const;
-
-			/**
-			* @return (snuffbox::engine::KeyCodes::KeyCode) The last key or button that was released
-			*/
-			KeyCodes::KeyCode LastReleased() const;
+			KeyCodes::KeyCode Last(KeyState state) const;
 
 		private:
+
+			KeyCodes::KeyCode any_; //!< The keycode for the 'any' key
 
 			Queue<Event> queue_; //!< The event queue
 			Vector<KeyState> states_; //!< The different keystates

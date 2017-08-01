@@ -155,6 +155,13 @@ namespace snuffbox
 			virtual unsigned int ConnectedControllers() const;
 
 			/**
+			* @brief Sets the deadzone of a specified controller
+			* @param[in] id (int) The controller ID to change the deadzone of
+			* @param[in] dz (float) The dead zone to set
+			*/
+			virtual void SetControllerDeadZone(int id, float dz);
+
+			/**
 			* @brief Retrieves the floating point value between -1 and 1 of a controller axis
 			* @param[in] id (int) The controller ID to check the axix for
 			* @param[in] axis (snuffbox::engine::ControllerButtons::Axes) The axis to check for
@@ -184,19 +191,22 @@ namespace snuffbox
 			virtual bool ControllerReleased(int id, KeyCodes::KeyCode button) const;
 
 			/**
+			* @param[in] id (int) The ID of the controller to check
 			* @return (snuffbox::engine::KeyCodes::KeyCode) The last controller button that was pressed this frame
 			*/
-			virtual KeyCodes::KeyCode LastControllerPressed() const;
+			virtual KeyCodes::KeyCode LastControllerPressed(int id) const;
 
 			/**
+			* @param[in] id (int) The ID of the controller to check
 			* @return (snuffbox::engine::KeyCodes::KeyCode) The last controller button that was down this frame
 			*/
-			virtual KeyCodes::KeyCode LastControllerDown() const;
+			virtual KeyCodes::KeyCode LastControllerDown(int id) const;
 
 			/**
+			* @param[in] id (int) The ID of the controller to check
 			* @return (snuffbox::engine::KeyCodes::KeyCode) The last controller button that was released this frame
 			*/
-			virtual KeyCodes::KeyCode LastControllerReleased() const;
+			virtual KeyCodes::KeyCode LastControllerReleased(int id) const;
 		};
 	}
 }
