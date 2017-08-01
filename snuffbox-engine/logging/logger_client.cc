@@ -78,9 +78,12 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void LoggerClient::IdleNotification()
 		{
-			flush_cv_.notify_all();
 			volatile bool empty = log_queue_.empty();
-			while (empty == false) { empty = log_queue_.empty(); }
+			while (empty == false) 
+			{ 
+				flush_cv_.notify_all(); 
+				empty = log_queue_.empty(); 
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -95,9 +98,9 @@ namespace snuffbox
 
 				if (front.severity == console::LogSeverity::kRGB)
 				{
-					stream_.Log(front.severity, 
-						front.message.c_str(), 
-						static_cast<int>(front.message.size()), 
+					stream_.Log(front.severity,
+						front.message.c_str(),
+						static_cast<int>(front.message.size()),
 						reinterpret_cast<const unsigned char*>(&front.colour.background),
 						reinterpret_cast<const unsigned char*>(&front.colour.foreground));
 				}

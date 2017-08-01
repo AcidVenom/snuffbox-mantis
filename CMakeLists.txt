@@ -8,7 +8,7 @@ SET_PROPERTY(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake-targets")
 
 SET(SNUFF_ENCRYPTION_KEY "snuffbox-mantis" CACHE STRING "Specifies the encryption key used during data encryption for this instance of the engine")
 SET(SNUFF_DEFAULT_PORT "8888" CACHE STRING "Specifies the default port for the logging connection to use")
-SET(SNUFF_LOG_TIMEOUT "3" CACHE STRING "Specifies the default timeout in seconds for the logging connection to use")
+SET(SNUFF_LOG_TIMEOUT "10" CACHE STRING "Specifies the default timeout in seconds for the logging connection to use")
 SET(SNUFF_LOG_BUFFERSIZE "512" CACHE STRING "Specifies the maximum buffer size for the logging connection to use per socket")
 SET(SNUFF_LOG_DEFAULT_MAXLINES "5000" CACHE STRING "Specifies the default for the maximum number of lines in the console")
 OPTION(SNUFF_USE_OGL "Forces OpenGL or Vulkan on Windows")
