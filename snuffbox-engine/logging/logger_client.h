@@ -32,11 +32,6 @@ namespace snuffbox
 			LoggerClient(logging::LoggingStream& stream);
 
 			/**
-			* @see snuffbox::engine::LoggingSocket::OnConnect
-			*/
-			virtual void OnConnect(const bool& stream_quit) override;
-
-			/**
 			* @see snuffbox::logging::LoggingClient::OnCommand
 			*/
 			void OnCommand(CommandTypes cmd, const char* message) override;
@@ -47,11 +42,6 @@ namespace snuffbox
 			*/
 			template <typename ... Args>
 			void QueueLog(console::LogSeverity severity, const String& message, const Args&... args);
-
-			/**
-			* @brief Called when the application is idle
-			*/
-			void IdleNotification();
 
 			/**
 			* @brief Flushes all the logs on a seperate thread
@@ -99,28 +89,20 @@ namespace snuffbox
 				console::LogColour colour; //!< If we have an RGB log, store the colour
 			};
 
-		public:
-
-			/**
-			* @brief Joins the flush thread
-			*/
-			~LoggerClient();
-
 		private:
 
 			logging::LoggingStream& stream_; //!< The logging TCP stream
 
 			Queue<ToLog> log_queue_; //!< The queue to fill up with logs and to flush in the end
-
-			std::thread flush_thread_; //!< The thread to flush the logs with
-			std::mutex flush_mutex_; //!< The mutex for flushing
-			std::condition_variable flush_cv_; //!< The condition variable to let the flush thread know there are new logs
+			std::mutex queue_mutex_; //!< The mutex for the queue
 		};
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename ... Args>
 		inline void LoggerClient::QueueLog(console::LogSeverity severity, const String& message, const Args&... args)
 		{
+			std::lock_guard<std::mutex> lock(queue_mutex_);
+
 			if (connected_ == false)
 			{
 				return;

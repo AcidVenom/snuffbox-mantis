@@ -50,7 +50,7 @@ namespace snuffbox
 #ifdef SNUFF_JAVASCRIPT
 			js_on_startup_->Call();
 #endif
-			log_service_->client_.IdleNotification();
+			log_service_->client_.FlushLogs();
 
 			while (window_service_->Closed() == false)
 			{
@@ -64,7 +64,7 @@ namespace snuffbox
 #ifdef SNUFF_JAVASCRIPT
 				js_on_update_->Call(delta_time_);
 #endif
-				log_service_->client_.IdleNotification();
+				log_service_->client_.FlushLogs();
 				delta_time_ = delta_timer_->Stop(Timer::Unit::kSeconds);
 			}
 
@@ -158,7 +158,7 @@ namespace snuffbox
 
 			js_state_wrapper_->Shutdown();
 #endif
-			log_service_->client_.IdleNotification();
+			log_service_->client_.FlushLogs();
 
 			log_service_->Shutdown();
 			cvar_service_->Shutdown();

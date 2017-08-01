@@ -22,33 +22,6 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void LoggerClient::OnConnect(const bool& stream_quit)
-		{
-			if (stream_quit == true)
-			{
-				return;
-			}
-
-			if (flush_thread_.joinable() == true)
-			{
-				flush_thread_.join();
-			}
-
-			flush_thread_ = std::thread([=]()
-			{
-				while (connected_ == true)
-				{
-					FlushLogs();
-				}
-
-				while (log_queue_.empty() == false)
-				{
-					log_queue_.pop();
-				}
-			});
-		}
-
-		//-----------------------------------------------------------------------------------------------
 		void LoggerClient::OnCommand(logging::LoggingClient::CommandTypes cmd, const char* message)
 		{
 			String msg = message;
@@ -71,27 +44,11 @@ namespace snuffbox
 			default:
 				break;
 			}
-
-			flush_cv_.notify_one();
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		void LoggerClient::IdleNotification()
-		{
-			volatile bool empty = log_queue_.empty();
-			while (empty == false) 
-			{ 
-				flush_cv_.notify_all(); 
-				empty = log_queue_.empty(); 
-			}
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		void LoggerClient::FlushLogs()
 		{
-			std::unique_lock<std::mutex> lock(flush_mutex_);
-			flush_cv_.wait(lock);
-
 			while (log_queue_.empty() == false)
 			{
 				const ToLog& front = log_queue_.front();
@@ -332,17 +289,6 @@ namespace snuffbox
 			}
 
 			return true;
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		LoggerClient::~LoggerClient()
-		{
-			flush_cv_.notify_all();
-			
-			if (flush_thread_.joinable() == true)
-			{
-				flush_thread_.join();
-			}
 		}
 	}
 }
