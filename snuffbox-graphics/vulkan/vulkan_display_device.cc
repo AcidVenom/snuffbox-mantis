@@ -9,7 +9,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		VulkanDisplayDevice::VulkanDisplayDevice(Renderer* renderer) :
 			renderer_(renderer),
-			instance_(nullptr),
+			instance_(VK_NULL_HANDLE),
 			validation_layer_(VulkanValidationLayer::DEFAULT_VALIDATION_LAYER_)
 		{
 
@@ -145,11 +145,12 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void VulkanDisplayDevice::Shutdown()
 		{
-			if (instance_ != nullptr)
+			if (instance_ != VK_NULL_HANDLE)
 			{
 				validation_layer_.Release(instance_);
+
 				vkDestroyInstance(instance_, nullptr);
-				instance_ = nullptr;
+				instance_ = VK_NULL_HANDLE;
 			}
 		}
 	}

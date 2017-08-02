@@ -14,7 +14,7 @@ namespace snuffbox
 		VulkanValidationLayer::VulkanValidationLayer(const std::string& name, bool verbose) :
 			name_(name),
 			verbose_(verbose),
-			debug_callback_(nullptr)
+			debug_callback_(VK_NULL_HANDLE)
 		{
 
 		}
@@ -69,10 +69,10 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void VulkanValidationLayer::Release(VkInstance instance)
 		{
-			if (debug_callback_ != nullptr)
+			if (debug_callback_ != VK_NULL_HANDLE)
 			{
 				DestroyDebugReportCallbackEXT(instance, debug_callback_, nullptr);
-				debug_callback_ = nullptr;
+				debug_callback_ = VK_NULL_HANDLE;
 			}
 		}
 
