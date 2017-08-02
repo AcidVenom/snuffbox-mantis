@@ -9,6 +9,11 @@ struct GLFWwindow;
 
 namespace snuffbox
 {
+	namespace graphics
+	{
+		class Renderer;
+	}
+
 	namespace engine
 	{
 		class SnuffboxApp;
@@ -62,6 +67,21 @@ namespace snuffbox
 			void Initialise(const String& title, const Input* input, unsigned int width = DEFAULT_WIDTH_, unsigned int height = DEFAULT_HEIGHT_);
 
 			/**
+			* @brief Creates the renderer
+			* @param[in] width (unsigned int) The intial x resolution, in pixels, for the renderer
+			* @param[in] height (unsigned int) The initial y resoluton, in pixels, for the renderer
+			* @return (bool) Were we able to initialise the renderer?
+			*/
+			bool InitialiseRenderer(unsigned int width, unsigned int height);
+
+			/**
+			* @brief Creates the full 'title - SNUFF_WINDOW_TITLE' string
+			* @param[in] title (const snuffbox::engine::String&) The application title
+			* @return (snuffbox::engine::String) The created title
+			*/
+			static String CreateTitle(const String& title);
+
+			/**
 			* @see snuffbox::engine::WindowService::SetTitle
 			*/
 			void SetTitle(const String& title) override;
@@ -106,14 +126,19 @@ namespace snuffbox
 			*/
 			void Shutdown();
 
-		private:
-
 			/**
 			* @brief Used to print out errors thrown by GLFW
 			* @param[in] error (int) The error code
 			* @param[in] description (const char*) The human-readable error
 			*/
-			static void ErrorCallback(int error, const char* description);
+			static void GLFWErrorCallback(int error, const char* description);
+
+			/**
+			* @see snuffbox::graphics::Renderer::Status
+			*/
+			static void RendererErrorCallback(const char* msg, bool error);
+
+		private:
 
 			static const unsigned int DEFAULT_WIDTH_; //!< The default window width
 			static const unsigned int DEFAULT_HEIGHT_; //!< The default window height
@@ -125,6 +150,9 @@ namespace snuffbox
 
 			GLFWwindow* window_; //!< The actual GLFW window
 			Queue<WindowCommand> command_queue_; //!< The command queue to use with the window, to execute commands on the main thread
+
+			UniquePtr<graphics::Renderer> renderer_; //!< The renderer owned by the window
+
 		public:
 
 			JS_NAME_SINGLE(Window);

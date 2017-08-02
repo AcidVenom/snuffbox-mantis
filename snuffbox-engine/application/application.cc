@@ -103,7 +103,7 @@ namespace snuffbox
 
 			cvar_service_->LogAll();
 
-			window_service_->Initialise("Snuffbox", input_service_.get());
+			window_service_->Initialise("Untitled", input_service_.get());
 			Services::Provide<WindowService>(window_service_.get());
 
 			delta_timer_ = Memory::ConstructUnique<Timer>("Delta time");

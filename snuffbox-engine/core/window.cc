@@ -3,8 +3,8 @@
 #include "../services/log_service.h"
 #include "../input/input.h"
 
+#include <snuffbox-graphics/platform/platform_renderer.h>
 #include <GLFW/glfw3.h>
-#include <snuffbox-graphics/vulkan/vulkan_device.h>
 
 namespace snuffbox
 {
@@ -31,12 +31,13 @@ namespace snuffbox
 			LogService& log = Services::Get<LogService>();
 
 			log.Assert(glfwInit() == GL_TRUE, "Could not initialise GLFW");
-			glfwSetErrorCallback(ErrorCallback);
+			glfwSetErrorCallback(GLFWErrorCallback);
 
-#ifdef SNUFF_USE_OGL
+#if defined(SNUFF_USE_OGL) || defined(SNUFF_USE_VULKAN)
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
-			log.Assert((window_ = glfwCreateWindow(1280, 720, title.c_str(), nullptr, nullptr)) != nullptr,
+			glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+			log.Assert((window_ = glfwCreateWindow(width, height, CreateTitle(title).c_str(), nullptr, nullptr)) != nullptr,
 						"GLFW window creation failed");
 
 			title_ = title;
@@ -51,7 +52,35 @@ namespace snuffbox
 				glfwSetScrollCallback(window_, Input::MouseScrollCallback);
 			}
 
-			TestVulkan::Test();
+			log.Assert(InitialiseRenderer(width, height) == true, "Could not initialise the renderer");
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool Window::InitialiseRenderer(unsigned int width, unsigned int height)
+		{
+			LogService& log = Services::Get<LogService>();
+			renderer_ = Memory::ConstructUnique<graphics::Renderer>(RendererErrorCallback);
+			bool success;
+
+#ifdef SNUFF_USE_VULKAN
+			unsigned int ext_count = 0;
+			const char** extensions;
+
+			extensions = glfwGetRequiredInstanceExtensions(&ext_count);
+
+			success = renderer_->Initialise(ext_count, extensions, width, height);
+#else
+			success = renderer_->Initialise(width, height);
+#endif
+			log.Log(console::LogSeverity::kSuccess, "Successfully initialised the renderer");
+
+			return success;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		String Window::CreateTitle(const String& title)
+		{
+			return title + " - " + SNUFF_WINDOW_TITLE;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -142,7 +171,7 @@ namespace snuffbox
 			auto TitleCommand = [=](const WindowCommand& cmd, LogService& l)
 			{
 				const String& title = cmd.title;
-				glfwSetWindowTitle(window_, title.c_str());
+				glfwSetWindowTitle(window_, CreateTitle(title).c_str());
 				title_ = title;
 
 				l.Log(console::LogSeverity::kInfo, "Renamed the window title to: {0}", title_);
@@ -181,9 +210,16 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void Window::ErrorCallback(int error, const char* description)
+		void Window::GLFWErrorCallback(int error, const char* description)
 		{
-			Services::Get<LogService>().Log(console::LogSeverity::kError, "GLFW Error: {0} -> {1}", error, description);
+			Services::Get<LogService>().Log(console::LogSeverity::kError, "GLFW error: {0} -> {1}", error, description);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Window::RendererErrorCallback(const char* msg, bool error)
+		{
+			Services::Get<LogService>().Log(error == true ? console::LogSeverity::kError : console::LogSeverity::kInfo, 
+				error == true ? "Renderer error: {0}" : "{0}", msg);
 		}
 
 		//-----------------------------------------------------------------------------------------------
