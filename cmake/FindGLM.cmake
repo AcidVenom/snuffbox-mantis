@@ -1,0 +1,18 @@
+SET(GLM_ROOT_DIR "deps/glm" CACHE STRING "The root directory for the source of GLM")
+
+FIND_FILE(GLM_INCLUDE
+	NAMES "glm.hpp"
+	PATHS
+	"${GLM_ROOT_DIR}/glm"
+)
+
+IF (GLM_INCLUDE)
+	SET (GLM_FOUND TRUE)
+	
+	MESSAGE (STATUS "Found GLM: ${GLM_INCLUDE}")
+ELSE ()
+	SET (GLM_FOUND FALSE)
+	IF (GLM_FIND_REQUIRED)
+		MESSAGE (FATAL_ERROR "Could not find GLM")
+	ENDIF ()
+ENDIF ()

@@ -4,6 +4,7 @@
 #include "../input/input.h"
 
 #include <GLFW/glfw3.h>
+#include <snuffbox-graphics/vulkan/vulkan_device.h>
 
 namespace snuffbox
 {
@@ -32,10 +33,9 @@ namespace snuffbox
 			log.Assert(glfwInit() == GL_TRUE, "Could not initialise GLFW");
 			glfwSetErrorCallback(ErrorCallback);
 
-			/**
-			* @todo Turn this on when rendering with DirectX
-			*/
-			//glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#ifdef SNUFF_USE_OGL
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
 			log.Assert((window_ = glfwCreateWindow(1280, 720, title.c_str(), nullptr, nullptr)) != nullptr,
 						"GLFW window creation failed");
 
@@ -50,6 +50,8 @@ namespace snuffbox
 				glfwSetCursorPosCallback(window_, Input::MousePositionCallback);
 				glfwSetScrollCallback(window_, Input::MouseScrollCallback);
 			}
+
+			TestVulkan::Test();
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -45,6 +45,22 @@ call git checkout latest & echo.
 cd ../
 
 :skipglfw
+set /P getglm="Clone GLM? (y/n)"
+echo.
+if /I "%getglm%" neq "y" goto skipglm
+
+if exist .\glm (
+	rmdir .\glm /s /q
+	echo Removing old 'glm' folder as we're regenerating & echo.
+)
+
+mkdir .\glm
+echo [32mMade the 'glm' folder[0m
+echo [32mCloning GLM from git[0m & echo.
+
+call git clone https://github.com/g-truc/glm glm & echo.
+
+:skipglm
 echo To download and build V8, depot_tools is required in your system PATH
 echo [91mBuilding V8 takes quite some time and is only required with SNUFF_JAVASCRIPT[0m & echo.
 

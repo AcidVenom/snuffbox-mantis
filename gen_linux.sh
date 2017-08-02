@@ -40,6 +40,21 @@ fi
 
 echo -e ""
 
+echo -n "Clone GLM? (y/n)"
+read option
+if echo "$option" | grep -iq "^y" ;then
+	if [ -d "glm" ]; then
+		rm -r -f glm
+		echo "Removing old 'glm' folder as we're regenerating"
+	fi
+	mkdir glm
+	echo -e "\e[32mMade the 'glm' folder\e[0m"
+	echo -e "\e[32mCloning GLM from git\e[0m"
+	git clone https://github.com/g-truc/glm glm
+fi
+
+echo -e ""
+
 echo "To download and build V8, depot_tools is required in your system PATH"
 echo -e "\e[91mBuilding V8 takes quite some time and is only required with SNUFF_JAVASCRIPT\e[0m\n"
 echo "libc++ and lib++abi are also required on Linux builds"
