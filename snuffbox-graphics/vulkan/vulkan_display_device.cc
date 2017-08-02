@@ -1,16 +1,16 @@
 #include "vulkan_display_device.h"
 #include "../platform/platform_renderer.h"
 
-#include <string>
-
 namespace snuffbox
 {
 	namespace graphics
 	{
+
 		//-----------------------------------------------------------------------------------------------
 		VulkanDisplayDevice::VulkanDisplayDevice(Renderer* renderer) :
 			renderer_(renderer),
-			instance_(nullptr)
+			instance_(nullptr),
+			validation_layer_(VulkanValidationLayer::DEFAULT_VALIDATION_LAYER_)
 		{
 
 		}
@@ -29,24 +29,57 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		std::vector<const char*> VulkanDisplayDevice::GetRequiredExtensions(unsigned int ext_count, const char** extensions)
+		{
+			std::vector<const char*> required;
+
+			for (unsigned int i = 0; i < ext_count; i++) 
+			{
+				required.push_back(extensions[i]);
+			}
+
+#ifdef SNUFF_DEBUG
+			required.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+#endif
+			return required;
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		bool VulkanDisplayDevice::CreateInstance(unsigned int ext_count, const char** extensions)
 		{
-			VkApplicationInfo appInfo = {};
-			appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-			appInfo.pApplicationName = "Snuffbox - Vulkan";
-			appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-			appInfo.pEngineName = "snuffbox-mantis";
-			appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-			appInfo.apiVersion = VK_API_VERSION_1_0;
+			VkApplicationInfo ai = {};
+			ai.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+			ai.pApplicationName = "Snuffbox (Vulkan)";
+			ai.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+			ai.pEngineName = "snuffbox-mantis";
+			ai.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+			ai.apiVersion = VK_API_VERSION_1_0;
 
-			VkInstanceCreateInfo createInfo = {};
-			createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-			createInfo.pApplicationInfo = &appInfo;
-			createInfo.enabledExtensionCount = ext_count;
-			createInfo.ppEnabledExtensionNames = extensions;
+			VkInstanceCreateInfo ci = {};
+			ci.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+			ci.pApplicationInfo = &ai;
+
+			std::vector<const char*> required_extensions = GetRequiredExtensions(ext_count, extensions);
+			ci.enabledExtensionCount = static_cast<unsigned int>(required_extensions.size());
+			ci.ppEnabledExtensionNames = &required_extensions[0];
+
+#ifdef SNUFF_DEBUG
+			if (validation_layer_.HasValidationLayer() == false)
+			{
+				renderer_->Error(std::string("The validation layer '" + validation_layer_.name() + "' was requested, but could not be used").c_str());
+				return false;
+			}
+
+			const char* validation_name = validation_layer_.name().c_str();
+			ci.enabledLayerCount = 1;
+			ci.ppEnabledLayerNames = &validation_name;
+
+			renderer_->Status(("Enabled Vulkan validation layer: " + validation_layer_.name()).c_str());
+#else
 			createInfo.enabledLayerCount = 0;
+#endif
 
-			VkResult result = vkCreateInstance(&createInfo, nullptr, &instance_);
+			VkResult result = vkCreateInstance(&ci, nullptr, &instance_);
 
 			if (result != VkResult::VK_SUCCESS)
 			{
@@ -84,7 +117,11 @@ namespace snuffbox
 				return false;
 			}
 
+#ifdef SNUFF_DEBUG
+			return validation_layer_.SetupValidationCallback(renderer_, instance_);
+#else
 			return true;
+#endif
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -102,6 +139,17 @@ namespace snuffbox
 			for (int i = 0; i < static_cast<int>(extensions_.size()); ++i)
 			{
 				renderer_->Status((name + extensions_.at(i).extensionName).c_str());
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void VulkanDisplayDevice::Shutdown()
+		{
+			if (instance_ != nullptr)
+			{
+				validation_layer_.Release(instance_);
+				vkDestroyInstance(instance_, nullptr);
+				instance_ = nullptr;
 			}
 		}
 	}

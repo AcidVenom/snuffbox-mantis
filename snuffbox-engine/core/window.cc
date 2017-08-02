@@ -205,6 +205,9 @@ namespace snuffbox
 		void Window::Shutdown()
 		{
 			Services::Get<LogService>().Assert(window_ != nullptr, "Attempted to shut down the window, but it was never initialised");
+
+			renderer_->Shutdown();
+
 			glfwDestroyWindow(window_);
 			glfwTerminate();
 		}

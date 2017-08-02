@@ -11,6 +11,7 @@ namespace snuffbox
 
 #ifdef SNUFF_USE_VULKAN
 			friend class VulkanDisplayDevice;
+			friend class VulkanValidationLayer;
 #elif SNUFF_USE_OGL
 			friend class OGLDisplayDevice;
 #elif SNUFF_USE_D3D11
@@ -48,6 +49,11 @@ namespace snuffbox
 			*/
 			bool Initialise(unsigned int width, unsigned int height);
 #endif
+
+			/**
+			* @brief Shuts down the renderer
+			*/
+			void Shutdown();
 
 		protected:
 

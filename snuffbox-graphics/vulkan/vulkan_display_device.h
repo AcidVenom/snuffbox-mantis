@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-#include <vector>
+#include "vulkan_validation_layer.h"
 
 namespace snuffbox
 {
@@ -9,6 +8,11 @@ namespace snuffbox
 	{
 		class Renderer;
 
+		/**
+		* @class snuffbox::graphics::VulkanDisplayDevice
+		* @brief The display device when Snuffbox is ran with Vulkan
+		* @author Daniel Konings
+		*/
 		class VulkanDisplayDevice
 		{
 
@@ -31,6 +35,14 @@ namespace snuffbox
 			bool Initialise(unsigned int ext_count, const char** extensions);
 
 			/**
+			* @brief Retrieves the required extensions to create a Vulkan instance
+			* @param[in] ext_count (unsigned int) The number of extensions required by GLFW
+			* @param[in] extensions (const char**) The array of extension names required by GLFW
+			* @return (std::vector<const char*>) A list of the initial required extensions
+			*/
+			std::vector<const char*> GetRequiredExtensions(unsigned int ext_count, const char** extensions);
+
+			/**
 			* @brief Creates the Vulkan instance
 			* @see snuffbox::graphics::VulkanDisplayDevice::Initialise
 			* @return (bool) Was the instance succesfully created?
@@ -42,12 +54,19 @@ namespace snuffbox
 			*/
 			void GetExtensions();
 
+			/**
+			* @brief Cleans up Vulkan
+			*/
+			void Shutdown();
+
 		private:
 
 			Renderer* renderer_; //!< The renderer this device was constructed from
 			VkInstance instance_; //!< The Vulkan instance
 
 			std::vector<VkExtensionProperties> extensions_; //!< The extensions available for this Vulkan instance
+
+			VulkanValidationLayer validation_layer_; //!< The validation layer to use in debug builds
 		};
 	}
 }

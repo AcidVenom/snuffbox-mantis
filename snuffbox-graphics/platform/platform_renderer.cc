@@ -33,6 +33,12 @@ namespace snuffbox
 #endif
 
 		//-----------------------------------------------------------------------------------------------
+		void Renderer::Shutdown()
+		{
+			display_device_.Shutdown();
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void Renderer::Status(const char* msg, bool error) const
 		{
 			if (error_callback_ == nullptr)

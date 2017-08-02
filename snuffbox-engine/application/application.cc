@@ -149,6 +149,7 @@ namespace snuffbox
 #endif
 
 			log_service_->Log(console::LogSeverity::kInfo, "Shutting down..");
+			window_service_->Shutdown();
 
 #ifdef SNUFF_JAVASCRIPT
 			js_on_startup_->Clear();
