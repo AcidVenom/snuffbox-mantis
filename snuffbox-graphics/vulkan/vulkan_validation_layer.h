@@ -48,6 +48,19 @@ namespace snuffbox
 			*/
 			void Release(VkInstance instance);
 
+		public:
+
+			/**
+			* @brief Used to set the validation layer to a Vulkan create info structure
+			* @remarks This will automatically disable the validation layer in Release mode
+			* @param[in] count (uint32_t&) A reference to a create info's 'enabledLayerCount' field
+			* @param[in] enabled_names (const char* const*&) A reference to a create info's 'ppEnabledLayerNames' field
+			* @return (const char*) The name of the validation layer
+			*/
+			void Set(uint32_t& count, const char* const*& enabled_names) const;
+
+		protected:
+
 			/**
 			* @return (const std::string&) The name of this validation layer
 			*/
@@ -88,13 +101,13 @@ namespace snuffbox
 		private:
 
 			std::string name_; //!< The name of this validation layer
+			const char* enabled_names_[1]; //!< Used to pass this validation layer's name into the 'ppEnabledLayerNames' of a create info structure
+
 			bool verbose_; //!< Should verbose logging be enabled?
 
 			std::vector<VkLayerProperties> validation_layers_; //!< The available validation layers
 
 			VkDebugReportCallbackEXT debug_callback_; //!< The loaded debug callback
-
-			VkPhysicalDevice gpu_; //!< The picked physical device for rendering
 		};
 	}
 }

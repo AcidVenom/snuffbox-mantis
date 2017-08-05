@@ -80,6 +80,8 @@ namespace snuffbox
 			VulkanValidationLayer validation_layer_; //!< The validation layer to use in debug builds
 
 			std::vector<VulkanPhysicalDevice> physical_devices_; //!< The physical devices and their properties/features
+
+			VulkanPhysicalDevice* device_; //!< The picked physical device for rendering
 		};
 	}
 }

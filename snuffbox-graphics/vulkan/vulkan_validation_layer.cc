@@ -2,6 +2,7 @@
 #include "../platform/platform_renderer.h"
 
 #include <string.h>
+#include <assert.h>
 
 namespace snuffbox
 {
@@ -14,10 +15,9 @@ namespace snuffbox
 		VulkanValidationLayer::VulkanValidationLayer(const std::string& name, bool verbose) :
 			name_(name),
 			verbose_(verbose),
-			debug_callback_(VK_NULL_HANDLE),
-			gpu_(VK_NULL_HANDLE)
+			debug_callback_(VK_NULL_HANDLE)
 		{
-
+			enabled_names_[0] = name.c_str();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -75,6 +75,17 @@ namespace snuffbox
 				DestroyDebugReportCallbackEXT(instance, debug_callback_, nullptr);
 				debug_callback_ = VK_NULL_HANDLE;
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void VulkanValidationLayer::Set(uint32_t& count, const char* const*& enabled_names) const
+		{
+#ifdef SNUFF_DEBUG
+			count = 1;
+			enabled_names = enabled_names_;
+#else
+			count = 0;
+#endif
 		}
 
 		//-----------------------------------------------------------------------------------------------

@@ -6,9 +6,9 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		Timer::Timer(const String& name) :
+		Timer::Timer(const String& name, bool auto_start) :
 			name_(name),
-			started_(false),
+			started_(auto_start),
 			elapsed_(0.0f),
 			start_(std::chrono::high_resolution_clock::now())
 		{

@@ -1,9 +1,22 @@
 #include "vulkan_physical_device.h"
+#include "vulkan_validation_layer.h"
+
+#include <vector>
 
 namespace snuffbox
 {
 	namespace graphics
 	{
+		//-----------------------------------------------------------------------------------------------
+		VulkanPhysicalDevice::VulkanPhysicalDevice(VkPhysicalDevice handle) :
+			physical_device_(handle),
+			logical_device_(VK_NULL_HANDLE),
+			queue_family_(-1),
+			properties_({ "", 0, false, false })
+		{
+			
+		}
+
 		//-----------------------------------------------------------------------------------------------
 		VulkanPhysicalDevice VulkanPhysicalDevice::ListDevice(VkPhysicalDevice device)
 		{
@@ -16,7 +29,7 @@ namespace snuffbox
 			VkPhysicalDeviceMemoryProperties mp;
 			vkGetPhysicalDeviceMemoryProperties(device, &mp);
 
-			VulkanPhysicalDevice pd;
+			VulkanPhysicalDevice pd(device);
 
 			pd.LoadProperties(dp);
 			pd.LoadMemory(mp);
@@ -86,7 +99,30 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void VulkanPhysicalDevice::LoadFeatures(VkPhysicalDeviceFeatures features)
 		{
-			properties_.supported = features.geometryShader == VK_TRUE;
+			queue_family_ = QueueFamilyIndex();
+			properties_.supported = queue_family_ >= 0 && features.geometryShader == VK_TRUE;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		int VulkanPhysicalDevice::QueueFamilyIndex() const
+		{
+			unsigned int count = 0;
+			vkGetPhysicalDeviceQueueFamilyProperties(physical_device_, &count, nullptr);
+
+			std::vector<VkQueueFamilyProperties> families(count);
+			vkGetPhysicalDeviceQueueFamilyProperties(physical_device_, &count, &families[0]);
+
+			for (unsigned int i = 0; i < count; ++i)
+			{
+				const VkQueueFamilyProperties& props = families.at(i);
+
+				if (props.queueCount > 0 && props.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+				{
+					return static_cast<int>(i);
+				}
+			}
+
+			return -1;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -103,6 +139,49 @@ namespace snuffbox
 			rating += static_cast<unsigned int>(properties_.physical_memory / 1024 / 1024);
 
 			return rating;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool VulkanPhysicalDevice::Pick(VulkanValidationLayer* vl)
+		{
+			VkDeviceQueueCreateInfo qci = {};
+			qci.sType = VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			qci.queueFamilyIndex = queue_family_;
+			qci.queueCount = 1;
+
+			float priority = 1.0f;
+			qci.pQueuePriorities = &priority;
+
+			VkPhysicalDeviceFeatures req_features = {};
+			req_features.geometryShader = VK_TRUE;
+
+			VkDeviceCreateInfo dci = {};
+			dci.sType = VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+			dci.pQueueCreateInfos = &qci;
+			dci.queueCreateInfoCount = 1;
+			dci.pEnabledFeatures = &req_features;
+
+			if (vl != nullptr)
+			{
+				vl->Set(dci.enabledLayerCount, dci.ppEnabledLayerNames);
+			}
+
+			if (vkCreateDevice(physical_device_, &dci, nullptr, &logical_device_) != VK_SUCCESS)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void VulkanPhysicalDevice::Release()
+		{
+			if (logical_device_ != VK_NULL_HANDLE)
+			{
+				vkDestroyDevice(logical_device_, nullptr);
+				logical_device_ = VK_NULL_HANDLE;
+			}
 		}
 	}
 }

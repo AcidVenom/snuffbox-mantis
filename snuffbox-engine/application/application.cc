@@ -83,46 +83,56 @@ namespace snuffbox
 		void SnuffboxApp::Initialise(int argc, char** argv)
 		{
 			Timer init_time("Initialisation");
-			init_time.Start();
-			cvar_service_ = Memory::ConstructUnique<CVar>();
-			log_service_ = Memory::ConstructUnique<Logger>();
-			content_service_ = Memory::ConstructUnique<ContentManager>();
-			input_service_ = Memory::ConstructUnique<Input>();
-			window_service_ = Memory::ConstructUnique<Window>();
+			{
+				cvar_service_ = Memory::ConstructUnique<CVar>();
+				log_service_ = Memory::ConstructUnique<Logger>();
+				content_service_ = Memory::ConstructUnique<ContentManager>();
+				input_service_ = Memory::ConstructUnique<Input>();
+				window_service_ = Memory::ConstructUnique<Window>();
 
-			cvar_service_->ParseCommandLine(argc, argv);
-			log_service_->Initialise(cvar_service_.get());
+				cvar_service_->ParseCommandLine(argc, argv);
 
-			Services::Provide<CVarService>(cvar_service_.get());
-			Services::Provide<LogService>(log_service_.get());
-			Services::Provide<InputService>(input_service_.get());
+				Timer log_time("Log service");
+				{
+					log_service_->Initialise(cvar_service_.get());
 
-			content_service_->Initialise(cvar_service_.get(), this);
+					Services::Provide<CVarService>(cvar_service_.get());
+					Services::Provide<LogService>(log_service_.get());
+					Services::Provide<InputService>(input_service_.get());
+				}
+				log_time.Stop(Timer::Unit::kMilliseconds, true);
 
-			Services::Provide<ContentService>(content_service_.get());
+				content_service_->Initialise(cvar_service_.get(), this);
 
-			cvar_service_->LogAll();
+				Services::Provide<ContentService>(content_service_.get());
 
-			window_service_->Initialise("Untitled", input_service_.get());
-			Services::Provide<WindowService>(window_service_.get());
+				cvar_service_->LogAll();
 
-			delta_timer_ = Memory::ConstructUnique<Timer>("Delta time");
+				Timer window_renderer_time("Window service/renderer");
+				{
+					window_service_->Initialise("Untitled", input_service_.get());
+					Services::Provide<WindowService>(window_service_.get());
+				}
+				window_renderer_time.Stop(Timer::Unit::kMilliseconds, true);
+
+				delta_timer_ = Memory::ConstructUnique<Timer>("Delta time");
 
 #ifdef SNUFF_JAVASCRIPT
-			js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
-			js_state_wrapper_->Initialise();
+				js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
+				js_state_wrapper_->Initialise();
 
-			log_service_->Assert(content_service_->Load<Script>("main.js") != nullptr, 
-							     "'main.js' is required in the current src_directory");
+				log_service_->Assert(content_service_->Load<Script>("main.js") != nullptr, "'main.js' is required in the current src_directory");
 
-			js_on_startup_ = Memory::ConstructUnique<JSCallback<>>();
-			js_on_update_ = Memory::ConstructUnique<JSCallback<float>>();
-			js_on_reload_ = Memory::ConstructUnique<JSCallback<String>>();
-			js_on_shutdown_ = Memory::ConstructUnique<JSCallback<>>();
+				js_on_startup_ = Memory::ConstructUnique<JSCallback<>>();
+				js_on_update_ = Memory::ConstructUnique<JSCallback<float>>();
+				js_on_reload_ = Memory::ConstructUnique<JSCallback<String>>();
+				js_on_shutdown_ = Memory::ConstructUnique<JSCallback<>>();
 
-			BindJSCallbacks();
+				BindJSCallbacks();
 #endif
+			}
 			init_time.Stop(Timer::Unit::kMilliseconds, true);
+
 			log_service_->Log(console::LogSeverity::kSuccess, "Initialised the application");
 
 			OnInit();

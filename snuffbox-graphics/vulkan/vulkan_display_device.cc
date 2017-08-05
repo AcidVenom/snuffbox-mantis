@@ -10,7 +10,8 @@ namespace snuffbox
 		VulkanDisplayDevice::VulkanDisplayDevice(Renderer* renderer) :
 			renderer_(renderer),
 			instance_(VK_NULL_HANDLE),
-			validation_layer_(VulkanValidationLayer::DEFAULT_VALIDATION_LAYER_)
+			validation_layer_(VulkanValidationLayer::DEFAULT_VALIDATION_LAYER_),
+			device_(nullptr)
 		{
 
 		}
@@ -75,9 +76,7 @@ namespace snuffbox
 				return false;
 			}
 
-			const char* validation_name = validation_layer_.name().c_str();
-			ci.enabledLayerCount = 1;
-			ci.ppEnabledLayerNames = &validation_name;
+			validation_layer_.Set(ci.enabledLayerCount, ci.ppEnabledLayerNames);
 
 			renderer_->Status(("Enabled Vulkan validation layer: " + validation_layer_.name()).c_str());
 #else
@@ -167,9 +166,9 @@ namespace snuffbox
 			std::vector<VkPhysicalDevice> devices(count);
 			vkEnumeratePhysicalDevices(instance_, &count, &devices[0]);
 
-			physical_devices_.resize(count);
+			physical_devices_.resize(count, VK_NULL_HANDLE);
 
-			VulkanPhysicalDevice pd;
+			VulkanPhysicalDevice pd(VK_NULL_HANDLE);
 			unsigned int highest = 0;
 			unsigned int max_score = 0;
 			unsigned int rating;
@@ -188,14 +187,23 @@ namespace snuffbox
 				}
 			}
 
-			if (physical_devices_.at(highest).properties_.supported == false)
+			device_ = &physical_devices_.at(highest);
+			if (device_->properties_.supported == false)
 			{
 				renderer_->Error("Could not find a supported physical device to use");
+				device_ = nullptr;
+
 				return false;
 			}
 
 			renderer_->Status(("Using physical device (" + std::to_string(highest) + ")").c_str());
 			LogDeviceProperties(highest);
+
+			if (device_->Pick(&validation_layer_) == false)
+			{
+				renderer_->Error("Could not create the logical device for the picked physical device");
+				return false;
+			}
 
 			return true;
 		}
@@ -219,6 +227,11 @@ namespace snuffbox
 		{
 			if (instance_ != VK_NULL_HANDLE)
 			{
+				if (device_ != nullptr)
+				{
+					device_->Release();
+				}
+
 				validation_layer_.Release(instance_);
 
 				vkDestroyInstance(instance_, nullptr);

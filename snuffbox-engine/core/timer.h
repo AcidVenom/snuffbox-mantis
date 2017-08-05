@@ -32,9 +32,9 @@ namespace snuffbox
 			/**
 			* @brief Construct with a name
 			* @param[in] name (const snuffbox::engine::String&) The name to construct this timer with
-			* @remarks This automatically runs the timer
+			* @param[in] auto_start (bool) Should the timer be automatically started? Default = true
 			*/
-            Timer(const String& name);
+            Timer(const String& name, bool auto_start = true);
 			
 			/**
 			* @brief Restarts the timer
