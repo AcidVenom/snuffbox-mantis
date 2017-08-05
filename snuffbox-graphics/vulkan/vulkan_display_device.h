@@ -61,6 +61,12 @@ namespace snuffbox
 			bool GetPhysicalDevices();
 
 			/**
+			* @brief Logs the device properties of a physical device in the devices list
+			* @param[in] idx (unsigned int) The index of the physical device to log the properties of
+			*/
+			void LogDeviceProperties(unsigned int idx);
+
+			/**
 			* @brief Cleans up Vulkan
 			*/
 			void Shutdown();

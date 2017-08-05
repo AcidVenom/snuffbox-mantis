@@ -88,5 +88,21 @@ namespace snuffbox
 		{
 			properties_.supported = features.geometryShader == VK_TRUE;
 		}
+
+		//-----------------------------------------------------------------------------------------------
+		unsigned int VulkanPhysicalDevice::Rating() const
+		{
+			if (properties_.supported == false)
+			{
+				return 0;
+			}
+
+			unsigned int rating = 0;
+
+			rating += properties_.dedicated == true ? 1000 : 0;
+			rating += static_cast<unsigned int>(properties_.physical_memory / 1024 / 1024);
+
+			return rating;
+		}
 	}
 }

@@ -75,6 +75,13 @@ namespace snuffbox
 			*/
 			void LoadFeatures(VkPhysicalDeviceFeatures features);
 
+			/**
+			* @brief Retrieves the 'rating' of this physical device to see how good it is opposed to other physical devices
+			* @return (unsigned int) The rating of this physical devices
+			* @remarks This is currently based on whether the this device is a dedicated GPU or not, its physical memory in megabytes and if it is supported
+			*/
+			unsigned int Rating() const;
+
 		private:
 
 			Properties properties_; //!< The properties of this physical device

@@ -81,7 +81,7 @@ namespace snuffbox
 
 			renderer_->Status(("Enabled Vulkan validation layer: " + validation_layer_.name()).c_str());
 #else
-			createInfo.enabledLayerCount = 0;
+			ci.enabledLayerCount = 0;
 #endif
 
 			VkResult result = vkCreateInstance(&ci, nullptr, &instance_);
@@ -138,13 +138,18 @@ namespace snuffbox
 			extensions_.resize(ext_count);
 			vkEnumerateInstanceExtensionProperties(nullptr, &ext_count, &extensions_[0]);
 
-			renderer_->Status("Available Vulkan extensions:");
-			std::string name = "\t";
+#ifdef SNUFF_DEBUG
+			std::string to_log = "\n\nAvailable Vulkan extensions:";
 
 			for (int i = 0; i < static_cast<int>(extensions_.size()); ++i)
 			{
-				renderer_->Status((name + extensions_.at(i).extensionName).c_str());
+				to_log += "\n\t" + std::string(extensions_.at(i).extensionName);
 			}
+
+			to_log += "\n";
+
+			renderer_->Status(to_log.c_str());
+#endif
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -165,14 +170,48 @@ namespace snuffbox
 			physical_devices_.resize(count);
 
 			VulkanPhysicalDevice pd;
+			unsigned int highest = 0;
+			unsigned int max_score = 0;
+			unsigned int rating;
+
 			for (unsigned int i = 0; i < count; ++i)
 			{
 				pd = VulkanPhysicalDevice::ListDevice(devices[i]);
-				renderer_->Status(("Found physical device: " + pd.properties_.name).c_str());
+				renderer_->Status(("Found physical device (" + std::to_string(i) + "): " + pd.properties_.name).c_str());
 				physical_devices_.at(i) = pd;
+
+				rating = pd.Rating();
+				if (rating > max_score)
+				{
+					max_score = rating;
+					highest = i;
+				}
 			}
 
+			if (physical_devices_.at(highest).properties_.supported == false)
+			{
+				renderer_->Error("Could not find a supported physical device to use");
+				return false;
+			}
+
+			renderer_->Status(("Using physical device (" + std::to_string(highest) + ")").c_str());
+			LogDeviceProperties(highest);
+
 			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void VulkanDisplayDevice::LogDeviceProperties(unsigned int idx)
+		{
+			std::string result = "";
+			const VulkanPhysicalDevice& dev = physical_devices_.at(idx);
+
+			result += "\n\n\tName: " + dev.properties_.name;
+			result += "\n\tPhysical memory: " + std::to_string(dev.properties_.physical_memory / 1000 / 1000) + " MB";
+			result += "\n\tDedicated GPU: " + std::string(dev.properties_.dedicated == true ? "Yes" : "No");
+			result += "\n";
+
+			renderer_->Status(result.c_str());
 		}
 
 		//-----------------------------------------------------------------------------------------------
