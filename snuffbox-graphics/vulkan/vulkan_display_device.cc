@@ -25,6 +25,11 @@ namespace snuffbox
 
 			GetExtensions();
 
+			if (GetPhysicalDevices() == false)
+			{
+				return false;
+			}
+
 			return true;
 		}
 
@@ -127,7 +132,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void VulkanDisplayDevice::GetExtensions()
 		{
-			uint32_t ext_count = 0;
+			unsigned int ext_count = 0;
 			vkEnumerateInstanceExtensionProperties(nullptr, &ext_count, nullptr);
 
 			extensions_.resize(ext_count);
@@ -140,6 +145,34 @@ namespace snuffbox
 			{
 				renderer_->Status((name + extensions_.at(i).extensionName).c_str());
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool VulkanDisplayDevice::GetPhysicalDevices()
+		{
+			unsigned int count = 0;
+			vkEnumeratePhysicalDevices(instance_, &count, nullptr);
+
+			if (count == 0)
+			{
+				renderer_->Error("Could not find any suitable Vulkan-supported physical devices");
+				return false;
+			}
+
+			std::vector<VkPhysicalDevice> devices(count);
+			vkEnumeratePhysicalDevices(instance_, &count, &devices[0]);
+
+			physical_devices_.resize(count);
+
+			VulkanPhysicalDevice pd;
+			for (unsigned int i = 0; i < count; ++i)
+			{
+				pd = VulkanPhysicalDevice::ListDevice(devices[i]);
+				renderer_->Status(("Found physical device: " + pd.properties_.name).c_str());
+				physical_devices_.at(i) = pd;
+			}
+
+			return true;
 		}
 
 		//-----------------------------------------------------------------------------------------------

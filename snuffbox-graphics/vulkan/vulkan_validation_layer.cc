@@ -14,7 +14,8 @@ namespace snuffbox
 		VulkanValidationLayer::VulkanValidationLayer(const std::string& name, bool verbose) :
 			name_(name),
 			verbose_(verbose),
-			debug_callback_(VK_NULL_HANDLE)
+			debug_callback_(VK_NULL_HANDLE),
+			gpu_(VK_NULL_HANDLE)
 		{
 
 		}

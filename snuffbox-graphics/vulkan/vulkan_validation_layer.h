@@ -93,6 +93,8 @@ namespace snuffbox
 			std::vector<VkLayerProperties> validation_layers_; //!< The available validation layers
 
 			VkDebugReportCallbackEXT debug_callback_; //!< The loaded debug callback
+
+			VkPhysicalDevice gpu_; //!< The picked physical device for rendering
 		};
 	}
 }

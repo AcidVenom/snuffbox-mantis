@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vulkan_validation_layer.h"
+#include "vulkan_physical_device.h"
 
 namespace snuffbox
 {
@@ -55,6 +56,11 @@ namespace snuffbox
 			void GetExtensions();
 
 			/**
+			* @brief Retrieves the list of physical devices and enumerates their data
+			*/
+			bool GetPhysicalDevices();
+
+			/**
 			* @brief Cleans up Vulkan
 			*/
 			void Shutdown();
@@ -65,8 +71,9 @@ namespace snuffbox
 			VkInstance instance_; //!< The Vulkan instance
 
 			std::vector<VkExtensionProperties> extensions_; //!< The extensions available for this Vulkan instance
-
 			VulkanValidationLayer validation_layer_; //!< The validation layer to use in debug builds
+
+			std::vector<VulkanPhysicalDevice> physical_devices_; //!< The physical devices and their properties/features
 		};
 	}
 }
