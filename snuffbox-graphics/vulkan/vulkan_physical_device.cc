@@ -12,7 +12,8 @@ namespace snuffbox
 			physical_device_(handle),
 			logical_device_(VK_NULL_HANDLE),
 			queue_family_(-1),
-			properties_({ "", 0, false, false })
+			properties_({ "", 0, false, false }),
+			graphics_queue_(VK_NULL_HANDLE)
 		{
 			
 		}
@@ -170,6 +171,8 @@ namespace snuffbox
 			{
 				return false;
 			}
+
+			vkGetDeviceQueue(logical_device_, queue_family_, 0, &graphics_queue_);
 
 			return true;
 		}

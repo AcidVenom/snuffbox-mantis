@@ -22,6 +22,14 @@ the important notes under **'Important notes for building V8..'** for each platf
 
 <dl><hr></hr></dl>
 
+### Vulkan with the LunarG SDK
+Vulkan can simply be downloaded through the official LunarG SDK. This is not included in the generation tool. After installation of the SDK all paths should be setup correctly and found through
+the FindVulkan module in CMake. Download the LunarG SDK [here](https://vulkan.lunarg.com/)
+
+If Vulkan was still not found, specify Vulkan_LIBRARY and Vulkan_INCLUDE_DIR in CMake manually to the paths where Vulkan is installed. (The library is found under **<Vulkan root>/Lib/vulkan-1**)
+
+<dl><hr></hr></dl>
+
 ### Get EASTL from the official repo
 You can clone the repository like so:
 

@@ -5,32 +5,29 @@ namespace snuffbox
 	namespace graphics
 	{
 		//-----------------------------------------------------------------------------------------------
-		Renderer::Renderer(ErrorCallback cb) :
+		Renderer::Renderer(GLFWwindow* window, ErrorCallback cb) :
+			window_(window),
 			error_callback_(cb),
-			display_device_(this)
+			display_device_(this, window)
 		{
 
 		}
 
-#ifdef SNUFF_USE_VULKAN
 		//-----------------------------------------------------------------------------------------------
-		bool Renderer::Initialise(unsigned int ext_count, const char** extensions, unsigned int width, unsigned int height)
+		bool Renderer::Initialise(unsigned int width, unsigned int height)
 		{
-			if (display_device_.Initialise(ext_count, extensions) == false)
+			if (window_ == nullptr)
+			{
+				return false;
+			}
+
+			if (display_device_.Initialise(width, height) == false)
 			{
 				return false;
 			}
 
 			return true;
 		}
-
-#else
-		//-----------------------------------------------------------------------------------------------
-		bool Renderer::Initialise()
-		{
-
-		}
-#endif
 
 		//-----------------------------------------------------------------------------------------------
 		void Renderer::Shutdown()

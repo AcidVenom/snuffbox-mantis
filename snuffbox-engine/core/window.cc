@@ -33,7 +33,7 @@ namespace snuffbox
 			log.Assert(glfwInit() == GL_TRUE, "Could not initialise GLFW");
 			glfwSetErrorCallback(GLFWErrorCallback);
 
-#if defined(SNUFF_USE_OGL) || defined(SNUFF_USE_VULKAN)
+#if defined(SNUFF_USE_D3D11) || defined(SNUFF_USE_D3D12)
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 			glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -59,22 +59,16 @@ namespace snuffbox
 		bool Window::InitialiseRenderer(unsigned int width, unsigned int height)
 		{
 			LogService& log = Services::Get<LogService>();
-			renderer_ = Memory::ConstructUnique<graphics::Renderer>(RendererErrorCallback);
-			bool success;
+			renderer_ = Memory::ConstructUnique<graphics::Renderer>(window_, RendererErrorCallback);
 
-#ifdef SNUFF_USE_VULKAN
-			unsigned int ext_count = 0;
-			const char** extensions;
+			if (renderer_->Initialise(width, height) == false)
+			{
+				return false;
+			}
 
-			extensions = glfwGetRequiredInstanceExtensions(&ext_count);
-
-			success = renderer_->Initialise(ext_count, extensions, width, height);
-#else
-			success = renderer_->Initialise(width, height);
-#endif
 			log.Log(console::LogSeverity::kSuccess, "Successfully initialised the renderer");
 
-			return success;
+			return true;
 		}
 
 		//-----------------------------------------------------------------------------------------------

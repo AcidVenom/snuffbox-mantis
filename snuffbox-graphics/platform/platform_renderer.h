@@ -2,6 +2,8 @@
 
 #include "platform_display_device.h"
 
+struct GLFWwindow;
+
 namespace snuffbox
 {
 	namespace graphics
@@ -26,29 +28,17 @@ namespace snuffbox
 
 			/**
 			* @brief Construct a renderer
+			* @param[in] window (GLFWwindow*) The window this renderer should render to
 			* @param[in] cb (snuffbox::graphics::ErrorCallback) The error callback to log errors with, default = nullptr
 			*/
-			Renderer(ErrorCallback cb = nullptr);
+			Renderer(GLFWwindow* window, ErrorCallback cb = nullptr);
 
-#ifdef SNUFF_USE_VULKAN
-
-			/**
-			* @brief Different initialisation is required for Vulkan, as GLFW needs to pass on its extension compatibility
-			* @param[in] ext_count (unsigned int) The number of extensions
-			* @param[in] extensions (const char**) The array of extension names
-			* @param[in] width (unsigned int) The initial x resolution, in pixels
-			* @param[in] height (unsigned int) The initial y resolution, in pixels
-			* @return (bool) Was the initialisation of the renderer a success?
-			*/
-			bool Initialise(unsigned int ext_count, const char** extensions, unsigned int width, unsigned int height);
-#else
 			/**
 			* @brief Initialises the renderer and its display device
 			* @param[in] width (unsigned int) The initial x resolution, in pixels
 			* @param[in] height (unsigned int) The initial y resolution, in pixels
 			*/
 			bool Initialise(unsigned int width, unsigned int height);
-#endif
 
 			/**
 			* @brief Shuts down the renderer
@@ -73,6 +63,7 @@ namespace snuffbox
 
 		private:
 
+			GLFWwindow* window_; //!< The window this renderer should render to
 			ErrorCallback error_callback_; //!< The error callback to log errors with
 			DisplayDevice display_device_; //!< The platform display device
 		};

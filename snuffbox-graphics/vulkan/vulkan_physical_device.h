@@ -113,6 +113,8 @@ namespace snuffbox
 			
 			int queue_family_; //!< The queue family index
 			Properties properties_; //!< The properties of this physical device
+
+			VkQueue graphics_queue_; //!< The graphics queue to send graphics related command buffers to
 		};
 	}
 }

@@ -1,14 +1,17 @@
 #include "vulkan_display_device.h"
 #include "../platform/platform_renderer.h"
 
+#include <GLFW/glfw3.h>
+
 namespace snuffbox
 {
 	namespace graphics
 	{
 
 		//-----------------------------------------------------------------------------------------------
-		VulkanDisplayDevice::VulkanDisplayDevice(Renderer* renderer) :
+		VulkanDisplayDevice::VulkanDisplayDevice(Renderer* renderer, GLFWwindow* window) :
 			renderer_(renderer),
+			window_(window),
 			instance_(VK_NULL_HANDLE),
 			validation_layer_(VulkanValidationLayer::DEFAULT_VALIDATION_LAYER_),
 			device_(nullptr)
@@ -17,9 +20,9 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool VulkanDisplayDevice::Initialise(unsigned int ext_count, const char** extensions)
+		bool VulkanDisplayDevice::Initialise(unsigned int width, unsigned int height)
 		{
-			if (CreateInstance(ext_count, extensions) == false)
+			if (CreateInstance() == false)
 			{
 				return false;
 			}
@@ -51,7 +54,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool VulkanDisplayDevice::CreateInstance(unsigned int ext_count, const char** extensions)
+		bool VulkanDisplayDevice::CreateInstance()
 		{
 			VkApplicationInfo ai = {};
 			ai.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -64,6 +67,11 @@ namespace snuffbox
 			VkInstanceCreateInfo ci = {};
 			ci.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 			ci.pApplicationInfo = &ai;
+
+			unsigned int ext_count = 0;
+			const char** extensions;
+
+			extensions = glfwGetRequiredInstanceExtensions(&ext_count);
 
 			std::vector<const char*> required_extensions = GetRequiredExtensions(ext_count, extensions);
 			ci.enabledExtensionCount = static_cast<unsigned int>(required_extensions.size());
@@ -211,7 +219,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void VulkanDisplayDevice::LogDeviceProperties(unsigned int idx)
 		{
-			std::string result = "";
+			std::string result = "Physical device details:";
 			const VulkanPhysicalDevice& dev = physical_devices_.at(idx);
 
 			result += "\n\n\tName: " + dev.properties_.name;
