@@ -92,7 +92,7 @@ namespace snuffbox
 
 				cvar_service_->ParseCommandLine(argc, argv);
 
-				Timer log_time("Log service");
+				Timer log_time("--Log service");
 				{
 					log_service_->Initialise(cvar_service_.get());
 
@@ -108,7 +108,7 @@ namespace snuffbox
 
 				cvar_service_->LogAll();
 
-				Timer window_renderer_time("Window service/renderer");
+				Timer window_renderer_time("--Window service/renderer");
 				{
 					window_service_->Initialise("Untitled", input_service_.get());
 					Services::Provide<WindowService>(window_service_.get());
@@ -118,6 +118,7 @@ namespace snuffbox
 				delta_timer_ = Memory::ConstructUnique<Timer>("Delta time");
 
 #ifdef SNUFF_JAVASCRIPT
+				Timer javascript_time("--JavaScript state");
 				js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
 				js_state_wrapper_->Initialise();
 
@@ -129,6 +130,7 @@ namespace snuffbox
 				js_on_shutdown_ = Memory::ConstructUnique<JSCallback<>>();
 
 				BindJSCallbacks();
+				javascript_time.Stop(Timer::Unit::kMilliseconds, true);
 #endif
 			}
 			init_time.Stop(Timer::Unit::kMilliseconds, true);
