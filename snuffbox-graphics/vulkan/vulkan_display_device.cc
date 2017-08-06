@@ -14,7 +14,8 @@ namespace snuffbox
 			window_(window),
 			instance_(VK_NULL_HANDLE),
 			validation_layer_(VulkanValidationLayer::DEFAULT_VALIDATION_LAYER_),
-			device_(nullptr)
+			device_(nullptr),
+			surface_(VK_NULL_HANDLE)
 		{
 
 		}
@@ -30,6 +31,11 @@ namespace snuffbox
 			GetExtensions();
 
 			if (GetPhysicalDevices() == false)
+			{
+				return false;
+			}
+
+			if (CreateWindowSurface() == false)
 			{
 				return false;
 			}
@@ -231,6 +237,18 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		bool VulkanDisplayDevice::CreateWindowSurface()
+		{
+			if (glfwCreateWindowSurface(instance_, window_, nullptr, &surface_) != VK_SUCCESS) 
+			{
+				renderer_->Error("Could not create the window surface");
+				return false;
+			}
+
+			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void VulkanDisplayDevice::Shutdown()
 		{
 			if (instance_ != VK_NULL_HANDLE)
@@ -238,6 +256,11 @@ namespace snuffbox
 				if (device_ != nullptr)
 				{
 					device_->Release();
+				}
+
+				if (surface_ != VK_NULL_HANDLE)
+				{
+					vkDestroySurfaceKHR(instance_, surface_, nullptr);
 				}
 
 				validation_layer_.Release(instance_);

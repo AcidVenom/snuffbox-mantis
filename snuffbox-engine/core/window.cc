@@ -33,7 +33,7 @@ namespace snuffbox
 			log.Assert(glfwInit() == GL_TRUE, "Could not initialise GLFW");
 			glfwSetErrorCallback(GLFWErrorCallback);
 
-#if defined(SNUFF_USE_D3D11) || defined(SNUFF_USE_D3D12)
+#ifndef SNUFF_USE_OGL
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 			glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);

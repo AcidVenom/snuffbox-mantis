@@ -69,6 +69,12 @@ namespace snuffbox
 			void LogDeviceProperties(unsigned int idx);
 
 			/**
+			* @brief Creates the window surface with GLFW
+			* @return (bool) Was the window surface created succesfully?
+			*/
+			bool CreateWindowSurface();
+
+			/**
 			* @brief Cleans up Vulkan
 			*/
 			void Shutdown();
@@ -86,6 +92,8 @@ namespace snuffbox
 			std::vector<VulkanPhysicalDevice> physical_devices_; //!< The physical devices and their properties/features
 
 			VulkanPhysicalDevice* device_; //!< The picked physical device for rendering
+
+			VkSurfaceKHR surface_; //!< The Window surface created by GLFW
 		};
 	}
 }
