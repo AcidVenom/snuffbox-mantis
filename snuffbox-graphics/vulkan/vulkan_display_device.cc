@@ -35,7 +35,7 @@ namespace snuffbox
 				return false;
 			}
 
-			if (CreateWindowSurface() == false)
+			if (CreateWindowSurfaceAndSwapChain(width, height) == false)
 			{
 				return false;
 			}
@@ -231,7 +231,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool VulkanDisplayDevice::CreateWindowSurface()
+		bool VulkanDisplayDevice::CreateWindowSurfaceAndSwapChain(unsigned int width, unsigned int height)
 		{
 			if (glfwCreateWindowSurface(instance_, window_, nullptr, &surface_) != VK_SUCCESS) 
 			{
@@ -245,6 +245,44 @@ namespace snuffbox
 				return false;
 			}
 
+			return CreateSwapChain(width, height);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool VulkanDisplayDevice::CreateSwapChain(unsigned int width, unsigned int height)
+		{
+			if (device_ == nullptr || surface_ == VK_NULL_HANDLE)
+			{
+				return false;
+			}
+
+			VulkanSwapChain::ErrorCode code = swap_chain_.GetSupported(device_, surface_);
+
+			switch (code)
+			{
+			case VulkanSwapChain::ErrorCode::kNoSupportedFormats:
+				renderer_->Error("There are no supported swap chain formats for this physical device");
+				break;
+
+			case VulkanSwapChain::ErrorCode::kNoSupportedPresentModes:
+				renderer_->Error("There are no supported swap chain present modes for this physical device");
+				break;
+
+			default:
+				break;
+			}
+
+			if (code != VulkanSwapChain::ErrorCode::kSuccess)
+			{
+				return false;
+			}
+
+			if (swap_chain_.Create(width, height, device_, surface_) == false)
+			{
+				renderer_->Error("Could not create the swap chain with the current physical device capabilities");
+				return false;
+			}
+
 			return true;
 		}
 
@@ -255,7 +293,9 @@ namespace snuffbox
 			{
 				if (device_ != nullptr)
 				{
+					swap_chain_.Release(device_);
 					device_->Release();
+					device_ = nullptr;
 				}
 
 				if (surface_ != VK_NULL_HANDLE)

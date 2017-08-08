@@ -11,6 +11,7 @@ namespace snuffbox
 	{
 		class VulkanDisplayDevice;
 		class VulkanValidationLayer;
+		class VulkanSwapChain;
 
 		/**
 		* @class snuffbox::graphics::VulkanPhysicalDevice
@@ -21,6 +22,7 @@ namespace snuffbox
 		{
 
 			friend class VulkanDisplayDevice;
+			friend class VulkanSwapChain;
 
 		public:
 

@@ -2,6 +2,7 @@
 
 #include "vulkan_validation_layer.h"
 #include "vulkan_physical_device.h"
+#include "vulkan_swap_chain.h"
 
 struct GLFWwindow;
 
@@ -69,10 +70,20 @@ namespace snuffbox
 			void LogDeviceProperties(unsigned int idx);
 
 			/**
-			* @brief Creates the window surface with GLFW
-			* @return (bool) Was the window surface created succesfully?
+			* @brief Creates the window surface with GLFW followed up by the creation of the swap chain
+			* @param[in] width (unsigned int) The initial width of the window in pixels
+			* @param[in] height (unsigned int) The initial height of the window in pixels
+			* @return (bool) Was the window surface and swap chain created succesfully?
 			*/
-			bool CreateWindowSurface();
+			bool CreateWindowSurfaceAndSwapChain(unsigned int width, unsigned int height);
+
+			/**
+			* @brief Creates the swap chain with a supported device
+			* @param[in] width (unsigned int) The initial width of the window in pixels
+			* @param[in] height (unsigned int) The initial height of the window in pixels
+			* @return (bool) Was the creation of the swap chain a success?
+			*/
+			bool CreateSwapChain(unsigned int width, unsigned int height);
 
 			/**
 			* @brief Cleans up Vulkan
@@ -92,6 +103,7 @@ namespace snuffbox
 			std::vector<VulkanPhysicalDevice> physical_devices_; //!< The physical devices and their properties/features
 
 			VulkanPhysicalDevice* device_; //!< The picked physical device for rendering
+			VulkanSwapChain swap_chain_; //!< The swap chain that contains the chain of images we can render to
 
 			VkSurfaceKHR surface_; //!< The Window surface created by GLFW
 		};
