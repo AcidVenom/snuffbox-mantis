@@ -8,12 +8,19 @@ namespace snuffbox
 	namespace graphics
 	{
 		//-----------------------------------------------------------------------------------------------
+		const char* VulkanPhysicalDevice::REQUIRED_EXTENSIONS_[VulkanPhysicalDevice::EXTENSION_COUNT_] =
+		{
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME
+		};
+
+		//-----------------------------------------------------------------------------------------------
 		VulkanPhysicalDevice::VulkanPhysicalDevice(VkPhysicalDevice handle) :
 			physical_device_(handle),
 			logical_device_(VK_NULL_HANDLE),
-			queue_family_(-1),
+			graphics_family_(-1),
 			properties_({ "", 0, false, false }),
-			graphics_queue_(VK_NULL_HANDLE)
+			graphics_queue_(VK_NULL_HANDLE),
+			present_queue_(VK_NULL_HANDLE)
 		{
 			
 		}
@@ -100,13 +107,27 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		void VulkanPhysicalDevice::LoadFeatures(VkPhysicalDeviceFeatures features)
 		{
-			queue_family_ = QueueFamilyIndex();
-			properties_.supported = queue_family_ >= 0 && features.geometryShader == VK_TRUE;
+			graphics_family_ = QueueFamilyIndex([](const VkQueueFamilyProperties& props, int i)
+			{
+				return (props.queueFlags & VK_QUEUE_GRAPHICS_BIT) == VK_QUEUE_GRAPHICS_BIT;
+			});
+
+			bool ext = HasRequiredExtensions();
+
+			properties_.supported = 
+				ext == true && 
+				graphics_family_ >= 0 && 
+				features.geometryShader == VK_TRUE;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		int VulkanPhysicalDevice::QueueFamilyIndex() const
+		int VulkanPhysicalDevice::QueueFamilyIndex(const std::function<bool(const VkQueueFamilyProperties&, int i)>& condition) const
 		{
+			if (condition == nullptr)
+			{
+				return -1;
+			}
+
 			unsigned int count = 0;
 			vkGetPhysicalDeviceQueueFamilyProperties(physical_device_, &count, nullptr);
 
@@ -117,13 +138,44 @@ namespace snuffbox
 			{
 				const VkQueueFamilyProperties& props = families.at(i);
 
-				if (props.queueCount > 0 && props.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+				if (props.queueCount > 0 && condition(props, i) == true) 
 				{
 					return static_cast<int>(i);
 				}
 			}
 
 			return -1;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool VulkanPhysicalDevice::HasRequiredExtensions() const
+		{
+			unsigned int ext_count;
+			vkEnumerateDeviceExtensionProperties(physical_device_, nullptr, &ext_count, nullptr);
+
+			std::vector<VkExtensionProperties> available(ext_count);
+			vkEnumerateDeviceExtensionProperties(physical_device_, nullptr, &ext_count, &available[0]);
+
+			bool found;
+			for (unsigned int i = 0; i < EXTENSION_COUNT_; ++i)
+			{
+				found = false;
+				for (unsigned int j = 0; j < available.size(); ++j)
+				{
+					if (strcmp(REQUIRED_EXTENSIONS_[i], available.at(j).extensionName) == 0)
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if (found == false)
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -143,24 +195,60 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool VulkanPhysicalDevice::Pick(VulkanValidationLayer* vl)
+		bool VulkanPhysicalDevice::Pick(VkSurfaceKHR surface, VulkanValidationLayer* vl)
 		{
-			VkDeviceQueueCreateInfo qci = {};
-			qci.sType = VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			qci.queueFamilyIndex = queue_family_;
-			qci.queueCount = 1;
+			if (GetPresentSupport(surface) == false)
+			{
+				return false;
+			}
 
+			int queues[] = 
+			{
+				graphics_family_,
+				present_family_
+			};
+
+			bool added[16];
+
+			for (int i = 0; i < 16; ++i)
+			{
+				added[i] = false;
+			}
+
+			unsigned int count = static_cast<unsigned int>(sizeof(queues) / sizeof(int));
+
+			std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
+
+			VkDeviceQueueCreateInfo qci;
 			float priority = 1.0f;
-			qci.pQueuePriorities = &priority;
+
+			for (unsigned int i = 0; i < count; ++i)
+			{
+				if (added[queues[i]] == true)
+				{
+					continue;
+				}
+
+				qci = {};
+				qci.sType = VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				qci.queueFamilyIndex = queues[i];
+				qci.queueCount = 1;
+				qci.pQueuePriorities = &priority;
+
+				queue_create_infos.push_back(qci);
+				added[qci.queueFamilyIndex] = true;
+			}
 
 			VkPhysicalDeviceFeatures req_features = {};
 			req_features.geometryShader = VK_TRUE;
 
 			VkDeviceCreateInfo dci = {};
 			dci.sType = VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-			dci.pQueueCreateInfos = &qci;
-			dci.queueCreateInfoCount = 1;
+			dci.pQueueCreateInfos = &queue_create_infos[0];
+			dci.queueCreateInfoCount = static_cast<unsigned int>(queue_create_infos.size());
 			dci.pEnabledFeatures = &req_features;
+			dci.enabledExtensionCount = EXTENSION_COUNT_;
+			dci.ppEnabledExtensionNames = REQUIRED_EXTENSIONS_;
 
 			if (vl != nullptr)
 			{
@@ -172,9 +260,24 @@ namespace snuffbox
 				return false;
 			}
 
-			vkGetDeviceQueue(logical_device_, queue_family_, 0, &graphics_queue_);
+			vkGetDeviceQueue(logical_device_, graphics_family_, 0, &graphics_queue_);
+			vkGetDeviceQueue(logical_device_, present_family_, 0, &present_queue_);
 
 			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool VulkanPhysicalDevice::GetPresentSupport(VkSurfaceKHR surface)
+		{
+			present_family_ = QueueFamilyIndex([=](const VkQueueFamilyProperties& props, int i)
+			{
+				unsigned int supported;
+				vkGetPhysicalDeviceSurfaceSupportKHR(physical_device_, i, surface, &supported);
+
+				return supported == VK_TRUE;
+			});
+
+			return present_family_ >= 0;
 		}
 
 		//-----------------------------------------------------------------------------------------------

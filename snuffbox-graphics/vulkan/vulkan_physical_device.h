@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
 #include <vulkan/vulkan.h>
 
@@ -83,9 +84,16 @@ namespace snuffbox
 			void LoadFeatures(VkPhysicalDeviceFeatures features);
 
 			/**
-			* @return (int) The queue family index of this physical device, or -1 if it doesn't have any
+			* @brief Searches for a queue family that meets the specified condition
+			* @param[in] condition (const std::function<bool(const VkQueueFamilyProperties&, int i)>&) The condition to evaluate
+			* @return (int) The queue family index of this physical device with the condition, or -1 if it doesn't have any
 			*/
-			int QueueFamilyIndex() const;
+			int QueueFamilyIndex(const std::function<bool(const VkQueueFamilyProperties&, int i)>& condition) const;
+
+			/**
+			* @return (bool) Does the device have the required extensions?
+			*/
+			bool HasRequiredExtensions() const;
 
 			/**
 			* @brief Retrieves the 'rating' of this physical device to see how good it is opposed to other physical devices
@@ -96,10 +104,18 @@ namespace snuffbox
 
 			/**
 			* @brief Picks this device for use with the renderer and creates a logical device for it
+			* @param[in] surface (VkSurfaceKHR) The Vulkan surface created by GLFW
 			* @param[in] vl (snuffbox::graphics::VulkanValidationLayer*) The validation layer, default = nullptr
 			* @return (bool) Were we able to create the logical device?
 			*/
-			bool Pick(VulkanValidationLayer* vl = nullptr);
+			bool Pick(VkSurfaceKHR surface, VulkanValidationLayer* vl = nullptr);
+
+			/**
+			* @brief Checks if the logical device has a queue family with present support and sets the queue family index if it does
+			* @param[in] surface (VkSurfaceKHR) The created Vulkan surface by GLFW
+			* @return (bool) Does the device have present support?
+			*/
+			bool GetPresentSupport(VkSurfaceKHR surface);
 
 			/**
 			* @brief Releases the logical device
@@ -108,13 +124,19 @@ namespace snuffbox
 
 		private:
 
+			static const unsigned int EXTENSION_COUNT_ = 1; //!< The required extensions count
+			static const char* REQUIRED_EXTENSIONS_[EXTENSION_COUNT_]; //!< The required extensions for a device
+
 			VkPhysicalDevice physical_device_; //!< The handle to the physical device this device was created with
 			VkDevice logical_device_; //!< The logical device to be created when this physical device was picked
 			
-			int queue_family_; //!< The queue family index
+			int graphics_family_; //!< The graphics queue family index
+			int present_family_; //!< The present queue family index
+
 			Properties properties_; //!< The properties of this physical device
 
 			VkQueue graphics_queue_; //!< The graphics queue to send graphics related command buffers to
+			VkQueue present_queue_; //!< The present queue to send presentation commands to
 		};
 	}
 }

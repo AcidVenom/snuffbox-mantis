@@ -213,12 +213,6 @@ namespace snuffbox
 			renderer_->Status(("Using physical device (" + std::to_string(highest) + ")").c_str());
 			LogDeviceProperties(highest);
 
-			if (device_->Pick(&validation_layer_) == false)
-			{
-				renderer_->Error("Could not create the logical device for the picked physical device");
-				return false;
-			}
-
 			return true;
 		}
 
@@ -242,6 +236,12 @@ namespace snuffbox
 			if (glfwCreateWindowSurface(instance_, window_, nullptr, &surface_) != VK_SUCCESS) 
 			{
 				renderer_->Error("Could not create the window surface");
+				return false;
+			}
+
+			if (device_ == nullptr || device_->Pick(surface_, &validation_layer_) == false)
+			{
+				renderer_->Error("Could not create the logical device for the picked physical device");
 				return false;
 			}
 
