@@ -111,12 +111,7 @@ namespace snuffbox
 				return false;
 			}
 
-			unsigned int count;
-			vkGetSwapchainImagesKHR(ld, handle_, &count, nullptr);
-			images_.resize(count);
-			vkGetSwapchainImagesKHR(ld, handle_, &count, &images_[0]);
-
-			return true;
+			return CreateImageViews(device) == true;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -194,11 +189,58 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		bool VulkanSwapChain::CreateImageViews(const VulkanPhysicalDevice* device)
+		{
+			VkDevice ld = device->logical_device_;
+
+			unsigned int count;
+			vkGetSwapchainImagesKHR(ld, handle_, &count, nullptr);
+
+			images_.resize(count);
+			image_views_.resize(count);
+
+			vkGetSwapchainImagesKHR(ld, handle_, &count, &images_[0]);
+
+			VkImageViewCreateInfo ci = {};
+			ci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			ci.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			ci.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+			ci.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+			ci.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+			ci.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+			ci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			ci.subresourceRange.baseMipLevel = 0;
+			ci.subresourceRange.levelCount = 1;
+			ci.subresourceRange.baseArrayLayer = 0;
+			ci.subresourceRange.layerCount = 1;
+
+			for (unsigned int i = 0; i < count; ++i) 
+			{
+				ci.image = images_.at(i);
+				ci.format = format_.format;
+
+				if (vkCreateImageView(ld, &ci, nullptr, &image_views_.at(i)) != VK_SUCCESS) 
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void VulkanSwapChain::Release(const VulkanPhysicalDevice* device)
 		{
 			if (handle_ != VK_NULL_HANDLE && device != nullptr)
 			{
-				vkDestroySwapchainKHR(device->logical_device_, handle_, nullptr);
+				VkDevice ld = device->logical_device_;
+
+				for (unsigned int i = 0; i < static_cast<unsigned int>(image_views_.size()); ++i)
+				{
+					vkDestroyImageView(ld, image_views_.at(i), nullptr);
+				}
+
+				vkDestroySwapchainKHR(ld, handle_, nullptr);
 			}
 		}
 	}

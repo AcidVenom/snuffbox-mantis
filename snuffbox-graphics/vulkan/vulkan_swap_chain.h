@@ -79,8 +79,15 @@ namespace snuffbox
 			VkExtent2D CreateExtents(unsigned int width, unsigned int height) const;
 
 			/**
+			* @brief Creates the image views to access the swap chain images with 
+			* @param[in] device (const snuffbox::graphics::VulkanPhysicalDevice*) The physical device created by Vulkan
+			* @return (bool) Were we able to create all image views per image?
+			*/
+			bool CreateImageViews(const VulkanPhysicalDevice* device);
+
+			/**
 			* @brief Releases the created swap chain if it was created
-			* @param[in] device (const snuffbox::graphics::VulkanPhysicalDevice*) The physical device created by vulkan
+			* @param[in] device (const snuffbox::graphics::VulkanPhysicalDevice*) The physical device created by Vulkan
 			*/
 			void Release(const VulkanPhysicalDevice* device);
 
@@ -96,6 +103,7 @@ namespace snuffbox
 			VkExtent2D extents_; //!< The chosen extents for this swap chain
 
 			std::vector<VkImage> images_; //!< A list of the created swap chain images
+			std::vector<VkImageView> image_views_; //!< A list of image views to access the created swap chain images with
 		};
 	}
 }
