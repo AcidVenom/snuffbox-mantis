@@ -2,6 +2,7 @@
 #include "vulkan_validation_layer.h"
 
 #include <vector>
+#include <string.h>
 
 namespace snuffbox
 {
