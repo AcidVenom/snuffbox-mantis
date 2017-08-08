@@ -123,7 +123,7 @@ namespace snuffbox
 			const VkAllocationCallbacks* pAllocator, 
 			VkDebugReportCallbackEXT* pCallback) 
 		{
-			PFN_vkCreateDebugReportCallbackEXT func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
+			PFN_vkCreateDebugReportCallbackEXT func = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT"));
 			if (func != nullptr) 
 			{
 				return func(instance, pCreateInfo, pAllocator, pCallback);
@@ -138,7 +138,7 @@ namespace snuffbox
 			VkDebugReportCallbackEXT callback, 
 			const VkAllocationCallbacks* pAllocator) 
 		{
-			PFN_vkDestroyDebugReportCallbackEXT func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
+			PFN_vkDestroyDebugReportCallbackEXT func = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT"));
 			if (func != nullptr) 
 			{
 				func(instance, callback, pAllocator);
