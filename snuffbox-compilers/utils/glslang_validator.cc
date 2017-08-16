@@ -10,6 +10,13 @@ namespace snuffbox
 	namespace compilers
 	{
 		//-----------------------------------------------------------------------------------------------
+		GLSLangValidator::Includer::Includer(const char* directory) :
+			directory_(directory)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		glslang::TShader::Includer::IncludeResult* GLSLangValidator::Includer::includeSystem(const char* header_name, const char* includer_name, size_t depth)
 		{
 			return nullptr;
@@ -20,7 +27,9 @@ namespace snuffbox
 		{
 			IncludeResult* res = nullptr;
 
-			std::ifstream file(header_name, std::ios::binary | std::ios::ate);
+			std::string full_path = std::string(directory_) + "/" + header_name;
+
+			std::ifstream file(full_path.c_str(), std::ios::binary | std::ios::ate);
 			if (file) 
 			{
 				int size = static_cast<int>(file.tellg());
@@ -116,7 +125,8 @@ namespace snuffbox
 			shader->setFlattenUniformArrays(false);
 			shader->setNoStorageFormat(false);
 
-			Includer includer;
+			std::string root = GetDirectory(filename);
+			Includer includer(root.c_str());
 			bool success = shader->parse(&glslang::DefaultTBuiltInResource, version.vulkan, true, EShMessages::EShMsgDefault, includer);
 
 			if (success == false)
@@ -197,6 +207,37 @@ namespace snuffbox
 			}
 
 			glslang::FinalizeProcess();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		std::string GLSLangValidator::GetDirectory(const char* full_path)
+		{
+			int len = static_cast<int>(strlen(full_path));
+
+			if (len == 0)
+			{
+				return "";
+			}
+
+			int idx = len;
+			for (int last = len - 1; last >= 0; --last)
+			{
+				if (full_path[last] == '/' || full_path[last] == '\\')
+				{
+					idx = last;
+					break;
+				}
+			}
+
+			if (idx == len)
+			{
+				return "";
+			}
+
+			std::string root(full_path);
+			root.erase(root.begin() + idx, root.end());
+
+			return root;
 		}
 	}
 }

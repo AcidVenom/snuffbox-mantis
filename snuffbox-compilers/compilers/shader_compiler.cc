@@ -37,6 +37,7 @@ namespace snuffbox
 			GLSLangValidator validator;
 			if (validator.Compile(reinterpret_cast<const char*>(input), size, full_path, static_cast<GLSLangValidator::ShaderType>(type), &bin_size, &bin) == false)
 			{
+				SetError(validator.GetError());
 				return false;
 			}
 

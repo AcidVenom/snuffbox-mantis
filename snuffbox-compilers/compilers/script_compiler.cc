@@ -27,6 +27,7 @@ namespace snuffbox
 
 			if (data_ == nullptr)
 			{
+				SetError("Could not allocate data to store the encrypted script");
 				return false;
 			}
 

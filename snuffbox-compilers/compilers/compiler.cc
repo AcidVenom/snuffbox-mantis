@@ -14,7 +14,8 @@ namespace snuffbox
 		Compiler::Compiler(Allocation allocation, Deallocation deallocation) :
 			allocator_(allocation),
 			deallocator_(deallocation),
-			data_(nullptr)
+			data_(nullptr),
+			error_message_(nullptr)
 		{
 			
 		}
@@ -56,14 +57,42 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		Compiler::~Compiler()
+		const char* Compiler::GetError() const
 		{
-			if (data_ == nullptr)
+			return error_message_;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Compiler::SetError(const char* error)
+		{
+			if (error_message_ != nullptr)
 			{
-				return;
+				Deallocate(error_message_);
+				error_message_ = nullptr;
 			}
 
-			Deallocate(data_);
+			size_t s = strlen(error) + 1;
+			error_message_ = reinterpret_cast<char*>(Allocate(s));
+
+			size_t null_terminated = s - 1;
+			memcpy(error_message_, error, null_terminated);
+			memset(error_message_ + null_terminated, '\0', sizeof(char));
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		Compiler::~Compiler()
+		{
+			if (error_message_ != nullptr)
+			{
+				Deallocate(error_message_);
+				error_message_ = nullptr;
+			}
+
+			if (data_ != nullptr)
+			{
+				Deallocate(data_);
+				data_ = nullptr;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------

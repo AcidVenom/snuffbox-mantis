@@ -59,6 +59,11 @@ namespace snuffbox
 			bool Decompile(const unsigned char* input, const unsigned char** output, const unsigned char* userdata);
 
 			/**
+			* @return (const char*) The current error of the compiler, or nullptr if there is none
+			*/
+			const char* GetError() const;
+
+			/**
 			* @brief Frees up the compiled data using snuffbox::compilers::Compiler::deallocator_
 			* @remarks As long as snuffbox::compilers::Compiler::data_ is used, all memory will be managed by the compiler
 			*/
@@ -102,6 +107,12 @@ namespace snuffbox
 			virtual bool Decompilation(const unsigned char* input, const unsigned char* userdata) = 0;
 
 			/**
+			* @brief Sets the current error message of the compiler
+			* @param[in] error (const char*) The error message to set
+			*/
+			void SetError(const char* error);
+
+			/**
 			* @brief Retrieves the file header from input data
 			* @param[in] input (const unsigned char*) The data to retrieve the file header from
 			* @param[out] out (snuffbox::compilers::Compiler::FileHeader*) The output value
@@ -117,6 +128,7 @@ namespace snuffbox
 		protected:
 
 			unsigned char* data_; //!< The currently allocated data (compiled or raw)
+			char* error_message_; //!< The error message of the compiler, if any
 		};
 	}
 }

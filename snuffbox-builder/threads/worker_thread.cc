@@ -77,13 +77,15 @@ namespace snuffbox
 					userdata = reinterpret_cast<const unsigned char*>(command_.src_path.c_str());
 				}
 
-				compiled = compilers_[static_cast<int>(command_.file_type)]->Compile(input, file_size, &out_size, &output, userdata);
+				compilers::Compiler* compiler = compilers_[static_cast<int>(command_.file_type)];
+				compiled = compiler->Compile(input, file_size, &out_size, &output, userdata);
 				
 				free(input);
 
 				if (compiled == false)
 				{
-					SetError("Could not compile", command_.src_path);
+					const char* error = compiler->GetError();
+					SetError(error != nullptr ? error : "Unknown error", command_.src_path);
 					return;
 				}
 

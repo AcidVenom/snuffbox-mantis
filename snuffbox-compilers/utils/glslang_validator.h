@@ -27,6 +27,15 @@ namespace snuffbox
 			*/
 			class Includer : public glslang::TShader::Includer
 			{
+
+			public:
+				/**
+				* @brief Sets the directory of the includer
+				* @param[in] directory (const char*) The directory to search for files
+				*/
+				Includer(const char* directory);
+
+			protected:
 				/**
 				* @brief Used to include system directories, this is unused and will always return nullptr
 				* @remarks e.g. when the user includes a shader using '#include <path/to/shader>'
@@ -43,6 +52,10 @@ namespace snuffbox
 				* @brief Releases the used data
 				*/
 				void releaseInclude(IncludeResult*) override;
+
+			private:
+
+				const char* directory_; //!< The directory to search for files
 			};
 
 			/**
@@ -80,6 +93,13 @@ namespace snuffbox
 			* @brief Frees up the buffer if it was used
 			*/
 			~GLSLangValidator();
+
+			/**
+			* @brief Retrieves the root directory of a file
+			* @param[in] full_path (const char*) The full path to the file
+			* @return (std::string) The corresponding root directory
+			*/
+			static std::string GetDirectory(const char* full_path);
 
 		private:
 
