@@ -103,16 +103,8 @@ namespace snuffbox
 
 			static const char* entry = "main";
 
-			glslang::TProgram* program = new glslang::TProgram();
-			glslang::TShader* shader = new glslang::TShader(lang);
-
-			auto Finalise = [=]()
-			{
-				delete program;
-				delete shader;
-
-				glslang::FinalizeProcess();
-			};
+			glslang::TProgram program;
+			glslang::TShader shader(lang);
 
 			auto Failed = [=](const char* error = nullptr)
 			{
@@ -125,46 +117,46 @@ namespace snuffbox
 					error_ = error;
 				}
 
-				Finalise();
+				glslang::FinalizeProcess();
 				return false;
 			};
 
-			shader->setSourceEntryPoint(entry);
-			shader->setEntryPoint(entry);
-			shader->setEnvTarget(glslang::EShTargetLanguage::EshTargetSpv, spv_version);
-			shader->setEnvClient(glslang::EShClient::EShClientVulkan, vulkan_version);
-			shader->setEnvInput(glslang::EShSource::EShSourceHlsl, lang, glslang::EShClient::EShClientVulkan, vulkan_version);
-			shader->setHlslIoMapping(true);
+			shader.setSourceEntryPoint(entry);
+			shader.setEntryPoint(entry);
+			shader.setEnvTarget(glslang::EShTargetLanguage::EshTargetSpv, spv_version);
+			shader.setEnvClient(glslang::EShClient::EShClientVulkan, vulkan_version);
+			shader.setEnvInput(glslang::EShSource::EShSourceHlsl, lang, glslang::EShClient::EShClientVulkan, vulkan_version);
+			shader.setHlslIoMapping(true);
 
 			int l = static_cast<int>(length);
-			shader->setStringsWithLengthsAndNames(&hlsl, &l, &filename, 1);
-			shader->setShiftSamplerBinding(0);
-			shader->setShiftTextureBinding(0);
-			shader->setShiftImageBinding(0);
-			shader->setShiftUboBinding(0);
-			shader->setShiftSsboBinding(0);
-			shader->setShiftUavBinding(0);
-			shader->setFlattenUniformArrays(false);
-			shader->setNoStorageFormat(false);
+			shader.setStringsWithLengthsAndNames(&hlsl, &l, &filename, 1);
+			shader.setShiftSamplerBinding(0);
+			shader.setShiftTextureBinding(0);
+			shader.setShiftImageBinding(0);
+			shader.setShiftUboBinding(0);
+			shader.setShiftSsboBinding(0);
+			shader.setShiftUavBinding(0);
+			shader.setFlattenUniformArrays(false);
+			shader.setNoStorageFormat(false);
 
 			std::string root = GetDirectory(filename);
 			Includer includer(root.c_str());
-			bool success = shader->parse(&glslang::DefaultTBuiltInResource, vulkan_version, true, EShMessages::EShMsgDefault, includer);
+			bool success = shader.parse(&glslang::DefaultTBuiltInResource, vulkan_version, true, EShMessages::EShMsgDefault, includer);
 
 			if (success == false)
 			{
 				error_ = "Could not compile shader\n\n";
-				error_ += shader->getInfoLog();
+				error_ += shader.getInfoLog();
 
 				return Failed();
 			}
 
-			program->addShader(shader);
+			program.addShader(&shader);
 			
-			if (program->link(EShMessages::EShMsgDefault) == false || program->mapIO() == false)
+			if (program.link(EShMessages::EShMsgDefault) == false || program.mapIO() == false)
 			{
 				error_ = "Could not link shader\n\n";
-				error_ += program->getInfoLog();
+				error_ += program.getInfoLog();
 
 				return Failed();
 			}
@@ -172,7 +164,7 @@ namespace snuffbox
 			std::vector<unsigned int> spv;
 			spv::SpvBuildLogger logger;
 
-			glslang::GlslangToSpv(*program->getIntermediate(lang), spv, &logger);
+			glslang::GlslangToSpv(*program.getIntermediate(lang), spv, &logger);
 			
 			size_t s = spv.size() * 4;
 
@@ -198,7 +190,7 @@ namespace snuffbox
 				*spirv = buffer_;
 			}
 
-			Finalise();
+			glslang::FinalizeProcess();
 
 			return true;
 		}
