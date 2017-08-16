@@ -19,7 +19,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool ScriptCompiler::Compilation(const unsigned char* input, size_t size, size_t* out_size)
+		bool ScriptCompiler::Compilation(const unsigned char* input, size_t size, size_t* out_size, const unsigned char* userdata)
 		{
 			const size_t header_size = sizeof(Compiler::FileHeader);
 			RC4 rc4;
@@ -49,7 +49,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool ScriptCompiler::Decompilation(const unsigned char* input)
+		bool ScriptCompiler::Decompilation(const unsigned char* input, const unsigned char* userdata)
 		{
 			FileHeader header;
 			if (GetFileHeader(input, &header) == false)

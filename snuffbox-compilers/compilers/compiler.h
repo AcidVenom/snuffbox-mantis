@@ -49,14 +49,14 @@ namespace snuffbox
 			* @param[out] output (const unsigned char**) The compiled data
 			* @remarks Makes sure snuffbox::compiler::Compiler::data_ is freed up before re-use
 			*/
-			bool Compile(const unsigned char* input, size_t size, size_t* out_size, const unsigned char** output);
+			bool Compile(const unsigned char* input, size_t size, size_t* out_size, const unsigned char** output, const unsigned char* userdata);
 
 			/**
 			* @see snuffbox::compiler::Compiler::Decompilation
 			* @param[out] output (const unsigned char**) The decompiled data
 			* @remarks Makes sure snuffbox::compiler::Compiler::data_ is freed up before re-use
 			*/
-			bool Decompile(const unsigned char* input, const unsigned char** output);
+			bool Decompile(const unsigned char* input, const unsigned char** output, const unsigned char* userdata);
 
 			/**
 			* @brief Frees up the compiled data using snuffbox::compilers::Compiler::deallocator_
@@ -86,18 +86,20 @@ namespace snuffbox
 			* @param[in] input (const unsigned char*) The raw data to compile into the compiled binary format
 			* @param[in] size (size_t) The input size
 			* @param[out] out_size (size_t*) The output size
+			* @param[in] userdata (const unsigned char*) User data to pass into the different compilers
 			* @return (bool) Was the compilation a success?
 			* @remarks snuffbox::compilers::Compiler::Allocate should be used to allocate the memory for 'out'
 			*/
-			virtual bool Compilation(const unsigned char* input, size_t size, size_t* out_size) = 0;
+			virtual bool Compilation(const unsigned char* input, size_t size, size_t* out_size, const unsigned char* userdata) = 0;
 
 			/**
 			* @brief Decompile compiled binary data into a raw binary format
 			* @param[in] input (const unsigned char*) The compiled data to decompile into the raw binary format
+			* @param[in] userdata (const unsigned char*) User data to pass into the different compilers
 			* @return (bool) Was the decompilation a success?
 			* @remarks snuffbox::compilers::Compiler::Allocate should be used to allocate the memory for 'out'
 			*/
-			virtual bool Decompilation(const unsigned char* input) = 0;
+			virtual bool Decompilation(const unsigned char* input, const unsigned char* userdata) = 0;
 
 			/**
 			* @brief Retrieves the file header from input data

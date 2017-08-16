@@ -58,6 +58,13 @@ namespace snuffbox
 			for (int i = 1; i < argc; ++i)
 			{
 				name = argv[i];
+				if (name[0] != '-')
+				{
+					continue;
+				}
+
+				name = name + 1;
+
 				command_line += String(name) + " ";
 
 				if (i + 1 < argc)

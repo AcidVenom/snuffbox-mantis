@@ -4,6 +4,9 @@
 #include <fstream>
 #include <assert.h>
 
+#include <snuffbox-compilers/compilers/script_compiler.h>
+#include <snuffbox-compilers/compilers/shader_compiler.h>
+
 namespace snuffbox
 {
 	namespace builder
@@ -19,6 +22,7 @@ namespace snuffbox
 			assert(build_thread_ != nullptr);
 
 			compilers_[static_cast<int>(FileType::kScript)] = new compilers::ScriptCompiler();
+			compilers_[static_cast<int>(FileType::kShader)] = new compilers::ShaderCompiler();
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -67,7 +71,13 @@ namespace snuffbox
 
 				bool compiled = false;
 
-				compiled = compilers_[static_cast<int>(command_.file_type)]->Compile(input, file_size, &out_size, &output);
+				const unsigned char* userdata = nullptr;
+				if (command_.file_type == BuildGraph::BuildData::FileType::kShader)
+				{
+					userdata = reinterpret_cast<const unsigned char*>(command_.src_path.c_str());
+				}
+
+				compiled = compilers_[static_cast<int>(command_.file_type)]->Compile(input, file_size, &out_size, &output, userdata);
 				
 				free(input);
 

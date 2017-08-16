@@ -314,6 +314,10 @@ namespace snuffbox
 			{
 				return BuildData::FileType::kScript;
 			}
+			else if (ext == ".vs" || ext == ".ps" || ext == ".gs")
+			{
+				return BuildData::FileType::kShader;
+			}
 
 			return BuildData::FileType::kSkip;
 		}

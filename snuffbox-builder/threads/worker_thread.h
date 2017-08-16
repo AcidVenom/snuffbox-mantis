@@ -3,12 +3,15 @@
 #include <thread>
 #include <mutex>
 
-#include <snuffbox-compilers/compilers/script_compiler.h>
-
 #include "../utils/build_graph.h"
 
 namespace snuffbox
 {
+	namespace compilers
+	{
+		class Compiler;
+	}
+
 	namespace builder
 	{
 		class BuildThread;

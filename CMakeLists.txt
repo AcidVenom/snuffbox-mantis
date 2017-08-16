@@ -131,6 +131,17 @@ IF (WIN32)
 	)
 ENDIF ()
 
+
+SET(BUILD_TESTING OFF CACHE BOOL "Build SpirVCross/GLSLang tests")
+
+FIND_PACKAGE(SpirVCross REQUIRED)
+ADD_SUBDIRECTORY("${SpirVCross_ROOT_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/deps/spirv-cross")
+INCLUDE_DIRECTORIES(${SpirVCross_INCLUDE_DIRECTORIES})
+
+FIND_PACKAGE(GLSLang REQUIRED)
+ADD_SUBDIRECTORY("${GLSLang_ROOT_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/deps/glslang")
+INCLUDE_DIRECTORIES(${GLSLang_INCLUDE_DIRECTORIES})
+
 IF (SNUFF_JAVASCRIPT)
     ADD_DEFINITIONS("/DSNUFF_JAVASCRIPT")
     ADD_DEFINITIONS("/DV8_IMMINENT_DEPRECATION_WARNINGS")
@@ -205,6 +216,35 @@ IF (GLFW_BUILD_TESTS)
 		SET_TARGET_PROPERTIES(${GLFWName} PROPERTIES FOLDER "deps/glfw3/tests")
 	ENDFOREACH ()
 ENDIF ()
+
+SET (SpirVCrossProjects
+	"spirv-cross"
+	"spirv-cross-core"
+	"spirv-cross-cpp"
+	"spirv-cross-glsl"
+	"spirv-cross-hlsl"
+	"spirv-cross-msl"
+)
+
+FOREACH (SpirVCrossName ${SpirVCrossProjects})
+	SET_TARGET_PROPERTIES(${SpirVCrossName} PROPERTIES FOLDER "deps/spirv-cross")
+ENDFOREACH ()
+
+SET (GLSLangProjects
+	"glslang"
+	"glslang-default-resource-limits"
+	"OGLCompiler"
+	"OSDependent"
+	"SPIRV"
+	"SPVRemapper"
+	"HLSL"
+	"glslangValidator"
+	"spirv-remap"
+)
+
+FOREACH (GLSLangName ${GLSLangProjects})
+	SET_TARGET_PROPERTIES(${GLSLangName} PROPERTIES FOLDER "deps/glslang")
+ENDFOREACH ()
 
 SET_TARGET_PROPERTIES(EASTL PROPERTIES FOLDER "deps/eastl")
 SET_TARGET_PROPERTIES(EABase_ide PROPERTIES FOLDER "deps/eastl")

@@ -61,6 +61,38 @@ echo [32mCloning GLM from git[0m & echo.
 call git clone https://github.com/g-truc/glm glm & echo.
 
 :skipglm
+set /P getspirvc="Clone SpirVCross? (y/n)"
+echo.
+if /I "%getspirvc%" neq "y" goto skipspirvc
+
+if exist .\spirv-cross (
+	rmdir .\spirv-cross /s /q
+	echo Removing old 'spirv-cross' folder as we're regenerating & echo.
+)
+
+mkdir .\spirv-cross
+echo [32mMade the 'spirv-cross' folder[0m
+echo [32mCloning SpirVCross from git[0m & echo.
+
+call git clone https://github.com/KhronosGroup/SPIRV-Cross spirv-cross & echo.
+
+skipspirvc:
+set /P getglslang="Clone glslang? (y/n)"
+echo.
+if /I "%getglslang%" neq "y" goto skipglslang
+
+if exist .\glslang (
+	rmdir .\glslang /s /q
+	echo Removing old 'glslang' folder as we're regenerating & echo.
+)
+
+mkdir .\glslang
+echo [32mMade the 'glslang' folder[0m
+echo [32mCloning glslang from git[0m & echo.
+
+call git clone https://github.com/KhronosGroup/glslang glslang & echo.
+
+skipglslang:
 echo To download and build V8, depot_tools is required in your system PATH
 echo [91mBuilding V8 takes quite some time and is only required with SNUFF_JAVASCRIPT[0m & echo.
 

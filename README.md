@@ -28,6 +28,8 @@ the FindVulkan module in CMake. Download the LunarG SDK [here](https://vulkan.lu
 
 If Vulkan was still not found, specify Vulkan_LIBRARY and Vulkan_INCLUDE_DIR in CMake manually to the paths where Vulkan is installed. (The library is found under **<Vulkan root>/Lib/vulkan-1**)
 
+As for shader compilation, **python3** is required to be installed on the system, else the CMake generation will fail. A stable release of python3 can be found [here](https://www.python.org/downloads/release/python-354/).
+
 <dl><hr></hr></dl>
 
 ### Get EASTL from the official repo

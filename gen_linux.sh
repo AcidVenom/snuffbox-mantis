@@ -55,6 +55,36 @@ fi
 
 echo -e ""
 
+echo -n "Clone SpirVCross? (y/n)"
+read option
+if echo "$option" | grep -iq "^y" ;then
+	if [ -d "spirv-cross" ]; then
+		rm -r -f spirv-cross
+		echo "Removing old 'spirv-cross' folder as we're regenerating"
+	fi
+	mkdir spirv-cross
+	echo -e "\e[32mMade the 'spirv-cross' folder\e[0m"
+	echo -e "\e[32mCloning SpirVCross from git\e[0m"
+	git clone https://github.com/KhronosGroup/SPIRV-Cross spirv-cross
+fi
+
+echo -e ""
+
+echo -n "Clone glslang? (y/n)"
+read option
+if echo "$option" | grep -iq "^y" ;then
+	if [ -d "glslang" ]; then
+		rm -r -f glslang
+		echo "Removing old 'glslang' folder as we're regenerating"
+	fi
+	mkdir glslang
+	echo -e "\e[32mMade the 'glslang' folder\e[0m"
+	echo -e "\e[32mCloning glslang from git\e[0m"
+	git clone https://github.com/KhronosGroup/glslang glslang
+fi
+
+echo -e ""
+
 echo "To download and build V8, depot_tools is required in your system PATH"
 echo -e "\e[91mBuilding V8 takes quite some time and is only required with SNUFF_JAVASCRIPT\e[0m\n"
 echo "libc++ and lib++abi are also required on Linux builds"

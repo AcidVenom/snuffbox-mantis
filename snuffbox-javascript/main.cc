@@ -3,6 +3,8 @@
 using namespace snuffbox;
 using namespace snuffbox::engine;
 
+#include <string>
+
 int main(int argc, char** argv)
 {
 	int exit = 0;

@@ -30,7 +30,7 @@ namespace snuffbox
 				[](void* ptr) { Memory::default_allocator().Free(ptr); });
 
 			const unsigned char* output;
-			bool decompiled = c.Decompile(buffer, &output);
+			bool decompiled = c.Decompile(buffer, &output, nullptr);
 
 			if (decompiled == false)
 			{

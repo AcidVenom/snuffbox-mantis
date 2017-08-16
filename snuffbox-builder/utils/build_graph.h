@@ -41,6 +41,7 @@ namespace snuffbox
 				enum struct FileType
 				{
 					kScript, //!< A JavaScript file
+					kShader, //!< A shader file
 					kSkip //!< An unknown file to skip
 				};
 

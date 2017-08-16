@@ -20,14 +20,14 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool Compiler::Compile(const unsigned char* input, size_t size, size_t* out_size, const unsigned char** output)
+		bool Compiler::Compile(const unsigned char* input, size_t size, size_t* out_size, const unsigned char** output, const unsigned char* userdata)
 		{
 			if (data_ != nullptr)
 			{
 				Deallocate(data_);
 			}
 
-			bool success = Compilation(input, size, out_size);
+			bool success = Compilation(input, size, out_size, userdata);
 
 			if (output != nullptr)
 			{
@@ -38,14 +38,14 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool Compiler::Decompile(const unsigned char* input, const unsigned char** output)
+		bool Compiler::Decompile(const unsigned char* input, const unsigned char** output, const unsigned char* userdata)
 		{
 			if (data_ != nullptr)
 			{
 				Deallocate(data_);
 			}
 
-			bool success = Decompilation(input);
+			bool success = Decompilation(input, userdata);
 
 			if (output != nullptr)
 			{

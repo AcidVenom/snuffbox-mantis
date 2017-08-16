@@ -17,3 +17,6 @@ SOURCE_GROUP("utils" FILES ${SNUFF_COMPILERS_UTILS})
 SOURCE_GROUP("compilers" FILES ${SNUFF_COMPILERS_COMPILERS})
 
 ADD_LIBRARY(snuffbox-compilers ${SNUFF_COMPILERS_SOURCES})
+TARGET_LINK_LIBRARIES(snuffbox-compilers glslang)
+TARGET_LINK_LIBRARIES(snuffbox-compilers glslang-default-resource-limits)
+TARGET_LINK_LIBRARIES(snuffbox-compilers SPIRV)
