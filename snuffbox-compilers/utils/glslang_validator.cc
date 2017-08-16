@@ -98,20 +98,42 @@ namespace snuffbox
 				return false;
 			}
 
-			glslang::SpvVersion version;
-			version.spv = 0x00001000;
-			version.vulkan = 100;
+			const unsigned int spv_version = 0x00001000;
+			const int vulkan_version = 100;
 
 			static const char* entry = "main";
 
 			glslang::TProgram* program = new glslang::TProgram();
 			glslang::TShader* shader = new glslang::TShader(lang);
 
+			auto Finalise = [=]()
+			{
+				delete program;
+				delete shader;
+
+				glslang::FinalizeProcess();
+			};
+
+			auto Failed = [=](const char* error = nullptr)
+			{
+				if (error == nullptr && error_.size() == 0)
+				{
+					error_ = "Unknown error";
+				}
+				else if (error != nullptr)
+				{
+					error_ = error;
+				}
+
+				Finalise();
+				return false;
+			};
+
 			shader->setSourceEntryPoint(entry);
 			shader->setEntryPoint(entry);
-			shader->setEnvTarget(glslang::EShTargetLanguage::EshTargetSpv, version.spv);
-			shader->setEnvClient(glslang::EShClient::EShClientVulkan, version.vulkan);
-			shader->setEnvInput(glslang::EShSource::EShSourceHlsl, lang, glslang::EShClient::EShClientVulkan, version.vulkan);
+			shader->setEnvTarget(glslang::EShTargetLanguage::EshTargetSpv, spv_version);
+			shader->setEnvClient(glslang::EShClient::EShClientVulkan, vulkan_version);
+			shader->setEnvInput(glslang::EShSource::EShSourceHlsl, lang, glslang::EShClient::EShClientVulkan, vulkan_version);
 			shader->setHlslIoMapping(true);
 
 			int l = static_cast<int>(length);
@@ -127,16 +149,14 @@ namespace snuffbox
 
 			std::string root = GetDirectory(filename);
 			Includer includer(root.c_str());
-			bool success = shader->parse(&glslang::DefaultTBuiltInResource, version.vulkan, true, EShMessages::EShMsgDefault, includer);
+			bool success = shader->parse(&glslang::DefaultTBuiltInResource, vulkan_version, true, EShMessages::EShMsgDefault, includer);
 
 			if (success == false)
 			{
 				error_ = "Could not compile shader\n\n";
 				error_ += shader->getInfoLog();
 
-				delete program;
-				delete shader;
-				return false;
+				return Failed();
 			}
 
 			program->addShader(shader);
@@ -146,9 +166,7 @@ namespace snuffbox
 				error_ = "Could not link shader\n\n";
 				error_ += program->getInfoLog();
 
-				delete program;
-				delete shader;
-				return false;
+				return Failed();
 			}
 
 			std::vector<unsigned int> spv;
@@ -180,8 +198,7 @@ namespace snuffbox
 				*spirv = buffer_;
 			}
 
-			delete program;
-			delete shader;
+			Finalise();
 
 			return true;
 		}
@@ -202,11 +219,9 @@ namespace snuffbox
 		{
 			if (buffer_ != nullptr)
 			{
-				free(buffer_);
+				delete[] buffer_;
 				buffer_ = nullptr;
 			}
-
-			glslang::FinalizeProcess();
 		}
 
 		//-----------------------------------------------------------------------------------------------
