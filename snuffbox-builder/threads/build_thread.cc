@@ -70,6 +70,15 @@ namespace snuffbox
 
 					FindCurrent();
 				}
+
+				if (building_ == false && queue_.size() > 0)
+				{
+					while (queue_.empty() == false)
+					{
+						queue_.pop();
+					}
+				}
+
 				queue_mutex_.unlock();
 
 				for (int i = 0; i < threads_.size(); ++i)
@@ -109,10 +118,6 @@ namespace snuffbox
 			{
 				builder_->Log(id + " -- [ERROR] " + compiled + ": " + error.c_str());
 				building_ = false;
-
-				queue_mutex_.lock();
-				while (queue_.empty() == false) { queue_.pop(); }
-				queue_mutex_.unlock();
 
 				return;
 			}

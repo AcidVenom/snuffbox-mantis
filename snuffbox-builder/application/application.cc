@@ -1,6 +1,8 @@
 #include "application.h"
 #include "builder.h"
 
+#include <snuffbox-compilers/utils/glslang_validator.h>
+
 namespace snuffbox
 {
 	namespace builder
@@ -8,6 +10,8 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		bool BuilderApp::OnInit()
 		{
+			compilers::GLSLangValidator::Initialise();
+
 			builder_ = new Builder(nullptr);
 			builder_->Show(true);
 			
@@ -17,6 +21,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		int BuilderApp::OnExit()
 		{
+			compilers::GLSLangValidator::Shutdown();
 			return 0;
 		}
 

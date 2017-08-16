@@ -5,10 +5,15 @@
 #include <glslang/OSDependent/osinclude.h>
 #include <fstream>
 
+#include <mutex>
+
 namespace snuffbox
 {
 	namespace compilers
 	{
+		//-----------------------------------------------------------------------------------------------
+		std::mutex GLSLangValidator::GLSLANG_MUTEX_;
+
 		//-----------------------------------------------------------------------------------------------
 		GLSLangValidator::Includer::Includer(const char* directory) :
 			directory_(directory)
@@ -59,12 +64,14 @@ namespace snuffbox
 			error_(""),
 			buffer_(nullptr)
 		{
-			glslang::InitializeProcess();
+			
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		bool GLSLangValidator::Compile(const char* hlsl, size_t length, const char* filename, ShaderType type, size_t* converted_size, unsigned char** spirv)
 		{
+			std::lock_guard<std::mutex> lock(GLSLANG_MUTEX_);
+
 			if (buffer_ != nullptr)
 			{
 				delete[] buffer_;
@@ -117,7 +124,6 @@ namespace snuffbox
 					error_ = error;
 				}
 
-				glslang::FinalizeProcess();
 				return false;
 			};
 
@@ -190,19 +196,12 @@ namespace snuffbox
 				*spirv = buffer_;
 			}
 
-			glslang::FinalizeProcess();
-
 			return true;
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		const char* GLSLangValidator::GetError() const
 		{
-			if (error_.size() == 0)
-			{
-				return nullptr;
-			}
-
 			return error_.c_str();
 		}
 
@@ -245,6 +244,18 @@ namespace snuffbox
 			root.erase(root.begin() + idx, root.end());
 
 			return root;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void GLSLangValidator::Initialise()
+		{
+			glslang::InitializeProcess();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void GLSLangValidator::Shutdown()
+		{
+			glslang::FinalizeProcess();
 		}
 	}
 }

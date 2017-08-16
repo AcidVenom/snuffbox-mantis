@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <mutex>
 
 #include <glslang/Public/ShaderLang.h>
 
@@ -101,7 +102,19 @@ namespace snuffbox
 			*/
 			static std::string GetDirectory(const char* full_path);
 
+			/**
+			* @brief Initialises glslang
+			*/
+			static void Initialise();
+
+			/**
+			* @brief Shuts glslang down
+			*/
+			static void Shutdown();
+			
 		private:
+
+			static std::mutex GLSLANG_MUTEX_; //!< The mutex for thread safety, I'm not sure how to do actual multithreading using glslang
 
 			std::string error_; //!< The current error message
 			unsigned char* buffer_; //!< The buffer to store the Spir-V bytecode in
