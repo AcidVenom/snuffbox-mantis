@@ -18,7 +18,7 @@ namespace snuffbox
 		* @author Daniel Konings
 		*/
 		template <typename T>
-		class ContentPtr : JS_OBJECT
+		class ContentPtr JS_OBJECT
 		{
 
 			friend class ContentManager;

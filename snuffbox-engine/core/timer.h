@@ -14,7 +14,7 @@ namespace snuffbox
 		* @brief Used for profiling, time based events and delta timing
 		* @author Daniel Konings
 		*/
-        class Timer : JS_OBJECT
+        class Timer JS_OBJECT
         {
 
         public:

@@ -26,7 +26,7 @@ namespace snuffbox
 		* @brief A helper class for cross-platform file reading/writing
 		* @author Daniel Konings
 		*/
-		class File : JS_OBJECT
+		class File JS_OBJECT
 		{
 
 			friend class Allocator;

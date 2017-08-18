@@ -18,7 +18,7 @@ static const char* js_ ## x ## _name_
 void type::JS ## x (const v8::FunctionCallbackInfo<v8::Value>& args) body \
 const char* type::js_ ## x ## _name_ = #x
 
-#define JS_OBJECT public JSObject
+#define JS_OBJECT : public JSObject
 #define JS_OBJECT_MULTI public JSObject,
 
 #define JS_REGISTER_DECL_SINGLE static void RegisterJS(const v8::Local<v8::Object>& obj)
