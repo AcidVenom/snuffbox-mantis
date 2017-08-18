@@ -80,7 +80,7 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentBase* ContentManager::GetContent(const String& path, ContentBase::Types type, bool quiet)
+		ContentPtr<ContentBase> ContentManager::GetContent(const String& path, ContentBase::Types type, bool quiet)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -91,7 +91,7 @@ namespace snuffbox
 
 			if (it != map.end())
 			{
-				return it->second.get();
+				return it->second;
 			}
 
 			if (quiet == false)
@@ -99,11 +99,11 @@ namespace snuffbox
 				log.Log(console::LogSeverity::kError, "Content with path '{0}' could not be found\nAre you sure it has been loaded correctly and the type is correct?", path);
 			}
 			
-			return nullptr;
+			return ContentPtr<ContentBase>();
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentBase* ContentManager::LoadContent(const String& path, ContentBase::Types type, bool quiet)
+		ContentPtr<ContentBase> ContentManager::LoadContent(const String& path, ContentBase::Types type, bool quiet)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -118,7 +118,7 @@ namespace snuffbox
 				{
 					log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was already loaded, skipping load", path);
 				}
-				return it->second.get();
+				return it->second.Get();
 			}
 
 			ContentBase* content = nullptr;
@@ -141,15 +141,17 @@ namespace snuffbox
 
 			if (success == false)
 			{
-				return nullptr;
+				Memory::default_allocator().Destruct<ContentBase>(content);
+				return ContentPtr<ContentBase>();
 			}
 
-			SharedPtr<ContentBase> shared = Memory::MakeShared<ContentBase>(content);
+			content->set_is_valid(true);
+			ContentPtr<ContentBase> shared = ContentPtr<ContentBase>(content);
 			map.emplace(full_path, shared);
 			
 			watch_.Add(full_path);
 
-			return shared.get();
+			return shared;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -165,7 +167,7 @@ namespace snuffbox
 			if (it != map.end())
 			{
 				watch_.Remove(full_path);
-
+				it->second.Get()->set_is_valid(false);
 				map.erase(it);
 				return;
 			}
@@ -205,19 +207,14 @@ namespace snuffbox
 
 			if (wrapper.Check("SN") == true)
 			{
-				ContentBase* ptr = nullptr;
 				String path = wrapper.GetValue<String>(0, "");
 				ContentBase::Types type = static_cast<ContentBase::Types>(wrapper.GetValue<int>(1, static_cast<int>(ContentBase::Types::kCount)));
 				ContentService& cs = Services::Get<ContentService>();
 
 				ContentManager& cm = static_cast<ContentManager&>(cs);
-				
-				ptr = cm.LoadContent(path, type, false);
 
-				v8::Local<v8::Object> ret = JSWrapper::CreateObject();
-				JSWrapper::SetPointer(ret, ptr);
-
-				wrapper.ReturnValue<v8::Local<v8::Object>>(ret);
+				v8::Local<v8::Object> ptr = JSWrapper::New<ContentPtr<ContentBase>>(cm.LoadContent(path, type, false));
+				wrapper.ReturnValue<v8::Local<v8::Object>>(ptr);
 			}
 		}));
 
@@ -228,19 +225,14 @@ namespace snuffbox
 
 			if (wrapper.Check("SN") == true)
 			{
-				ContentBase* ptr = nullptr;
 				String path = wrapper.GetValue<String>(0, "");
 				ContentBase::Types type = static_cast<ContentBase::Types>(wrapper.GetValue<int>(1, static_cast<int>(ContentBase::Types::kCount)));
 				ContentService& cs = Services::Get<ContentService>();
 
 				ContentManager& cm = static_cast<ContentManager&>(cs);
 
-				ptr = cm.GetContent(path, type, false);
-
-				v8::Local<v8::Object> ret = JSWrapper::CreateObject();
-				JSWrapper::SetPointer(ret, ptr);
-
-				wrapper.ReturnValue<v8::Local<v8::Object>>(ret);
+				v8::Local<v8::Object> ptr = JSWrapper::New<ContentPtr<ContentBase>>(cm.GetContent(path, type, false));
+				wrapper.ReturnValue<v8::Local<v8::Object>>(ptr);
 			}
 		}));
 

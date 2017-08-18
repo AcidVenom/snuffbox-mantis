@@ -43,19 +43,19 @@ namespace snuffbox
 			* @brief Retrieves a piece of content of type T from a path
 			* @param[in] path (const String&) The path to retrieve the content from
 			* @param[in] quiet (bool) Should this call be quiet and not log anything?
-			* @return (T*) A pointer to the retrieved content, or nullptr if it doesn't exist
+			* @return (snuffbox::engine::ContentPtr<T>) A pointer to the retrieved content, or nullptr if it doesn't exist
 			*/
 			template <typename T>
-			T* Get(const String& path, bool quiet = false);
+			ContentPtr<T> Get(const String& path, bool quiet = false);
 
 			/**
 			* @brief Loads and returns a piece of content of type T from a path
 			* @param[in] path (const String&) The path to load the content from
 			* @param[in] quiet (bool) Should this call be quiet and not log anything?
-			* @return (T*) A pointer to the loaded content, or nullptr if it doesn't exist
+			* @return (snuffbox::engine::ContentPtr<T>) A pointer to the loaded content, or nullptr if it doesn't exist
 			*/
 			template <typename T>
-			T* Load(const String& path, bool quiet = false);
+			ContentPtr<T> Load(const String& path, bool quiet = false);
 
 			/**
 			* @brief Unloads a piece of content of type T from a path
@@ -71,13 +71,13 @@ namespace snuffbox
 			* @see snuffbox::ContentService::Get
 			* @remarks param[in] type will be deduced from template argument T
 			*/
-			virtual ContentBase* GetContent(const String& path, ContentBase::Types type, bool quiet);
+			virtual ContentPtr<ContentBase> GetContent(const String& path, ContentBase::Types type, bool quiet);
 
 			/**
 			* @see snuffbox::ContentService::Load
 			* @remarks param[in] type will be deduced from template argument T
 			*/
-			virtual ContentBase* LoadContent(const String& path, ContentBase::Types type, bool quiet);
+			virtual ContentPtr<ContentBase> LoadContent(const String& path, ContentBase::Types type, bool quiet);
 
 			/**
 			* @see snuffbox::ContentService::Unload
@@ -88,20 +88,20 @@ namespace snuffbox
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T>
-		inline T* ContentService::Get(const String& path, bool quiet)
+		inline ContentPtr<T> ContentService::Get(const String& path, bool quiet)
 		{
 			static_assert(is_content<T>::value, "Attempted to Get content of a non-content type T");
-			ContentBase* ptr = GetContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID), quiet);
-			return static_cast<T*>(ptr);
+			ContentPtr<ContentBase> ptr = GetContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID), quiet);
+			return ContentPtr<T>(ptr);
 		}
 
 		//-----------------------------------------------------------------------------------------------
 		template <typename T>
-		inline T* ContentService::Load(const String& path, bool quiet)
+		inline ContentPtr<T> ContentService::Load(const String& path, bool quiet)
 		{
 			static_assert(is_content<T>::value, "Attempted to Load content of a non-content type T");
-			ContentBase* ptr = LoadContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID), quiet);
-			return static_cast<T*>(ptr);
+			ContentPtr<ContentBase> ptr = LoadContent(path, static_cast<ContentBase::Types>(T::CONTENT_ID), quiet);
+			return ContentPtr<T>(ptr);
 		}
 
 		//-----------------------------------------------------------------------------------------------

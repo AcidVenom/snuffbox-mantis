@@ -317,6 +317,7 @@ namespace snuffbox
 			JSFunctionRegister funcs[] = {
 				JS_FUNCTION_REG(require),
 				JS_FUNCTION_REG(assert),
+				JS_FUNCTION_REG(forcegc),
 				JS_FUNCTION_REG_END
 			};
 
@@ -345,6 +346,12 @@ namespace snuffbox
 			{
 				Services::Get<LogService>().Assert(wrapper.GetValue<bool>(0, true), wrapper.GetValue<engine::String>(1, ""));
 			}
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(JSStateWrapper, forcegc, JS_BODY(
+		{
+			JSStateWrapper::Instance()->isolate()->LowMemoryNotification();
 		}));
 	}
 }

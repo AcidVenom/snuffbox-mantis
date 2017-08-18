@@ -17,6 +17,16 @@ namespace snuffbox
 		public:
 
 			/**
+			* @brief Default constructor
+			*/
+			JSObject();
+
+			/**
+			* @brief Copy constructor, don't copy the persistent handle
+			*/
+			JSObject(const JSObject& other);
+
+			/**
 			* @return v8::Persistent<v8::Object>& The persistent handle of this object
 			*/
 			v8::Persistent<v8::Object>& object();

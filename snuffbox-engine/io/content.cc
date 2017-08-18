@@ -1,31 +1,33 @@
-#include "content_service.h"
+#include "content.h"
+#include "../services/log_service.h"
 
 namespace snuffbox
 {
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		ContentService::ContentService()
+		ContentBase::ContentBase() :
+			is_valid_(false)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentPtr<ContentBase> ContentService::GetContent(const String& path, ContentBase::Types type, bool quiet)
+		void ContentBase::set_is_valid(bool valid)
 		{
-			return ContentPtr<ContentBase>();
+			is_valid_ = valid;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		ContentPtr<ContentBase> ContentService::LoadContent(const String& path, ContentBase::Types type, bool quiet)
+		bool ContentBase::is_valid() const
 		{
-			return ContentPtr<ContentBase>();
+			return is_valid_;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ContentService::UnloadContent(const String& path, ContentBase::Types type, bool quiet)
+		ContentBase::~ContentBase()
 		{
-			
+
 		}
 	}
 }

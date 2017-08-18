@@ -7,6 +7,12 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
+		JSObject::JSObject(const JSObject& other)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		Persistent<Object>& JSObject::object()
 		{
 			return object_;

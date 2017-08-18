@@ -122,7 +122,7 @@ namespace snuffbox
 				js_state_wrapper_ = Memory::ConstructUnique<JSStateWrapper>(Memory::default_allocator());
 				js_state_wrapper_->Initialise();
 
-				log_service_->Assert(content_service_->Load<Script>("main.js") != nullptr, "'main.js' is required in the current src_directory");
+				log_service_->Assert(content_service_->Load<Script>("main.js").Get() != nullptr, "'main.js' is required in the current src_directory");
 
 				js_on_startup_ = Memory::ConstructUnique<JSCallback<>>();
 				js_on_update_ = Memory::ConstructUnique<JSCallback<float>>();

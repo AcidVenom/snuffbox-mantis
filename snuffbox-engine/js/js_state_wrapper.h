@@ -231,6 +231,9 @@ namespace snuffbox
 
             static void JSassert(const v8::FunctionCallbackInfo<v8::Value>& args);
             static const char* js_assert_name_;
+
+			static void JSforcegc(const v8::FunctionCallbackInfo<v8::Value>& args);
+			static const char* js_forcegc_name_;
         };
 
         //-----------------------------------------------------------------------------------------------

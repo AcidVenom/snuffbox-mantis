@@ -54,12 +54,12 @@ namespace snuffbox
 			/**
 			* @see snuffbox::engine::ContentService::GetContent
 			*/
-			ContentBase* GetContent(const String& path, ContentBase::Types type, bool quiet) override;
+			ContentPtr<ContentBase> GetContent(const String& path, ContentBase::Types type, bool quiet) override;
 
 			/**
 			* @see snuffbox::engine::ContentService::LoadContent
 			*/
-			ContentBase* LoadContent(const String& path, ContentBase::Types type, bool quiet) override;
+			ContentPtr<ContentBase> LoadContent(const String& path, ContentBase::Types type, bool quiet) override;
 
 			/**
 			* @see snuffbox::engine::ContentService::UnloadContent
@@ -75,7 +75,7 @@ namespace snuffbox
 
 		private:
 
-			typedef Map<String, SharedPtr<ContentBase>> ContentMap;
+			typedef Map<String, ContentPtr<ContentBase>> ContentMap;
 			ContentMap loaded_content_[ContentBase::Types::kCount]; //!< The currently loaded content per content type
 
 			String src_directory_; //!< The working directory
