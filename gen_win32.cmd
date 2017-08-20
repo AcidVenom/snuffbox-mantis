@@ -76,7 +76,7 @@ echo [32mCloning SpirVCross from git[0m & echo.
 
 call git clone https://github.com/KhronosGroup/SPIRV-Cross spirv-cross & echo.
 
-skipspirvc:
+:skipspirvc
 set /P getglslang="Clone glslang? (y/n)"
 echo.
 if /I "%getglslang%" neq "y" goto skipglslang
@@ -92,7 +92,7 @@ echo [32mCloning glslang from git[0m & echo.
 
 call git clone https://github.com/KhronosGroup/glslang glslang & echo.
 
-skipglslang:
+:skipglslang
 echo To download and build V8, depot_tools is required in your system PATH
 echo [91mBuilding V8 takes quite some time and is only required with SNUFF_JAVASCRIPT[0m & echo.
 
