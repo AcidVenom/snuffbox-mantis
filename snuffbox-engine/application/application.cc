@@ -98,15 +98,12 @@ namespace snuffbox
 
 					Services::Provide<CVarService>(cvar_service_.get());
 					Services::Provide<LogService>(log_service_.get());
+
+					cvar_service_->LogAll();
+
 					Services::Provide<InputService>(input_service_.get());
 				}
 				log_time.Stop(Timer::Unit::kMilliseconds, true);
-
-				content_service_->Initialise(cvar_service_.get(), this);
-
-				Services::Provide<ContentService>(content_service_.get());
-
-				cvar_service_->LogAll();
 
 				Timer window_renderer_time("--Window service/renderer");
 				{
@@ -114,6 +111,13 @@ namespace snuffbox
 					Services::Provide<WindowService>(window_service_.get());
 				}
 				window_renderer_time.Stop(Timer::Unit::kMilliseconds, true);
+
+				Timer content_manager_time("--Content manager");
+				{
+					content_service_->Initialise(cvar_service_.get(), window_service_->renderer_.get(), this);
+					Services::Provide<ContentService>(content_service_.get());
+				}
+				content_manager_time.Stop(Timer::Unit::kMilliseconds, true);
 
 				delta_timer_ = Memory::ConstructUnique<Timer>("Delta time");
 
@@ -155,6 +159,8 @@ namespace snuffbox
 		void SnuffboxApp::Shutdown()
 		{
 			OnShutdown();
+
+			content_service_->UnloadAll();
 
 #ifdef SNUFF_JAVASCRIPT
 			js_on_shutdown_->Call();

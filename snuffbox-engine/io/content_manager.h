@@ -8,6 +8,11 @@
 
 namespace snuffbox
 {
+	namespace graphics
+	{
+		class Renderer;
+	}
+
 	namespace engine
 	{
 		class CVar;
@@ -36,9 +41,10 @@ namespace snuffbox
 			/**
 			* @brief Initialises the content manager
 			* @param[in] cvar (snuffbox::engine::CVar*) The CVar system
+			* @param[in] renderer (snuffbox::graphics::Renderer*) The current renderer
 			* @param[in] app (snuffbox::engine::SnuffboxApp*) The current application
 			*/
-			void Initialise(CVar* cvar, SnuffboxApp* app);
+			void Initialise(CVar* cvar, graphics::Renderer* renderer, SnuffboxApp* app);
 
 			/**
 			* @brief Reloads a loaded file in the content manager
@@ -67,11 +73,23 @@ namespace snuffbox
 			void UnloadContent(const String& path, ContentBase::Types type, bool quiet) override;
 
 			/**
+			* @see snuffbox::engine::ContentService::UnloadAll
+			*/
+			void UnloadAll() override;
+
+			/**
 			* @brief Concatenates a full path string from a relative path
 			* @param[in] path (const snuffbox::engine::String&) The path to concatenate
 			* @return (snuffbox::engine::String) The full path including source directory
 			*/
 			String FullPath(const String& path) const;
+
+		public:
+
+			/**
+			* @return (snuffbox::graphics::Renderer*) The current renderer
+			*/
+			graphics::Renderer* renderer() const;
 
 		private:
 
@@ -81,6 +99,7 @@ namespace snuffbox
 			String src_directory_; //!< The working directory
 			FileWatch watch_; //!< The file watch
 
+			graphics::Renderer* renderer_; //!< The current renderer
 			SnuffboxApp* application_; //!< The current application
 
 		public:
@@ -89,6 +108,7 @@ namespace snuffbox
 			JS_FUNCTION_DECL(load);
 			JS_FUNCTION_DECL(get);
 			JS_FUNCTION_DECL(unload);
+			JS_FUNCTION_DECL(unloadAll);
 		};
 	}
 }

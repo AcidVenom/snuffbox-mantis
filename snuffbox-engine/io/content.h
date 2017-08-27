@@ -46,6 +46,13 @@ namespace snuffbox
 			template <typename Y>
 			ContentPtr(const ContentPtr<Y>& other);
 
+			/**
+			* @brief Assignment of a raw pointer from one type to the other
+			* @param[in] ptr (Y*) The raw pointer of a different type
+			*/
+			template <typename Y>
+			ContentPtr<T> operator=(Y* ptr);
+
 		public:
 
 			/**
@@ -95,22 +102,32 @@ namespace snuffbox
 			enum Types : int
 			{
 				kScript, //!< The JavaScript file type
+				kShader, //!< The shader file type
 				kCount //!< The total number of types
 			};
 
 			/**
 			* @brief Loads the actual data from a provided file
 			* @param[in] file (snuffbox::engine::File*) The file to load the data of this content from
+			* @param[in] cm (snuffbox::engine::ContentManager*) The content manager this content is being loaded from
 			* @return (bool) Was the load a success?
 			*/
-			virtual bool Load(File* file) = 0;
+			virtual bool Load(File* file, ContentManager* cm) = 0;
 
 			/**
 			* @brief Reloads the actual data from a provided file
 			* @param[in] file (snuffbox::engine::File*) The file to reload the data of this content from
+			* @param[in] cm (snuffbox::engine::ContentManager*) The content manager this content is being reloaded from
 			* @return (bool) Was the reload a success?
+			* @remarks By default, it simply calls 'Load' again, override for custom behaviour
 			*/
-			virtual bool Reload(File* file) = 0;
+			virtual bool Reload(File* file, ContentManager* cm);
+
+			/**
+			* @brief Unloads a piece of content
+			* @param[in] cm (snuffbox::engine::ContentManager*) The content manager this content is being unloaded from
+			*/
+			virtual void Unload(ContentManager* cm);
 
 		protected:
 
@@ -182,7 +199,7 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		template <typename T>
 		inline ContentPtr<T>::ContentPtr(T* ptr) :
-			ptr_(Memory::MakeShared<ContentBase>(static_cast<ContentBase*>(ptr)))
+			ptr_(Memory::MakeShared<T>(ptr))
 		{
 
 		}
@@ -192,6 +209,14 @@ namespace snuffbox
 		inline ContentPtr<T>::ContentPtr(const ContentPtr<Y>& other)
 		{
 			ptr_ = other.ptr();
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		template <typename T> template <typename Y>
+		inline ContentPtr<T> ContentPtr<T>::operator=(Y* ptr)
+		{
+			ptr_ = Memory::MakeShared<Y>(ptr);
+			return *this;
 		}
 
 		//-----------------------------------------------------------------------------------------------

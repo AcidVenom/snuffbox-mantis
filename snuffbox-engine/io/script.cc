@@ -14,7 +14,7 @@ namespace snuffbox
 	namespace engine
 	{
 		//-----------------------------------------------------------------------------------------------
-		bool Script::Load(File* file)
+		bool Script::Load(File* file, ContentManager* cm)
 		{
 			LogService& log = Services::Get<LogService>();
 
@@ -30,11 +30,13 @@ namespace snuffbox
 				[](void* ptr) { Memory::default_allocator().Free(ptr); });
 
 			const unsigned char* output;
-			bool decompiled = c.Decompile(buffer, &output, nullptr);
+			size_t size;
+
+			bool decompiled = c.Decompile(buffer, &output, &size, nullptr);
 
 			if (decompiled == false)
 			{
-				log.Log(console::LogSeverity::kError, "Could not decompile '{0}'", file->path());
+				log.Log(console::LogSeverity::kError, "Could not decompile script '{0}'\n\t{1}", file->path(), c.GetError());
 				return false;
 			}
 
@@ -52,12 +54,6 @@ namespace snuffbox
 #else
 			return false;
 #endif
-		}
-
-		//-----------------------------------------------------------------------------------------------
-		bool Script::Reload(File* file)
-		{
-			return Load(file);
 		}
 	}
 }

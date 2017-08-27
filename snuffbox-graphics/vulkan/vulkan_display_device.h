@@ -86,6 +86,22 @@ namespace snuffbox
 			bool CreateSwapChain(unsigned int width, unsigned int height);
 
 			/**
+			* @brief Creates a Spir-V shader in GPU memory
+			* @param[in] byte_code (const unsigned char*) The Spir-V byte code
+			* @param[in] size (size_t) The size of the byte code
+			* @param[in] type (char) The type of shader
+			* @param[out] blob (void**) The loaded shader blob
+			* @return (bool) Was it a success?
+			*/
+			bool CreateShader(const unsigned char* byte_code, size_t size, char type, void** blob);
+
+			/**
+			* @brief Releases a created shader
+			* @param[in] blob (void*) The shader to release
+			*/
+			void ReleaseShader(void* blob);
+
+			/**
 			* @brief Cleans up Vulkan
 			*/
 			void Shutdown();

@@ -41,6 +41,22 @@ namespace snuffbox
 			bool Initialise(unsigned int width, unsigned int height);
 
 			/**
+			* @brief Loads a platform-specific shader into GPU memory from the corresponding bytecode and a type
+			* @param[in] byte_code (unsigned char*) The byte code of the shader
+			* @parma[in] size (size_t) The size of the byte code
+			* @param[in] type (char) The type of the shader to load
+			* @param[out] blob (void**) The created platform-specific shader
+			* @return (bool) Was the loading of the shader a success?
+			*/
+			bool CreateShader(const unsigned char* byte_code, size_t size, char type, void** blob);
+
+			/**
+			* @brief Releases a platform specific shader
+			* @param[in] blob (void*) The pointer to the underlying platform-specific shader
+			*/
+			void ReleaseShader(void* blob);
+
+			/**
 			* @brief Shuts down the renderer
 			*/
 			void Shutdown();

@@ -30,6 +30,18 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		bool Renderer::CreateShader(const unsigned char* byte_code, size_t size, char type, void** blob)
+		{
+			return display_device_.CreateShader(byte_code, size, type, blob);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void Renderer::ReleaseShader(void* blob)
+		{
+			display_device_.ReleaseShader(blob);
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void Renderer::Shutdown()
 		{
 			display_device_.Shutdown();

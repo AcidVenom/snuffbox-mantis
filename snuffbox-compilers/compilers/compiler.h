@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <functional>
 
+#include "../utils/magic.h"
+
 namespace snuffbox
 {
 	namespace compilers
@@ -25,11 +27,9 @@ namespace snuffbox
 			*/
 			struct FileHeader
 			{
-				uint32_t magic; //!< The magic number to determine that we're actually dealing with Snuffbox files
-				uint32_t file_type; //!< The file type, which should be a unique ID set from each compiler
+				Magic magic; //!< The magic number to determine that we're actually dealing with Snuffbox files
+				Magic file_type; //!< The file type, which should be a unique ID set from each compiler
 				size_t file_size; //!< The file size after the file header
-				
-				static const uint32_t MAGIC; //!< 'SNUF' represented as a hexadecimal value
 			};
 
 		public:
@@ -54,9 +54,10 @@ namespace snuffbox
 			/**
 			* @see snuffbox::compiler::Compiler::Decompilation
 			* @param[out] output (const unsigned char**) The decompiled data
+			* @param[out] out_size (size_t*) The output size
 			* @remarks Makes sure snuffbox::compiler::Compiler::data_ is freed up before re-use
 			*/
-			bool Decompile(const unsigned char* input, const unsigned char** output, const unsigned char* userdata);
+			bool Decompile(const unsigned char* input, const unsigned char** output, size_t* out_size, const unsigned char* userdata);
 
 			/**
 			* @return (const char*) The current error of the compiler, or nullptr if there is none
@@ -104,7 +105,7 @@ namespace snuffbox
 			* @return (bool) Was the decompilation a success?
 			* @remarks snuffbox::compilers::Compiler::Allocate should be used to allocate the memory for 'out'
 			*/
-			virtual bool Decompilation(const unsigned char* input, const unsigned char* userdata) = 0;
+			virtual bool Decompilation(const unsigned char* input, size_t* out_size, const unsigned char* userdata) = 0;
 
 			/**
 			* @brief Sets the current error message of the compiler
@@ -115,10 +116,18 @@ namespace snuffbox
 			/**
 			* @brief Retrieves the file header from input data
 			* @param[in] input (const unsigned char*) The data to retrieve the file header from
+			* @param[in] file_type (snuffbox::compilers::Magic) The expected file type to compare to the 'magic' field of the file header
 			* @param[out] out (snuffbox::compilers::Compiler::FileHeader*) The output value
 			* @return (bool) Does the raw data contain a file header?
 			*/
-			static bool GetFileHeader(const unsigned char* input, FileHeader* out);
+			bool GetFileHeader(const unsigned char* input, Magic file_type, FileHeader* out);
+
+			/**
+			* @brief Creates a file header containing information about the file
+			* @param[in] file_size (size_t) The file size after the header
+			* @param[in] file_type (snuffbox::compilers::Magic) The type of the file
+			*/
+			static FileHeader CreateFileHeader(size_t file_size, Magic file_type);
 
 		private:
 

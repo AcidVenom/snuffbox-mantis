@@ -32,9 +32,7 @@ namespace snuffbox
 			/**
 			* @see snuffbox::compilers::Compiler::Decompilation
 			*/
-			bool Decompilation(const unsigned char* input, const unsigned char* userdata) override;
-
-			static const uint32_t TYPE_; //!< The type to store in the file header (SJS represented as a hexadecimal value)
+			bool Decompilation(const unsigned char* input, size_t* out_size, const unsigned char* userdata) override;
 		};
 	}
 }

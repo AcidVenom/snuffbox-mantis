@@ -4,6 +4,7 @@
 #include <SPIRV/GlslangToSpv.h>
 #include <glslang/OSDependent/osinclude.h>
 #include <fstream>
+#include <SPIRV/disassemble.h>
 
 #include <mutex>
 
@@ -127,12 +128,16 @@ namespace snuffbox
 				return false;
 			};
 
+			EShMessages messages =	static_cast<EShMessages>(	EShMessages::EShMsgDefault | 
+																EShMessages::EShMsgVulkanRules | 
+																EShMessages::EShMsgSpvRules | 
+																EShMessages::EShMsgReadHlsl);
+
 			shader.setSourceEntryPoint(entry);
 			shader.setEntryPoint(entry);
 			shader.setEnvTarget(glslang::EShTargetLanguage::EshTargetSpv, spv_version);
 			shader.setEnvClient(glslang::EShClient::EShClientVulkan, vulkan_version);
 			shader.setEnvInput(glslang::EShSource::EShSourceHlsl, lang, glslang::EShClient::EShClientVulkan, vulkan_version);
-			shader.setHlslIoMapping(true);
 
 			int l = static_cast<int>(length);
 			shader.setStringsWithLengthsAndNames(&hlsl, &l, &filename, 1);
@@ -145,9 +150,14 @@ namespace snuffbox
 			shader.setFlattenUniformArrays(false);
 			shader.setNoStorageFormat(false);
 
+			std::vector<std::string> rsb;
+			shader.setResourceSetBinding(rsb);
+
+			const int desktop_version = 110;
+
 			std::string root = GetDirectory(filename);
 			Includer includer(root.c_str());
-			bool success = shader.parse(&glslang::DefaultTBuiltInResource, vulkan_version, true, EShMessages::EShMsgDefault, includer);
+			bool success = shader.parse(&glslang::DefaultTBuiltInResource, desktop_version, false, messages, includer);
 
 			if (success == false)
 			{
@@ -159,7 +169,7 @@ namespace snuffbox
 
 			program.addShader(&shader);
 			
-			if (program.link(EShMessages::EShMsgDefault) == false || program.mapIO() == false)
+			if (program.link(messages) == false || program.mapIO() == false)
 			{
 				error_ = "Could not link shader\n\n";
 				error_ += program.getInfoLog();
@@ -181,15 +191,7 @@ namespace snuffbox
 
 			buffer_ = new unsigned char[s];
 
-			unsigned int word;
-			unsigned char offset = 0;
-
-			for (int i = 0; i < static_cast<int>(spv.size()); ++i)
-			{
-				word = spv[i];
-				memcpy(buffer_ + offset, reinterpret_cast<const char*>(&word), 4);
-				offset += 4;
-			}
+			memcpy(buffer_, &spv[0], s);
 
 			if (spirv != nullptr)
 			{

@@ -17,6 +17,17 @@ namespace snuffbox
 		public:
 
 			/**
+			* @struct snuffbox::compilers::ShaderCompiler::Header
+			* @brief A header to contain shader information in
+			* @author Daniel Konings
+			*/
+			struct Header
+			{
+				size_t size; //!< The size of the shader byte code
+				char type; //!< The type of the shader
+			};
+
+			/**
 			* @see snuffbox::compilers::Compiler::Compiler
 			*/
 			ShaderCompiler(Allocation allocator = nullptr, Deallocation deallocator = nullptr);
@@ -32,7 +43,7 @@ namespace snuffbox
 			/**
 			* @see snuffbox::compilers::Compiler::Decompilation
 			*/
-			bool Decompilation(const unsigned char* input, const unsigned char* userdata) override;
+			bool Decompilation(const unsigned char* input, size_t* out_size, const unsigned char* userdata) override;
 
 			/**
 			* @brief Retrieves the shader type from an extension
@@ -40,8 +51,6 @@ namespace snuffbox
 			* @return (char) The GLSLangValidator shader type
 			*/
 			static char GetShaderTypeFromExtension(const char* path);
-
-			static const uint32_t TYPE_; //!< The type to store in the file header (SSH represented as a hexadecimal value)
 		};
 	}
 }

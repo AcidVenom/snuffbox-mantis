@@ -9,9 +9,6 @@ namespace snuffbox
 	namespace compilers
 	{
 		//-----------------------------------------------------------------------------------------------
-		const uint32_t ScriptCompiler::TYPE_ = 0x00534A53;
-
-		//-----------------------------------------------------------------------------------------------
 		ScriptCompiler::ScriptCompiler(Compiler::Allocation allocator, Compiler::Deallocation deallocator) :
 			Compiler(allocator, deallocator)
 		{
@@ -31,10 +28,7 @@ namespace snuffbox
 				return false;
 			}
 
-			FileHeader header;
-			header.magic = FileHeader::MAGIC;
-			header.file_type = TYPE_;
-			header.file_size = size;
+			FileHeader header = CreateFileHeader(size, Magic::kScript);
 
 			memcpy(data_, &header, header_size);
 			memcpy(data_ + header_size, input, size);
@@ -50,15 +44,10 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool ScriptCompiler::Decompilation(const unsigned char* input, const unsigned char* userdata)
+		bool ScriptCompiler::Decompilation(const unsigned char* input, size_t* out_size, const unsigned char* userdata)
 		{
 			FileHeader header;
-			if (GetFileHeader(input, &header) == false)
-			{
-				return false;
-			}
-
-			if (header.magic != FileHeader::MAGIC || header.file_type != TYPE_)
+			if (GetFileHeader(input, Magic::kScript, &header) == false)
 			{
 				return false;
 			}

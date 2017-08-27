@@ -26,6 +26,8 @@ namespace snuffbox
 			*/
 			JSObject(const JSObject& other);
 
+			JSObject operator=(const JSObject& other) { return other; };
+
 			/**
 			* @return v8::Persistent<v8::Object>& The persistent handle of this object
 			*/
@@ -38,7 +40,7 @@ namespace snuffbox
 
 		private:
 
-			v8::Persistent<v8::Object> object_; //!< THe persistent handle of this object
+			v8::Persistent<v8::Object> object_; //!< The persistent handle of this object
 		};
 	}
 }

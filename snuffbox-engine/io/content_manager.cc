@@ -7,6 +7,7 @@
 #include "../application/application.h"
 
 #include "script.h"
+#include "shader.h"
 
 namespace snuffbox
 {
@@ -15,14 +16,16 @@ namespace snuffbox
 		//-----------------------------------------------------------------------------------------------
 		ContentManager::ContentManager() :
 			watch_(this),
+			renderer_(nullptr),
 			application_(nullptr)
 		{
 
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		void ContentManager::Initialise(CVar* cvar, SnuffboxApp* app)
+		void ContentManager::Initialise(CVar* cvar, graphics::Renderer* renderer, SnuffboxApp* app)
 		{
+			renderer_ = renderer;
 			application_ = app;
 
 			LogService& log = Services::Get<LogService>();
@@ -56,7 +59,7 @@ namespace snuffbox
 				if (it != map.end())
 				{
 					File* f = File::Open(path, File::AccessFlags::kRead | File::AccessFlags::kBinary);
-					it->second->Reload(f);
+					it->second->Reload(f, this);
 					File::Close(f);
 
 					break;
@@ -107,6 +110,11 @@ namespace snuffbox
 		{
 			LogService& log = Services::Get<LogService>();
 
+			if (quiet == false)
+			{
+				log.Log(console::LogSeverity::kDebug, "Loading '{0}'", path);
+			}
+
 			String full_path = FullPath(path);
 
 			ContentMap& map = loaded_content_[type];
@@ -121,7 +129,7 @@ namespace snuffbox
 				return it->second.Get();
 			}
 
-			ContentBase* content = nullptr;
+			ContentPtr<ContentBase> content = nullptr;
 			
 			switch (type)
 			{
@@ -129,29 +137,36 @@ namespace snuffbox
 				content = Memory::default_allocator().Construct<Script>();
 				break;
 
+			case ContentBase::Types::kShader:
+				content = Memory::default_allocator().Construct<Shader>();
+				break;
+
 			default:
 				break;
 			}
 
-			log.Assert(content != nullptr, "Content to be loaded from path '{0}' with type '{1}' was null after file reading", path, type);
+			log.Assert(content.ptr() != nullptr, "Content to be loaded from path '{0}' with type '{1}' was null after file reading", path, type);
 
 			File* f = File::Open(full_path, File::AccessFlags::kRead | File::AccessFlags::kBinary);
-			bool success = content->Load(f);
+			bool success = content.ptr()->Load(f, this);
 			File::Close(f);
 
 			if (success == false)
 			{
-				Memory::default_allocator().Destruct<ContentBase>(content);
 				return ContentPtr<ContentBase>();
 			}
 
-			content->set_is_valid(true);
-			ContentPtr<ContentBase> shared = ContentPtr<ContentBase>(content);
-			map.emplace(full_path, shared);
+			content.ptr()->set_is_valid(true);
+			map.emplace(full_path, content);
 			
 			watch_.Add(full_path);
 
-			return shared;
+			if (quiet == false)
+			{
+				log.Log(console::LogSeverity::kDebug, "Loaded '{0}'", path);
+			}
+
+			return content;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -168,6 +183,7 @@ namespace snuffbox
 			{
 				watch_.Remove(full_path);
 				it->second.Get()->set_is_valid(false);
+				it->second.Get()->Unload(this);
 				map.erase(it);
 				return;
 			}
@@ -179,9 +195,37 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		void ContentManager::UnloadAll()
+		{
+			for (int i = 0; i < ContentBase::Types::kCount; ++i)
+			{
+				ContentMap& map = loaded_content_[i];
+
+				if (map.empty() == true)
+				{
+					continue;
+				}
+
+				for (ContentMap::iterator it = map.begin(); it != map.end(); ++it)
+				{
+					it->second->Unload(this);
+					it->second->set_is_valid(false);
+				}
+
+				map.clear();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		String ContentManager::FullPath(const String& path) const
 		{
 			return src_directory_.size() > 0 ? src_directory_ + "/" + path : path;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		graphics::Renderer* ContentManager::renderer() const
+		{
+			return renderer_;
 		}
 
 		//-----------------------------------------------------------------------------------------------
@@ -192,10 +236,12 @@ namespace snuffbox
 				JS_FUNCTION_REG(load),
 				JS_FUNCTION_REG(get),
 				JS_FUNCTION_REG(unload),
+				JS_FUNCTION_REG(unloadAll),
 				JS_FUNCTION_REG_END
 			};
 
 			JSWrapper::SetObjectValue(obj, "Script", static_cast<int>(ContentBase::Types::kScript));
+			JSWrapper::SetObjectValue(obj, "Shader", static_cast<int>(ContentBase::Types::kShader));
 
 			JSFunctionRegister::Register(funcs, obj);
 		}));
@@ -251,6 +297,12 @@ namespace snuffbox
 
 				cm.UnloadContent(path, type, false);
 			}
+		}));
+
+		//-----------------------------------------------------------------------------------------------
+		JS_FUNCTION_IMPL(ContentManager, unloadAll, JS_BODY(
+		{
+			Services::Get<ContentService>().UnloadAll();
 		}));
 	}
 }

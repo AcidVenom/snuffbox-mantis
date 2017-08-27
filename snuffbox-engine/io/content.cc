@@ -13,6 +13,18 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
+		bool ContentBase::Reload(File* file, ContentManager* cm)
+		{
+			return Load(file, cm);
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void ContentBase::Unload(ContentManager* cm)
+		{
+
+		}
+
+		//-----------------------------------------------------------------------------------------------
 		void ContentBase::set_is_valid(bool valid)
 		{
 			is_valid_ = valid;

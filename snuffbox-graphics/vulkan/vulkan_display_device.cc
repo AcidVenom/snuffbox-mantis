@@ -1,4 +1,6 @@
 #include "vulkan_display_device.h"
+#include "vulkan_shader.h"
+
 #include "../platform/platform_renderer.h"
 
 #include <GLFW/glfw3.h>
@@ -284,6 +286,39 @@ namespace snuffbox
 			}
 
 			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		bool VulkanDisplayDevice::CreateShader(const unsigned char* byte_code, size_t size, char type, void** blob)
+		{
+			VulkanShader* shader = new VulkanShader();
+			if (shader->Create(byte_code, size, type, device_) == false)
+			{
+				delete shader;
+				renderer_->Error("Could not create a new Vulkan shader");
+				return false;
+			}
+
+			if (blob != nullptr)
+			{
+				*blob = shader;
+			}
+
+			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		void VulkanDisplayDevice::ReleaseShader(void* blob)
+		{
+			if (blob == nullptr)
+			{
+				return;
+			}
+
+			VulkanShader* shader = reinterpret_cast<VulkanShader*>(blob);
+			shader->Release(device_);
+
+			delete shader;
 		}
 
 		//-----------------------------------------------------------------------------------------------

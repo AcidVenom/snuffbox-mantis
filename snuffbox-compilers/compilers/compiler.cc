@@ -8,9 +8,6 @@ namespace snuffbox
 	namespace compilers
 	{
 		//-----------------------------------------------------------------------------------------------
-		const uint32_t Compiler::FileHeader::MAGIC = 0x46554E53;
-
-		//-----------------------------------------------------------------------------------------------
 		Compiler::Compiler(Allocation allocation, Deallocation deallocation) :
 			allocator_(allocation),
 			deallocator_(deallocation),
@@ -39,14 +36,14 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool Compiler::Decompile(const unsigned char* input, const unsigned char** output, const unsigned char* userdata)
+		bool Compiler::Decompile(const unsigned char* input, const unsigned char** output, size_t* out_size, const unsigned char* userdata)
 		{
 			if (data_ != nullptr)
 			{
 				Deallocate(data_);
 			}
 
-			bool success = Decompilation(input, userdata);
+			bool success = Decompilation(input, out_size, userdata);
 
 			if (output != nullptr)
 			{
@@ -123,11 +120,12 @@ namespace snuffbox
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool Compiler::GetFileHeader(const unsigned char* data, FileHeader* out)
+		bool Compiler::GetFileHeader(const unsigned char* data, Magic file_type, FileHeader* out)
 		{
 			const FileHeader* header = reinterpret_cast<const FileHeader*>(data);
-			if (header->magic != FileHeader::MAGIC)
+			if (header->magic != Magic::kSnuffboxFile || header->file_type != file_type)
 			{
+				SetError("Unexpected file type");
 				return false;
 			}
 
@@ -137,6 +135,17 @@ namespace snuffbox
 			}
 
 			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------
+		Compiler::FileHeader Compiler::CreateFileHeader(size_t file_size, Magic file_type)
+		{
+			FileHeader header;
+			header.magic = Magic::kSnuffboxFile;
+			header.file_type = file_type;
+			header.file_size = file_size;
+
+			return header;
 		}
 	}
 }

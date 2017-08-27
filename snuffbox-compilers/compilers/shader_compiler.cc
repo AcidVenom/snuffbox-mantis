@@ -6,9 +6,6 @@ namespace snuffbox
 	namespace compilers
 	{
 		//-----------------------------------------------------------------------------------------------
-		const uint32_t ShaderCompiler::TYPE_ = 0x00485353;
-
-		//-----------------------------------------------------------------------------------------------
 		ShaderCompiler::ShaderCompiler(Allocation allocator, Deallocation deallocator) :
 			Compiler(allocator, deallocator)
 		{
@@ -43,27 +40,55 @@ namespace snuffbox
 			}
 
 			const size_t header_size = sizeof(Compiler::FileHeader);
-			data_ = Allocate(bin_size + header_size);
+			const size_t shader_header_size = sizeof(ShaderCompiler::Header);
 
-			FileHeader header;
-			header.magic = FileHeader::MAGIC;
-			header.file_type = TYPE_;
-			header.file_size = bin_size;
+			size_t file_size = bin_size + sizeof(ShaderCompiler::Header);
+
+			data_ = Allocate(file_size + header_size);
+
+			FileHeader header = CreateFileHeader(file_size, Magic::kShader);
+
+			ShaderCompiler::Header shader_header;
+			shader_header.size = bin_size;
+			shader_header.type = type;
 
 			memcpy(data_, &header, header_size);
-			memcpy(data_ + header_size, bin, bin_size);
+			memcpy(data_ + header_size, &shader_header, shader_header_size);
+			memcpy(data_ + header_size + shader_header_size, bin, bin_size);
 
 			if (out_size != nullptr)
 			{
-				*out_size = bin_size;
+				*out_size = file_size + header_size;
 			}
 
 			return true;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-		bool ShaderCompiler::Decompilation(const unsigned char* input, const unsigned char* userdata)
+		bool ShaderCompiler::Decompilation(const unsigned char* input, size_t* out_size, const unsigned char* userdata)
 		{
+			Compiler::FileHeader header;
+			
+			if (GetFileHeader(input, Magic::kShader, &header) == false)
+			{
+				return false;
+			}
+
+			const size_t s = header.file_size;
+
+#ifdef SNUFF_USE_VULKAN
+			data_ = Allocate(s);
+			memcpy(data_, input + sizeof(FileHeader), s);
+#else
+			SetError("No implementation provided for shaders for this type of renderer");
+			return false;
+#endif
+
+			if (out_size != nullptr)
+			{
+				*out_size = s;
+			}
+
 			return true;
 		}
 

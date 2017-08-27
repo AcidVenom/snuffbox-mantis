@@ -65,6 +65,11 @@ namespace snuffbox
 			template <typename T>
 			void Unload(const String& path, bool quiet = false);
 
+			/**
+			* @brief Unload all content
+			*/
+			virtual void UnloadAll();
+
 		protected:
 
 			/**

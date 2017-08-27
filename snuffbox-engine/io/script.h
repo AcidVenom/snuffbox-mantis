@@ -18,12 +18,7 @@ namespace snuffbox
 			/**
 			* @see snuffbox::engine::ContentBase::Load
 			*/
-			bool Load(File* file) override;
-
-			/**
-			* @see snuffbox::engine::ContentBase::Reload
-			*/
-			bool Reload(File* file) override;
+			bool Load(File* file, ContentManager* cm) override;
 		};
 	}
 }
