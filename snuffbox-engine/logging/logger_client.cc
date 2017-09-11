@@ -215,15 +215,16 @@ namespace snuffbox
 					return true;
 				}
 
-				if (key.size() > 255 || value.size() > 255)
+				if (key.size() > 254 || value.size() > 255)
 				{
 					QueueLog(console::LogSeverity::kError, "Invalid arguments for command 'set', buffer overflow");
 					return true;
 				}
 
 				char buffer_key[256];
-				memcpy(buffer_key, key.c_str(), key.size());
-				memset(buffer_key + key.size(), '\0', sizeof(char));
+				memset(buffer_key, '-', sizeof(char));
+				memcpy(buffer_key + 1, key.c_str(), key.size());
+				memset(buffer_key + 1 + key.size(), '\0', sizeof(char));
 
 				char buffer_value[256];
 				memcpy(buffer_value, value.c_str(), value.size());

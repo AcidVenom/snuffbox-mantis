@@ -126,7 +126,8 @@ namespace snuffbox
 				{
 					log.Log(console::LogSeverity::kWarning, "Content with path '{0}' was already loaded, skipping load", path);
 				}
-				return it->second.Get();
+
+				return it->second;
 			}
 
 			ContentPtr<ContentBase> content = nullptr;
